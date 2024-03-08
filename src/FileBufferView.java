@@ -1,14 +1,35 @@
-public class FileBufferView
+public class FileBufferView extends Layout
 {
-    private int scrollState;
+    private int verticalScrollState;
+    private int horizontalScrollState;
 
-    public void setScrollState(int newScrollState)
-    {
-        this.scrollState = newScrollState;
+    private FileBuffer buffer;
+
+    public FileBufferView(FileBuffer buffer) {
+        super();
     }
 
-    public int getScrollState()
-    {
-        return scrollState;
+    public void setVerticalScrollState(int newVerticalScrollState) {
+        this.verticalScrollState = newVerticalScrollState;
+    }
+
+    public int getVerticalScrollState() {
+        return verticalScrollState;
+    }
+
+    public void setHorizontalScrollState(int newHorizontalScrollState) {
+        this.horizontalScrollState = newHorizontalScrollState;
+    }
+
+    public int getHorizontalScrollState() {
+        return horizontalScrollState;
+    }
+
+    public void setBuffer(FileBuffer newBuffer) {
+        this.buffer = newBuffer;
+    }
+
+    public FileBuffer getBuffer() {
+        return buffer;
     }
 }

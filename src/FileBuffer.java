@@ -1,27 +1,41 @@
 import java.awt.*;
+import java.rmi.UnexpectedException;
+import java.util.Scanner;
 
 public class FileBuffer {
     private String content;
-    private String path;
     private Point insertionPoint;
     private FileBufferView bufferView;
     private boolean dirty;
+
+    public FileBuffer(String path)
+    {
+        StringBuilder cont = new StringBuilder();
+        try (Scanner fileReader = new Scanner(path)) {
+            while (fileReader.hasNextByte()) {
+                int c = fileReader.nextByte();
+                if (c != 10 && c != 13 && (c < 32 || c > 126)) {
+                    throw new Exception("File contains illegal byte");
+                }
+                else {
+                    cont.append(String.valueOf((char) c));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.content = cont.toString();
+        this.insertionPoint = null;
+        this.bufferView = null;
+        this.dirty = false;
+    }
 
     public FileBufferView getBufferView() {
         return bufferView;
     }
 
-    public void setBufferView(FileBufferView newBufferview) {
-        this.bufferView = newBufferview;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String newPath)
-    {
-        path = newPath;
+    public void setBufferView(FileBufferView newBufferView) {
+        this.bufferView = newBufferView;
     }
 
     public boolean getDirty() {
