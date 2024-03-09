@@ -1,11 +1,9 @@
 import java.awt.*;
-import java.rmi.UnexpectedException;
 import java.util.Scanner;
 
 public class FileBuffer {
     private String content;
     private Point insertionPoint;
-    private FileBufferView bufferView;
     private boolean dirty;
 
     public FileBuffer(String path)

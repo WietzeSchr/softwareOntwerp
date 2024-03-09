@@ -4,6 +4,13 @@ public class Textr
 
     private int newLine;
 
+    public Textr(String[] filepaths) {
+        if (filepaths.length > 1) {
+            Layout lay = new StackedLayout(25, 80, filepaths);
+
+        }
+    }
+
     public void setLayout(Layout newLayout) {
         this.layout = newLayout;
     }

@@ -8,10 +8,9 @@ public class Main {
     {
         Terminal.clearScreen();
         Terminal.leaveRawInputMode();
-        for (int i = 0; i < args.length; i++)
-        {
-            System.out.println(args[i]);
-        }
+        new Textr(args);
+        Terminal.enterRawInputMode();
+        Terminal.clearScreen();
     }
 }
 

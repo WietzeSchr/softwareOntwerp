@@ -4,15 +4,18 @@ public abstract class Layout
 
     private int width;
 
-    private int position;
-
     private Layout parent;
 
-    public Layout(){
-        this.heigth = 0;
-        this.width = 0;
-        this.position = 0;
+    public Layout(int heigth, int width) {
+        this.heigth = heigth;
+        this.width = width;
         this.parent = null;
+    }
+
+    public Layout(int heigth, int width, Layout parent) {
+        this.heigth = heigth;
+        this.width = width;
+        this.parent = parent;
     }
 
     public void setHeigth(int newHeigth) {
@@ -31,13 +34,6 @@ public abstract class Layout
         return width;
     }
 
-    public void setPosition(int newPosition) {
-        this.position = newPosition;
-    }
-
-    public int getPosition() {
-        return this.position;
-    }
 
     public void setParent(Layout newParent) {
         this.parent = newParent;
