@@ -12,7 +12,7 @@ public abstract class CompositeLayout extends Layout
         int length = filepaths.length;
         Layout[] subLay = new Layout[length];
         for (int i = 0; i < length; i++) {
-            subLay[i] = new FileBufferView(subSize.getX(), subSize.getY(), filepaths[i]);
+            subLay[i] = new FileBufferView((int) subSize.getX(), (int) subSize.getY(), filepaths[i]);
         }
 
     }
