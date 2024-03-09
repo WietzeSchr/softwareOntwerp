@@ -5,14 +5,16 @@ public class FileBufferView extends Layout
 
     private int position;
 
-    private FileBuffer buffer;
+    private File file;
 
     public FileBufferView(int heigth, int witdh, String filepath) {
         super(heigth, witdh);
+        this.file = new File(filepath);
     }
 
     public FileBufferView(int heigth, int witdh, Layout parent, String filepath) {
         super(heigth, witdh,parent);
+
     }
     public void setVerticalScrollState(int newVerticalScrollState) {
         this.verticalScrollState = newVerticalScrollState;
@@ -30,12 +32,12 @@ public class FileBufferView extends Layout
         return horizontalScrollState;
     }
 
-    public void setBuffer(FileBuffer newBuffer) {
-        this.buffer = newBuffer;
+    public void setFile(File newFile) {
+        this.file = newFile;
     }
 
-    public FileBuffer getBuffer() {
-        return buffer;
+    public File getFile() {
+        return file;
     }
 
     public void setPosition(int newPosition) {
