@@ -26,16 +26,7 @@ public class FileBuffer {
         }
         this.content = cont.toString();
         this.insertionPoint = null;
-        this.bufferView = null;
         this.dirty = false;
-    }
-
-    public FileBufferView getBufferView() {
-        return bufferView;
-    }
-
-    public void setBufferView(FileBufferView newBufferView) {
-        this.bufferView = newBufferView;
     }
 
     public boolean getDirty() {
