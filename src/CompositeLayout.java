@@ -6,15 +6,17 @@ public abstract class CompositeLayout extends Layout
 
     public abstract Point calcSubSize();
 
-    public CompositeLayout(int height, int width, String[] filepaths) {
-        super(height, width);
+    public abstract Point calcLeftUpCorner(int i);
+
+    public CompositeLayout(int height, int width, Point leftUpperCorner, String[] filepaths) {
+        super(height, width, leftUpperCorner);
         Point subSize = calcSubSize();
         int length = filepaths.length;
         Layout[] subLay = new Layout[length];
         for (int i = 0; i < length; i++) {
-            subLay[i] = new FileBufferView((int) subSize.getX(), (int) subSize.getY(), this, filepaths[i]);
+            Point leftUpCorner = calcLeftUpCorner(i);
+            subLay[i] = new FileBufferView((int) subSize.getX(), (int) subSize.getY(), this, calcLeftUpCorner(i), filepaths[i]);
         }
-
     }
 
     public void setSubLayouts(Layout[] newSubLayouts) {
@@ -27,5 +29,12 @@ public abstract class CompositeLayout extends Layout
 
     public int countSubLayouts() {
         return subLayouts.length;
+    }
+
+    public void show() {
+        Layout[] subLays = getSubLayouts();
+        for (int i = 0; i < countSubLayouts(); i++) {
+            subLays[i].show();
+        }
     }
 }
