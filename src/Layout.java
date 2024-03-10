@@ -1,21 +1,29 @@
+import java.awt.*;
+
 public abstract class Layout
 {
     private int heigth;
 
     private int width;
 
+    private Point leftUpperCorner;
+
     private Layout parent;
 
-    public Layout(int heigth, int width) {
+    public abstract void show();
+
+    public Layout(int heigth, int width, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;
         this.parent = null;
+        this.leftUpperCorner = leftUpperCorner;
     }
 
-    public Layout(int heigth, int width, Layout parent) {
+    public Layout(int heigth, int width, Layout parent, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;
         this.parent = parent;
+        this.leftUpperCorner = leftUpperCorner;
     }
 
     public void setHeigth(int newHeigth) {
@@ -41,5 +49,13 @@ public abstract class Layout
 
     public Layout getParent() {
         return parent;
+    }
+
+    public void setLeftUpperCorner(Point newLeftUpperCorner) {
+        this.leftUpperCorner = newLeftUpperCorner;
+    }
+
+    public Point getLeftUpperCorner() {
+        return leftUpperCorner;
     }
 }

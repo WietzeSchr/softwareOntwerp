@@ -65,6 +65,7 @@ replay_pid*
 #       Rider
 # --------------------------------------------------------------------------------------------------------------
 
+.idea/
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -101,7 +102,7 @@ replay_pid*
 # .idea/modules.xml
 # .idea/*.iml
 # .idea/modules
-# *.iml
+*.iml
 # *.ipr
 
 # CMake
