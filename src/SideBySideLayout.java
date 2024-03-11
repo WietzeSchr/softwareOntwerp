@@ -1,8 +1,8 @@
 import java.awt.*;
 
 public class SideBySideLayout extends CompositeLayout{
-    public SideBySideLayout(int height, int width, Point leftUpperCorner, String[] filepaths) {
-        super(height, width, leftUpperCorner, filepaths);
+    public SideBySideLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
+        super(height, width, leftUpperCorner, filepaths, newLine);
     }
 
     @Override

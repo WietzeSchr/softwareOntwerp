@@ -6,9 +6,9 @@ public class File
 
     private FileBuffer buffer;
 
-    public File(String path) throws FileNotFoundException {
+    public File(String path, String newLine) throws FileNotFoundException {
         this.path = path;
-        this.buffer = new FileBuffer(path);
+        this.buffer = new FileBuffer(path, newLine);
     }
 
     public String getPath()

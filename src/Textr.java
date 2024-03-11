@@ -57,7 +57,7 @@ public class Textr
 
     private int focus;
 
-    public Textr(String[] filepaths){
+    public Textr(String newLine, String[] filepaths){
         Point size;
         try {
             size = getSize();
@@ -65,17 +65,17 @@ public class Textr
             throw new RuntimeException(e);
         }
         if (filepaths.length > 1) {
-            this.layout = new StackedLayout((int) size.getX(), (int) size.getY(), new Point(1,1), filepaths);
+            this.layout = new StackedLayout((int) size.getX(), (int) size.getY(), new Point(1,1), filepaths, newLine);
         }
         else {
-            this.layout = new FileBufferView((int) size.getX(), (int) size.getY(), new Point(1, 1), filepaths[0]);
+            this.layout = new FileBufferView((int) size.getX(), (int) size.getY(), new Point(1, 1), filepaths[0], newLine);
         }
-        this.newLine = System.lineSeparator();
+        this.newLine = newLine;
         this.focus = 1;
         show();
         initViewPositions();
         initCursor();
-        for (;;) {}
+        run();
     }
 
     public void setLayout(Layout newLayout) {
@@ -136,6 +136,10 @@ public class Textr
         FileBufferView focus = getFocusedView();
         Point cursor = focus.getInsertionPoint();
         Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
+    }
+
+    private void run() {
+        for (;;);
     }
 
 }

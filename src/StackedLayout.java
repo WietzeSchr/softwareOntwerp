@@ -3,8 +3,8 @@ import java.awt.*;
 import static java.lang.Math.floor;
 
 public class StackedLayout extends CompositeLayout {
-    public StackedLayout(int heigth, int width, Point leftUpperCorner, String[] filepaths) {
-        super(heigth, width, leftUpperCorner, filepaths);
+    public StackedLayout(int heigth, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
+        super(heigth, width, leftUpperCorner, filepaths, newLine);
     }
 
     public Point calcSubSize() {
