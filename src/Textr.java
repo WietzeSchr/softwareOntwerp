@@ -74,7 +74,7 @@ public class Textr
         this.focus = 1;
         show();
         initViewPositions();
-        updateCursor();
+        initCursor();
         for (;;) {}
     }
 
@@ -122,14 +122,17 @@ public class Textr
 
     private void show() {
         Terminal.clearScreen();
-        getLayout().show();
+        Layout lay = getLayout();
+        int heigth = lay.getHeigth();
+        int width = lay.getWidth();
+        lay.show();
     }
 
     private void initViewPositions() {
         getLayout().initViewPosition(1);
     }
 
-    private void updateCursor() {
+    private void initCursor() {
         FileBufferView focus = getFocusedView();
         Point cursor = focus.getInsertionPoint();
         Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
