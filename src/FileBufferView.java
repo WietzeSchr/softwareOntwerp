@@ -1,6 +1,7 @@
 import io.github.btj.termios.Terminal;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
 
 public class FileBufferView extends Layout
 {
@@ -14,12 +15,20 @@ public class FileBufferView extends Layout
 
     public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath) {
         super(heigth, witdh, leftUpperCorner);
-        this.file = new File(filepath);
+        try {
+            this.file = new File(filepath);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public FileBufferView(int heigth, int witdh, Layout parent, Point leftUpperCorner, String filepath) {
         super(heigth, witdh, parent, leftUpperCorner);
-        this.file = new File(filepath);
+        try {
+            this.file = new File(filepath);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
     }
     public void setVerticalScrollState(int newVerticalScrollState) {
@@ -54,7 +63,36 @@ public class FileBufferView extends Layout
         return this.position;
     }
 
-    public void show() {
+    public String[] getContent() {
+        return getFile().getContent();
+}
 
+    public FileBuffer getBuffer() {
+        return getFile().getBuffer();
+    }
+
+    public Point getInsertionPoint() {
+        return getBuffer().getInsertionPoint();
+    }
+
+    public void show() {
+        String[] cont = getContent();
+        for (int i = 0; i < cont.length; i++) {
+            Terminal.printText((int) (getLeftUpperCorner().getX() + i), 1, cont[i]);
+        }
+    }
+
+    @Override
+    public int initViewPosition(int i) {
+        setPosition(i);
+        return 1;
+    }
+
+    @Override
+    public FileBufferView getFocusedView(int i) {
+        if (getPosition() == i) {
+            return this;
+        }
+        return null;
     }
 }

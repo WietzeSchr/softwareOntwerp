@@ -13,8 +13,8 @@ public class StackedLayout extends CompositeLayout {
 
 
     public Point calcLeftUpCorner(int i) {
-        int hei = (int) floor(getHeigth() / countSubLayouts());
-        return new Point((int) getLeftUpperCorner().getX(), (int) (getLeftUpperCorner().getY() + i * hei));
+        int subHeight = (int) floor(getHeigth() / countSubLayouts());
+        return new Point((int) (getLeftUpperCorner().getX() + i * subHeight), (int) getLeftUpperCorner().getY());
     }
 
 }

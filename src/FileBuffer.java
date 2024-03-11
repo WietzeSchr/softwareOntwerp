@@ -1,34 +1,34 @@
 import java.awt.*;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class FileBuffer {
     private String[] content;
     private Point insertionPoint;
     private boolean dirty;
 
-    public FileBuffer(String path)
-    {
-        ArrayList<String> conts = new ArrayList<>();
-        StringBuilder cont = new StringBuilder();
-        try (Scanner fileReader = new Scanner(path)) {
-            while (fileReader.hasNextByte()) {
-                int c = fileReader.nextByte();
-                if (c != 10 && c != 13 && (c < 32 || c > 126)) {
-                    throw new Exception("File contains illegal byte");
-                }
-                else if (c == 10) {
-                    conts.add(cont.toString());
-                }
-                else {
-                    cont.append(String.valueOf((char) c));
+    public FileBuffer(String path) throws FileNotFoundException {
+        ArrayList<String> content = new ArrayList<>();
+        FileInputStream file = new FileInputStream(path);
+        int c;
+        StringBuilder line = new StringBuilder();
+        int column = 1;
+        try {
+            while ((c = file.read()) != -1) {
+                if (c != 10) {
+                    column += 1;
+                    line.append((char) c);
+                } else {
+                    column = 1;
+                    content.add(line.toString());
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.content = (String[]) conts.toArray();
-        this.insertionPoint = new Point(1, 1);
+        this.content = content.toArray(new String[0]);
+        int contentLength = getContent().length;
+        this.insertionPoint = new Point(contentLength, getContent()[contentLength - 1].length() + 1);
         this.dirty = false;
     }
 
@@ -56,8 +56,7 @@ public class FileBuffer {
         this.content = newContent;
     }
 
-    public void moveInsertionPoint(Point dir)
-    {
+    public void moveInsertionPoint(Point dir) {
         Point newInsertionPoint = new Point((int) (getInsertionPoint().getX() + dir.getX()),
                 (int) (getInsertionPoint().getY() + dir.getY()));
         setInsertionPoint(newInsertionPoint);

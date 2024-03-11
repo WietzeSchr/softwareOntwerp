@@ -1,11 +1,12 @@
+import java.io.FileNotFoundException;
+
 public class File
 {
     private final String path;
 
     private FileBuffer buffer;
 
-    public File(String path)
-    {
+    public File(String path) throws FileNotFoundException {
         this.path = path;
         this.buffer = new FileBuffer(path);
     }
@@ -21,5 +22,9 @@ public class File
 
     public void setBuffer(FileBuffer newBuffer) {
         this.buffer = newBuffer;
+    }
+
+    public String[] getContent() {
+        return getBuffer().getContent();
     }
 }
