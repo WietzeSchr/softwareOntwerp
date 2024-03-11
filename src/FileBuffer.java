@@ -7,7 +7,7 @@ public class FileBuffer {
     private Point insertionPoint;
     private boolean dirty;
 
-    public FileBuffer(String path) throws FileNotFoundException {
+    public FileBuffer(String path, String newLine) throws FileNotFoundException {
         ArrayList<String> content = new ArrayList<>();
         FileInputStream file = new FileInputStream(path);
         int c;
@@ -21,11 +21,10 @@ public class FileBuffer {
                 }
                 else {
                     if (c != 10) {
-                        column += 1;
                         line.append((char) c);
                     } else {
-                        column = 1;
                         content.add(line.toString());
+                        line = new StringBuilder();
                     }
                 }
             }
@@ -33,8 +32,7 @@ public class FileBuffer {
             throw new RuntimeException(e);
         }
         this.content = content.toArray(new String[0]);
-        int contentLength = getContent().length;
-        this.insertionPoint = new Point(contentLength, getContent()[contentLength - 1].length() + 1);
+        this.insertionPoint = new Point(1,1);
         this.dirty = false;
     }
 

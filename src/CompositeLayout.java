@@ -8,14 +8,14 @@ public abstract class CompositeLayout extends Layout
 
     public abstract Point calcLeftUpCorner(int i);
 
-    public CompositeLayout(int height, int width, Point leftUpperCorner, String[] filepaths) {
+    public CompositeLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
         super(height, width, leftUpperCorner);
         int length = filepaths.length;
         this.subLayouts = new Layout[length];
         Point subSize = calcSubSize();
         for (int i = 0; i < length; i++) {
             Point leftUpCorner = calcLeftUpCorner(i);
-            setSubLayout(new FileBufferView((int) subSize.getX(), (int) subSize.getY(), this, calcLeftUpCorner(i), filepaths[i]), i);
+            setSubLayout(new FileBufferView((int) subSize.getX(), (int) subSize.getY(), this, calcLeftUpCorner(i), filepaths[i], newLine), i);
         }
     }
 

@@ -13,23 +13,26 @@ public class FileBufferView extends Layout
 
     private File file;
 
-    public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath) {
+    public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) {
         super(heigth, witdh, leftUpperCorner);
         try {
-            this.file = new File(filepath);
+            this.file = new File(filepath, newLine);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        this.verticalScrollState = 1;
+        this.horizontalScrollState = 1;
     }
 
-    public FileBufferView(int heigth, int witdh, Layout parent, Point leftUpperCorner, String filepath) {
+    public FileBufferView(int heigth, int witdh, Layout parent, Point leftUpperCorner, String filepath, String newLine) {
         super(heigth, witdh, parent, leftUpperCorner);
         try {
-            this.file = new File(filepath);
+            this.file = new File(filepath, newLine);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-
+        this.verticalScrollState = 1;
+        this.horizontalScrollState = 1;
     }
     public void setVerticalScrollState(int newVerticalScrollState) {
         this.verticalScrollState = newVerticalScrollState;
@@ -83,18 +86,22 @@ public class FileBufferView extends Layout
         return getBuffer().getColumnCount();
     }
 
+    public String getPath() {
+        return getFile().getPath();
+    }
+
     public void show() {
         String[] cont = getContent();
         for (int i = 0; i < getHeigth() - 2; i++) {
-            int row = i + getVerticalScrollState();
+            int row = i + getVerticalScrollState() - 1;
             if (row >= getRowCount()) {
                 break;
             }
-            if (cont[row].length() >= getWidth() - getHorizontalScrollState() - 2) {
-                Terminal.printText((int) (getLeftUpperCorner().getX() + i), 1, cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
+            if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
+                Terminal.printText((int) getLeftUpperCorner().getX() + i, 1, cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
             }
             else {
-                Terminal.printText((int) getLeftUpperCorner().getX() + i, 1, cont[row]);
+                Terminal.printText((int) getLeftUpperCorner().getX() + i, 1, cont[row].substring(getHorizontalScrollState() - 1));
             }
         }
         showScrollbars();
@@ -134,21 +141,24 @@ public class FileBufferView extends Layout
 
     private String makeHorizontalScrollBar() {
         StringBuilder result = new StringBuilder();
+        result.append(getPath() + ", rows: " + String.valueOf(getRowCount()) + ", columns: " + String.valueOf(getColumnCount()) + " ");
         if (getWidth() > getColumnCount()) {
-            for (int i = 0; i < getWidth(); i++) {
+            while (result.length() < getWidth()) {
                 result.append('#');
             }
         }
         else {
-            int start = (int) Math.floor((float) getHorizontalScrollState() / (float) getColumnCount() * getWidth() + 1);
-            int end = (int) Math.floor((float) (getHorizontalScrollState() + getWidth() - 1)/ (float) getColumnCount() * getWidth());
-            for (int i = 0; i < getWidth(); i++) {
+            int start = (int) Math.floor((float) getHorizontalScrollState() / (float) getColumnCount() * (getWidth() - result.length()) + 1);
+            int end = (int) Math.floor((float) (getHorizontalScrollState() + getWidth() - 1)/ (float) getColumnCount() * (getWidth() - result.length()));
+            int i = 1;
+            while (result.length() < getWidth()) {
                 if (i < start || i > end) {
                     result.append('-');
                 }
                 else {
                     result.append('#');
                 }
+                i++;
             }
         }
         return result.toString();
