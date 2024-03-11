@@ -12,6 +12,10 @@ public abstract class Layout
 
     public abstract void show();
 
+    public abstract int initViewPosition(int i);
+
+    public abstract FileBufferView getFocusedView(int i);
+
     public Layout(int heigth, int width, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;
