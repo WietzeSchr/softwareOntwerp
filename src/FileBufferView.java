@@ -177,4 +177,9 @@ public class FileBufferView extends Layout
         }
         return null;
     }
+
+    @Override
+    public int countViews() {
+        return 1;
+    }
 }

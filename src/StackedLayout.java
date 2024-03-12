@@ -16,5 +16,4 @@ public class StackedLayout extends CompositeLayout {
         int subHeight = (int) floor(getHeigth() / countSubLayouts());
         return new Point((int) (getLeftUpperCorner().getX() + i * subHeight), (int) getLeftUpperCorner().getY());
     }
-
 }

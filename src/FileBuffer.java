@@ -4,10 +4,20 @@ import java.util.ArrayList;
 
 public class FileBuffer {
     private String[] content;
+
+    private final String newLine;
     private Point insertionPoint;
     private boolean dirty;
 
+    public FileBuffer(String[] content, String newLine, Point insertionPoint, boolean dirty) {
+        this.content = content;
+        this.newLine = newLine;
+        this.insertionPoint = insertionPoint;
+        this.dirty = dirty;
+    }
+
     public FileBuffer(String path, String newLine) throws FileNotFoundException {
+        this.newLine = newLine;
         ArrayList<String> content = new ArrayList<>();
         FileInputStream file = new FileInputStream(path);
         int c;
@@ -36,6 +46,10 @@ public class FileBuffer {
         this.dirty = false;
     }
 
+    public String getNewLine() {
+        return String.copyValueOf(newLine.toCharArray());
+    }
+
     public boolean getDirty() {
         return dirty;
     }
@@ -45,7 +59,7 @@ public class FileBuffer {
     }
 
     public Point getInsertionPoint() {
-        return insertionPoint;
+        return new Point((int) insertionPoint.getX(), (int) insertionPoint.getY());
     }
 
     public void setInsertionPoint(Point insertionPoint) {
@@ -53,7 +67,11 @@ public class FileBuffer {
     }
 
     public String[] getContent() {
-        return content;
+        String[] result = new String[content.length];
+        for (int i = 0; i < content.length; i++) {
+            result[i] = String.copyValueOf(content[i].toCharArray());
+        }
+        return result;
     }
 
     public void setContent(String[] newContent) {
@@ -79,5 +97,9 @@ public class FileBuffer {
         Point newInsertionPoint = new Point((int) (getInsertionPoint().getX() + dir.getX()),
                 (int) (getInsertionPoint().getY() + dir.getY()));
         setInsertionPoint(newInsertionPoint);
+    }
+
+    public FileBuffer copy() {
+        return new FileBuffer(getContent(), getNewLine(), getInsertionPoint(), getDirty());
     }
 }

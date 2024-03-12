@@ -17,7 +17,11 @@ public class File
     }
 
     public FileBuffer getBuffer() {
-        return this.buffer;
+        return buffer.copy();
+    }
+
+    public String getNewLine() {
+        return getBuffer().getNewLine();
     }
 
     public void setBuffer(FileBuffer newBuffer) {
@@ -26,5 +30,9 @@ public class File
 
     public String[] getContent() {
         return getBuffer().getContent();
+    }
+
+    public File copy() throws FileNotFoundException {
+        return new File(getPath(), getNewLine());
     }
 }
