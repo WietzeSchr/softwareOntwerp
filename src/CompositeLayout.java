@@ -65,4 +65,14 @@ public abstract class CompositeLayout extends Layout
         }
         return res;
     }
+
+    @Override
+    public int countViews() {
+        int result  = 0;
+        Layout[] subLays = getSubLayouts();
+        for (int i = 0; i < subLays.length; i++) {
+            result += subLays[i].countViews();
+        }
+        return result;
+    }
 }

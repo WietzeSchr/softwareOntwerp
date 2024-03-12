@@ -57,7 +57,7 @@ public class Textr
 
     private int focus;
 
-    public Textr(String newLine, String[] filepaths){
+    public Textr(String newLine, String[] filepaths) throws IOException {
         Point size;
         try {
             size = getSize();
@@ -138,8 +138,57 @@ public class Textr
         Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
     }
 
-    private void run() {
-        for (;;);
+    private void run() throws IOException {
+        while (getLayout().countViews() > 0) {
+            int c = Terminal.readByte();
+            if (c == 10 || c == 13) {
+                addNewLineBreak();
+            }
+            else if (c == 17) {
+                closeBuffer();
+            }
+            else if (c == 14) {
+                changeFocus(1);
+            }
+            else if (c == 16) {
+                changeFocus(-1);
+            }
+            else if (c == 18) {
+                rotateView(1);
+            }
+            else if (c == 20) {
+                rotateView(-1);
+            }
+            else if (c == 19) {
+                safeBuffer();
+            }
+            else if (c >= 32 && c <= 126) {
+                addNewChar((char) c);
+            }
+        }
     }
 
+    private void addNewLineBreak() {
+
+    }
+
+    private void addNewChar(char c) {
+
+    }
+
+    private void closeBuffer() {
+
+    }
+
+    private void changeFocus(int dir) {
+
+    }
+
+    private void rotateView(int dir) {
+
+    }
+
+    private void safeBuffer() {
+
+    }
 }

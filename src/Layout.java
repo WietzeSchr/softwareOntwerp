@@ -16,6 +16,8 @@ public abstract class Layout
 
     public abstract FileBufferView getFocusedView(int i);
 
+    public abstract int countViews();
+
     public Layout(int heigth, int width, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;
