@@ -132,11 +132,11 @@ public class Textr
         getLayout().initViewPosition(1);
     }
 
+
     private void updateCursor() {
         FileBufferView focus = getFocusedView();
-        Point cursor = focus.getCursor();
-        Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
-    }
+
+  
 
     private int countViews() {
         return getLayout().countViews();
@@ -151,7 +151,34 @@ public class Textr
             else if (c == 17) {     //  F4
                 closeBuffer();
             }
+
             else if (c == 14) {     //  Ctrl + N
+
+            else if (c == '\033') {
+                int c1 = Terminal.readByte();
+                if (c1 == ']'){
+                    int c2 = Terminal.readByte();
+                    if (c2 == 'A') {
+                        updateCursor(-1, 0);
+                    }
+                    else if (c2 == 'B') {
+                        updateCursor(1,0);
+                    }
+                    else if (c2 == 'C') {
+                        updateCursor(0, -1);
+                    }
+                    else if (c2 == 'D') {
+                        updateCursor(0, 1);
+                    }
+                }
+                else if(c1 == 'O') {
+                    int c2 = Terminal.readByte();
+                    if(c2 == 'S') {
+                        closeBuffer();
+                    }
+                }
+            }
+            else if (c == 14) {
                 changeFocus(1);
             }
             else if (c == 16) {     //  Ctrl + P
