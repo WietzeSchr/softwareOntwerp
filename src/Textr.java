@@ -129,7 +129,7 @@ public class Textr
     }
 
     private void initViewPositions() {
-        getLayout().initViewPosition(1);
+        layout.initViewPosition(1);
     }
 
     private void showCursor() {
@@ -157,10 +157,6 @@ public class Textr
             else if (c == 17) {     //  F4
                 closeBuffer();
             }
-
-            else if (c == 14) {     //  Ctrl + N
-            }
-
             else if (c == '\033') {
                 int c1 = Terminal.readByte();
                 if (c1 == ']'){

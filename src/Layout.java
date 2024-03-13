@@ -20,7 +20,6 @@ public abstract class Layout
 
     public abstract Layout addNewChar(char c, int focus);
 
-
     public Layout(int heigth, int width, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;
@@ -67,4 +66,5 @@ public abstract class Layout
     public Point getLeftUpperCorner() {
         return leftUpperCorner;
     }
+
 }
