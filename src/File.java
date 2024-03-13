@@ -11,17 +11,18 @@ public class File
         this.buffer = new FileBuffer(path, newLine);
     }
 
+    public File(String path, FileBuffer buffer) {
+        this.path = path;
+        this.buffer = buffer;
+    }
+
     public String getPath()
     {
         return this.path;
     }
 
     public FileBuffer getBuffer() {
-        return buffer.copy();
-    }
-
-    public String getNewLine() {
-        return getBuffer().getNewLine();
+        return buffer;
     }
 
     public void setBuffer(FileBuffer newBuffer) {
@@ -30,10 +31,6 @@ public class File
 
     public String[] getContent() {
         return getBuffer().getContent();
-    }
-
-    public File copy() throws FileNotFoundException {
-        return new File(getPath(), getNewLine());
     }
 
     public void addNewChar(char c) {

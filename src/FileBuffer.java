@@ -4,20 +4,10 @@ import java.util.ArrayList;
 
 public class FileBuffer {
     private String[] content;
-
-    private final String newLine;
     private Point insertionPoint;
     private boolean dirty;
 
-    public FileBuffer(String[] content, String newLine, Point insertionPoint, boolean dirty) {
-        this.content = content;
-        this.newLine = newLine;
-        this.insertionPoint = insertionPoint;
-        this.dirty = dirty;
-    }
-
     public FileBuffer(String path, String newLine) throws FileNotFoundException {
-        this.newLine = newLine;
         ArrayList<String> content = new ArrayList<>();
         FileInputStream file = new FileInputStream(path);
         int c;
@@ -44,10 +34,6 @@ public class FileBuffer {
         this.content = content.toArray(new String[0]);
         this.insertionPoint = new Point(1,1);
         this.dirty = false;
-    }
-
-    public String getNewLine() {
-        return String.copyValueOf(newLine.toCharArray());
     }
 
     public boolean getDirty() {
@@ -125,9 +111,5 @@ public class FileBuffer {
         setContent(content);
         moveInsertionPoint(new Point(0, 1));
         setDirty(true);
-    }
-
-    public FileBuffer copy() {
-        return new FileBuffer(getContent(), getNewLine(), getInsertionPoint(), getDirty());
     }
 }

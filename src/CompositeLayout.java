@@ -58,6 +58,7 @@ public abstract class CompositeLayout extends Layout
         {
             i1 += subLayouts[j].initViewPosition(i1);
         }
+        setSubLayouts(subLayouts);
         return i1;
     }
 
