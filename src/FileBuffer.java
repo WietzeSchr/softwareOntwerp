@@ -20,7 +20,7 @@ public class FileBuffer {
                     throw new RuntimeException("File" + path + "contains an illegal byte");
                 }
                 else {
-                    if (c != 10) {
+                    if (c != 13 && c != 10) {
                         line.append((char) c);
                     } else {
                         content.add(line.toString());
@@ -28,6 +28,7 @@ public class FileBuffer {
                     }
                 }
             }
+            content.add(line.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -49,6 +50,14 @@ public class FileBuffer {
     }
 
     public void setInsertionPoint(Point insertionPoint) {
+        if (insertionPoint.getX()<1 || insertionPoint.getY()<1 || insertionPoint.getX() > content.length){
+            return;
+        }
+        //spring naar laatste character van deze lijn
+        int currRowLength = content[(int)getInsertionPoint().getX()].length();
+        if (insertionPoint.getY() > currRowLength){
+            insertionPoint = new Point((int)insertionPoint.getX(), currRowLength);
+        }
         this.insertionPoint = insertionPoint;
     }
 

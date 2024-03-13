@@ -141,6 +141,9 @@ public class Textr
     private void updateCursor(int x, int y) throws IOException {
         FileBufferView focus = getFocusedView();
         Point insert = focus.getInsertionPoint();
+        Point newInsert = new Point((int)insert.getX() + x, (int)insert.getY() + y);
+        FileBuffer buffer = focus.getBuffer();
+        buffer.setInsertionPoint(newInsert);
         showCursor();
     }
 
@@ -157,26 +160,26 @@ public class Textr
             else if (c == 17) {     //  F4
                 closeBuffer();
             }
-            else if (c == '\033') {
+            else if (c == 27) {
                 int c1 = Terminal.readByte();
-                if (c1 == ']'){
+                if (c1 == 91) {
                     int c2 = Terminal.readByte();
-                    if (c2 == 'A') {
-                        updateCursor(0, 1);
-                    }
-                    else if (c2 == 'B') {
-                        updateCursor(1,0);
-                    }
-                    else if (c2 == 'C') {
-                        updateCursor(0, -1);
-                    }
-                    else if (c2 == 'D') {
-                        updateCursor(0, 1);
+                    if (c2 == 65) {
+                        updateCursor(-1, 0); //UP
+                    } else if (c2 == 66) {
+                        updateCursor(1, 0); //DOWN
+                    } else if (c2 == 67) {
+                        updateCursor(0, 1); //RIGHT
+                    } else if (c2 == 68) {
+                        updateCursor(0, -1); //LEFT
                     }
                 }
-                else if(c1 == 'O') {
+            }
+            else if (c == 59) {
+                int c1 = Terminal.readByte();
+                if (c1 == 50) {
                     int c2 = Terminal.readByte();
-                    if(c2 == 'S') {
+                    if (c2 == 83) {
                         closeBuffer();
                     }
                 }
