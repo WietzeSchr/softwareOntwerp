@@ -35,4 +35,10 @@ public class File
     public File copy() throws FileNotFoundException {
         return new File(getPath(), getNewLine());
     }
+
+    public void addNewChar(char c) {
+        FileBuffer buffer = getBuffer();
+        buffer.addNewChar(c);
+        setBuffer(buffer);
+    }
 }

@@ -18,6 +18,9 @@ public abstract class Layout
 
     public abstract int countViews();
 
+    public abstract Layout addNewChar(char c, int focus);
+
+
     public Layout(int heigth, int width, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;

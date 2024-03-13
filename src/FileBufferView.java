@@ -90,6 +90,11 @@ public class FileBufferView extends Layout
         return getFile().getPath();
     }
 
+    public Point getCursor() {
+        Point insert = getInsertionPoint();
+        return new Point((int) (insert.getX() - getVerticalScrollState() + 1), (int) (insert.getY() - getHorizontalScrollState() + 1));
+    }
+
     public void show() {
         String[] cont = getContent();
         for (int i = 0; i < getHeigth() - 2; i++) {
@@ -98,10 +103,12 @@ public class FileBufferView extends Layout
                 break;
             }
             if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
-                Terminal.printText((int) getLeftUpperCorner().getX() + i, 1, cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
+                Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                        1, cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
             }
             else {
-                Terminal.printText((int) getLeftUpperCorner().getX() + i, 1, cont[row].substring(getHorizontalScrollState() - 1));
+                Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                        1, cont[row].substring(getHorizontalScrollState() - 1));
             }
         }
         showScrollbars();
@@ -142,13 +149,13 @@ public class FileBufferView extends Layout
     private String makeHorizontalScrollBar() {
         StringBuilder result = new StringBuilder();
         result.append(getPath() + ", rows: " + String.valueOf(getRowCount()) + ", columns: " + String.valueOf(getColumnCount()) + " ");
-        if (getWidth() > getColumnCount()) {
+        if (getWidth() - 1 > getColumnCount()) {
             while (result.length() < getWidth()) {
                 result.append('#');
             }
         }
         else {
-            int start = (int) Math.floor((float) getHorizontalScrollState() / (float) getColumnCount() * (getWidth() - result.length()) + 1);
+            int start = (int) Math.floor((float) getHorizontalScrollState() / (float) (getHorizontalScrollState() + getWidth()) * (getWidth() - result.length()) + 1);
             int end = (int) Math.floor((float) (getHorizontalScrollState() + getWidth() - 1)/ (float) getColumnCount() * (getWidth() - result.length()));
             int i = 1;
             while (result.length() < getWidth()) {
@@ -162,6 +169,31 @@ public class FileBufferView extends Layout
             }
         }
         return result.toString();
+    }
+
+    public FileBufferView addNewChar(char c, int focus) {
+        if (getPosition() == focus)  {
+            File file = getFile();
+            file.addNewChar(c);
+            setFile(file);
+            updateScrollStates();
+        }
+        return this;
+    }
+
+    private void updateScrollStates() {
+        if (getInsertionPoint().getY() > getHorizontalScrollState() + getWidth() - 2) {
+            setHorizontalScrollState((int) getInsertionPoint().getY());
+        }
+        else if (getInsertionPoint().getY() < getHorizontalScrollState()) {
+            setHorizontalScrollState((int) Math.floor(getHorizontalScrollState() - ((float) getWidth() / 2)));
+        }
+        if (getInsertionPoint().getX() > getVerticalScrollState() + getHeigth() - 2) {
+            setVerticalScrollState((int) getInsertionPoint().getX());
+        }
+        else if (getInsertionPoint().getX() < getVerticalScrollState()) {
+            setVerticalScrollState((int) Math.floor(getVerticalScrollState() - ((float) getHeigth() / 2)));
+        }
     }
 
     @Override
