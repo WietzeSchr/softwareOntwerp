@@ -99,6 +99,34 @@ public class FileBuffer {
         setInsertionPoint(newInsertionPoint);
     }
 
+    public void addNewChar(char c) {
+        Point insert = getInsertionPoint();
+        String[] content = getContent();
+        if (content.length == 0)
+        {
+            content = new String[1];
+            content[0] = String.valueOf(c);
+        }
+        else {
+            String row = content[(int) insert.getX() - 1];
+            StringBuilder eRow = new StringBuilder();
+            for (int i = 0; i < row.length(); i++) {
+                if (i == insert.getY() - 1) {
+                    eRow.append(c);
+                }
+                eRow.append(row.toCharArray()[i]);
+            }
+            if (insert.getY() > row.length())
+            {
+                eRow.append(c);
+            }
+            content[(int) insert.getX() - 1] = eRow.toString();
+        }
+        setContent(content);
+        moveInsertionPoint(new Point(0, 1));
+        setDirty(true);
+    }
+
     public FileBuffer copy() {
         return new FileBuffer(getContent(), getNewLine(), getInsertionPoint(), getDirty());
     }

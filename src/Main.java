@@ -1,9 +1,10 @@
 import io.github.btj.termios.Terminal;
 
+import java.io.IOException;
+
 public class Main {
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws IOException {
         Terminal.enterRawInputMode();
         Terminal.clearScreen();
         String newLine = "";

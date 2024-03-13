@@ -74,7 +74,7 @@ public class Textr
         this.focus = 1;
         show();
         initViewPositions();
-        initCursor();
+        updateCursor();
         run();
     }
 
@@ -132,10 +132,14 @@ public class Textr
         getLayout().initViewPosition(1);
     }
 
-    private void initCursor() {
+    private void updateCursor() {
         FileBufferView focus = getFocusedView();
-        Point cursor = focus.getInsertionPoint();
+        Point cursor = focus.getCursor();
         Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
+    }
+
+    private int countViews() {
+        return getLayout().countViews();
     }
 
     private void run() throws IOException {
@@ -144,22 +148,22 @@ public class Textr
             if (c == 10 || c == 13) {
                 addNewLineBreak();
             }
-            else if (c == 17) {
+            else if (c == 17) {     //  F4
                 closeBuffer();
             }
-            else if (c == 14) {
+            else if (c == 14) {     //  Ctrl + N
                 changeFocus(1);
             }
-            else if (c == 16) {
+            else if (c == 16) {     //  Ctrl + P
                 changeFocus(-1);
             }
-            else if (c == 18) {
+            else if (c == 18) {     //  Ctrl + R
                 rotateView(1);
             }
-            else if (c == 20) {
+            else if (c == 20) {     //  Ctrl + T
                 rotateView(-1);
             }
-            else if (c == 19) {
+            else if (c == 19) {     //  Ctrl + S
                 safeBuffer();
             }
             else if (c >= 32 && c <= 126) {
@@ -168,12 +172,22 @@ public class Textr
         }
     }
 
+    /** Adds a new line break to the focused file buffer at the insertion point. It also updates the
+     *  cursor's position and optionally the scroll states if needed.
+     */
     private void addNewLineBreak() {
 
     }
 
+    /** Adds char c to the focused file buffer at the insertion point. It also changes
+     *  the cursor's position and optionally changes the scroll states and bars if needed.
+     * @param c : the char which needs to be added
+     */
     private void addNewChar(char c) {
-
+        Layout newLayout = getLayout().addNewChar(c, getFocus());
+        setLayout(newLayout);
+        show();
+        updateCursor();
     }
 
     private void closeBuffer() {
