@@ -74,7 +74,7 @@ public class Textr
         this.focus = 1;
         show();
         initViewPositions();
-        initCursor();
+        updateCursor(0, 0);
         run();
     }
 
@@ -132,9 +132,11 @@ public class Textr
         getLayout().initViewPosition(1);
     }
 
-    private void initCursor() {
+    private void updateCursor(int x, int y) {
         FileBufferView focus = getFocusedView();
-        Point cursor = focus.getInsertionPoint();
+        Point insertionPoint = focus.getInsertionPoint();
+        Point leftUpperPoint = focus.getLeftUpperCorner();
+        Point cursor = new Point((int)(insertionPoint.getX() + leftUpperPoint.getX()) + x, (int)(insertionPoint.getY() + leftUpperPoint.getY()) + y);
         Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
     }
 
@@ -146,6 +148,30 @@ public class Textr
             }
             else if (c == 17) {
                 closeBuffer();
+            }
+            else if (c == '\033') {
+                int c1 = Terminal.readByte();
+                if (c1 == ']'){
+                    int c2 = Terminal.readByte();
+                    if (c2 == 'A') {
+                        updateCursor(-1, 0);
+                    }
+                    else if (c2 == 'B') {
+                        updateCursor(1,0);
+                    }
+                    else if (c2 == 'C') {
+                        updateCursor(0, -1);
+                    }
+                    else if (c2 == 'D') {
+                        updateCursor(0, 1);
+                    }
+                }
+                else if(c1 == 'O') {
+                    int c2 = Terminal.readByte();
+                    if(c2 == 'S') {
+                        closeBuffer();
+                    }
+                }
             }
             else if (c == 14) {
                 changeFocus(1);
