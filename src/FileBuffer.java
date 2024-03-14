@@ -43,7 +43,7 @@ public class FileBuffer {
             c = file.read();
             return c==10;
         }
-        return false;
+        return c==10;
     }
 
     public void insertLineBreak(){
@@ -74,7 +74,7 @@ public class FileBuffer {
 
     public void setInsertionPoint(Point insertionPoint) {
         if (insertionPoint.getX()<1 || insertionPoint.getY()<1 || insertionPoint.getX() > content.length){
-            return; //moet og aangepast worden als scrollstate wordt aangepast
+            return;
         }
         //spring naar laatste character van target lijn
         int currRowLength = content[(int)insertionPoint.getX()-1].length();

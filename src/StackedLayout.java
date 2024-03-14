@@ -8,8 +8,8 @@ public class StackedLayout extends CompositeLayout {
         super(height, width, leftUpperCorner, subLaysCount);
     }
 
-    public StackedLayout(int heigth, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
-        super(heigth, width, leftUpperCorner, filepaths, newLine);
+    public StackedLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
+        super(height, width, leftUpperCorner, filepaths, newLine);
     }
 
     public StackedLayout(int heigth, int width, Point leftUpperCorner, Layout[] subLayouts) {
