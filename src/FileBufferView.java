@@ -98,6 +98,7 @@ public class FileBufferView extends Layout
     }
 
     public void show() {
+        updateScrollStates();
         String[] cont = getContent();
         for (int i = 0; i < getHeigth() - 1; i++) {
             int row = i + getVerticalScrollState() - 1;
@@ -105,12 +106,14 @@ public class FileBufferView extends Layout
                 break;
             }
             if (cont[row] != null) {
-                if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
-                    Terminal.printText((int) getLeftUpperCorner().getX() + i,
-                            (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
-                } else {
-                    Terminal.printText((int) getLeftUpperCorner().getX() + i,
-                            (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1));
+                if (cont[row].length() > getHorizontalScrollState() - 1) {
+                    if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
+                        Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                                (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
+                    } else {
+                        Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                                (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1));
+                    }
                 }
             }
         }
@@ -156,7 +159,9 @@ public class FileBufferView extends Layout
 
     private String makeHorizontalScrollBar() {
         StringBuilder result = new StringBuilder();
-        result.append(getPath() + ", rows: " + String.valueOf(getRowCount()) + ", columns: " + String.valueOf(getColumnCount()) + " ");
+        String[] filepath = getPath().split("/");
+        String filename = filepath[filepath.length - 1];
+        result.append(filename + ", r: " + String.valueOf(getRowCount()) + ", char: " + String.valueOf(getCharacterCount()) + " ");
         if (getWidth() - 1 > getColumnCount()) {
             while (result.length() < getWidth()) {
                 result.append('#');
@@ -177,6 +182,10 @@ public class FileBufferView extends Layout
             }
         }
         return result.toString();
+    }
+
+    private int getCharacterCount() {
+        return 0;
     }
 
     public void addNewChar(char c) {
