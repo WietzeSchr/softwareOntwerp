@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.IOException;
 
 public abstract class Layout {
     private int height;
@@ -19,7 +20,7 @@ public abstract class Layout {
 
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
-    public abstract Layout closeBuffer(int focus, CompositeLayout parent);
+    public abstract Layout closeBuffer(int focus, CompositeLayout parent) throws IOException;
 
     public Layout(int height, int width, Point leftUpperCorner) {
         this.height = height;

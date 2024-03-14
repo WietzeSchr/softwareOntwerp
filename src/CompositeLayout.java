@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.IOException;
 
 public abstract class CompositeLayout extends Layout
 {
@@ -120,7 +121,7 @@ public abstract class CompositeLayout extends Layout
     }
 
     @Override
-    public Layout closeBuffer(int focus, CompositeLayout parent) {
+    public Layout closeBuffer(int focus, CompositeLayout parent) throws IOException {
         if (this == parent) {
             if (getSubLayouts().length == 2) {
                 if (getSubLayouts()[0].closeBuffer(focus, parent) != null) {

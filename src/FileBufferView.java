@@ -2,6 +2,7 @@ import io.github.btj.termios.Terminal;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class FileBufferView extends Layout
 {
@@ -161,6 +162,9 @@ public class FileBufferView extends Layout
         StringBuilder result = new StringBuilder();
         String[] filepath = getPath().split("/");
         String filename = filepath[filepath.length - 1];
+        if (getBuffer().getDirty()) {
+            result.append("* ");
+        }
         result.append(filename + ", r: " + String.valueOf(getRowCount()) + ", char: " + String.valueOf(getCharacterCount()) + " ");
         if (getWidth() - 1 > getColumnCount()) {
             while (result.length() < getWidth()) {
@@ -252,10 +256,26 @@ public class FileBufferView extends Layout
     }
 
     @Override
-    public FileBufferView closeBuffer(int focus, CompositeLayout parent) {
+    public FileBufferView closeBuffer(int focus, CompositeLayout parent) throws IOException {
         if (getPosition() != focus) {
             return this;
         }
-        return null;
+        else {
+            if (getBuffer().getDirty()) {
+                Terminal.clearScreen();
+                Terminal.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
+                int c = Terminal.readByte();
+                while (c != 121 || c != 89 || c != 78 || c != 110) {
+                    c = Terminal.readByte();
+                }
+                if (c == 121 || c == 89) {
+                    return null;
+                }
+                return this;
+            }
+            else {
+                return null;
+            }
+        }
     }
 }
