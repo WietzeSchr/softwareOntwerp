@@ -207,6 +207,9 @@ public class Textr
                     }
                 }
             }
+            else if (c == 8) {
+                //deleteChar();
+            }
             else if (c == 14) {     //  Ctrl + N
                 changeFocusNext();
             }
@@ -222,7 +225,7 @@ public class Textr
             else if (c == 19) {     //  Ctrl + S
                 safeBuffer();
             }
-            else if (c >= 32 && c <= 126) {
+            else if (c >= 32 && c <= 127) {
                 addNewChar((char) c);
             }
         }
@@ -242,6 +245,11 @@ public class Textr
      */
     private void addNewChar(char c) {
         getFocusedView().addNewChar(c);
+        show();
+    }
+
+    private void deleteChar() {
+        getFocusedView().deleteChar();
         show();
     }
 

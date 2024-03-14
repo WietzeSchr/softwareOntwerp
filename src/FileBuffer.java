@@ -57,6 +57,7 @@ public class FileBuffer {
         cont.add(row + 1, secondPart);
         setContent(cont.toArray(new String[0]));
         setInsertionPoint(new Point((int)getInsertionPoint().getX()+1, 1));
+        setDirty(true);
     }
 
     public boolean getDirty() {
@@ -144,6 +145,42 @@ public class FileBuffer {
         }
         setContent(content);
         moveInsertionPoint(new Point(0, 1));
+        setDirty(true);
+    }
+
+    public void deleteChar() {
+        String[] content = getContent();
+        String[] newContent;
+        if (content[(int) (getInsertionPoint().getX() - 1)] == null)  {
+            newContent = new String[content.length - 1];
+            int j = 0;
+            for (int i = 0; i < content.length; i++) {
+                if (i != getInsertionPoint().getX() - 1) {
+                    newContent[j] = content[i];
+                    j++;
+                }
+            }
+            setInsertionPoint(new Point((int) (getInsertionPoint().getX() + 1), content[(int) (getInsertionPoint().getX() + 1)].length()));
+        }
+        else {
+            newContent = new String[content.length];
+            for (int i = 0; i < content.length; i++) {
+                if (i != getInsertionPoint().getX() - 1) {
+                    newContent[i] = String.copyValueOf(content[i].toCharArray());
+                }
+                else {
+                    StringBuilder newRow = new StringBuilder();
+                    for (int j = 0; j < content[i].length(); j++) {
+                        if (j != getInsertionPoint().getY() - 2) {
+                            newRow.append(content[i].toCharArray()[j]);
+                        }
+                    }
+                    newContent[i] = newRow.toString();
+                }
+            }
+            moveInsertionPoint(new Point(0, -1));
+        }
+        setContent(newContent);
         setDirty(true);
     }
 }
