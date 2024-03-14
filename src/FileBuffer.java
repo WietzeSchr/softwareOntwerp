@@ -108,31 +108,6 @@ public class FileBuffer {
         return result;
     }
 
-    public void addNewLineBreak() {
-        String[] content = getContent();
-        String[] newContent = new String[getRowCount() + 1];
-        int j = 0;
-        for (int i = 0; i < content.length; i++) {
-            if (getInsertionPoint().getX() != i) {
-                newContent[j] = content[i];
-                j += 1;
-            }
-            else {
-                if (getInsertionPoint().getY() >= content[i].length()) {
-                    newContent[j] = content[i];
-                    newContent[j + 1] = new String("");
-                }
-                else {
-                    newContent[j] = content[i].substring(0, (int) getInsertionPoint().getY());
-                    newContent[j + 1] = content[i].substring((int) getInsertionPoint().getY());
-                }
-                j += 2;
-            }
-        }
-        setContent(newContent);
-        setInsertionPoint(new Point((int) getInsertionPoint().getX() + 1, 1));
-    }
-
     public void moveInsertionPoint(Point dir) {
         Point newInsertionPoint = new Point((int) (getInsertionPoint().getX() + dir.getX()),
                 (int) (getInsertionPoint().getY() + dir.getY()));

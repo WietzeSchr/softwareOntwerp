@@ -118,7 +118,7 @@ public class FileBufferView extends Layout
     }
 
     public void addNewLineBreak() {
-        getBuffer().addNewLineBreak();
+        getBuffer().insertLineBreak();
         updateScrollStates();
     }
 
