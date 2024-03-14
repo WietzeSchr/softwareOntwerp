@@ -9,19 +9,13 @@ public class Main {
         Terminal.clearScreen();
         String newLine = "";
         if (args[0].equals("--lf") || args[0].equals("-lf")) {
-            newLine = "lf";
+            newLine = "\n";
         }
         else if (args[0].equals("--crlf") || args[0].equals("-crlf")) {
-            newLine = "lf";
+            newLine = "\r\n";
         }
         else {
-            String linesep = System.lineSeparator();
-            if (linesep.equals("10")) {
-                newLine = "lf";
-            }
-            else if (linesep.equals("\r\n")) {
-                newLine = "crlf";
-            }
+            newLine = System.lineSeparator();
         }
         new Textr(newLine, args);
         Terminal.clearScreen();

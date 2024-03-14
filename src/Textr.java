@@ -154,7 +154,7 @@ public class Textr
     private void run() throws IOException {
         while (getLayout().countViews() > 0) {
             int c = Terminal.readByte();
-            if (c == 10 || c == 13) {
+            if (c == 13) {
                 addNewLineBreak();
             }
             else if (c == 17) {     //  F4
@@ -209,7 +209,11 @@ public class Textr
      *  cursor's position and optionally the scroll states if needed.
      */
     private void addNewLineBreak() {
-
+        Terminal.clearScreen();
+        FileBufferView focussedBuffer = getFocusedView();
+        focussedBuffer.getBuffer().insertLineBreak();
+        showCursor();
+        show();
     }
 
     /** Adds char c to the focused file buffer at the insertion point. It also changes
