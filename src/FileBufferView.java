@@ -140,8 +140,8 @@ public class FileBufferView extends Layout
             }
         }
         else {
-            int start = (int) Math.floor((float) getVerticalScrollState() / (float) getRowCount() * getHeigth() + 1);
-            int end = (int) Math.floor((float) (getVerticalScrollState() + getHeigth() - 1) / getRowCount() * getHeigth());
+            int start = (int) Math.floor((float) getVerticalScrollState() / ((float) getVerticalScrollState() + getHeigth()) * getHeigth() + 1);
+            int end = (int) Math.floor((float) (getVerticalScrollState() + getHeigth() - 1) / (float) getRowCount() * getHeigth());
             for (int i = 0; i < getHeigth() - 1; i++) {
                 if (i < start || i > end) {
                     result[i] = '|';
@@ -183,6 +183,11 @@ public class FileBufferView extends Layout
         File file = getFile();
         file.addNewChar(c);
         setFile(file);
+        updateScrollStates();
+    }
+
+    public void deleteChar() {
+        getBuffer().deleteChar();
         updateScrollStates();
     }
 
