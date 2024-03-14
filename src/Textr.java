@@ -1,5 +1,6 @@
 import io.github.btj.termios.Terminal;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 class TerminalParser {
@@ -77,33 +78,37 @@ public class Textr
         run();
     }
 
-    public void setLayout(Layout newLayout) {
+    private void setLayout(Layout newLayout) {
         this.layout = newLayout;
     }
 
-    public Layout getLayout() {
+    private Layout getLayout() {
         return layout;
     }
 
-    public void setNewLine(String newLine1) {
+    private void setNewLine(String newLine1) {
         newLine = newLine1;
     }
 
-    public String getNewLine() {
+    private String getNewLine() {
         return newLine;
     }
 
-    public void setFocus(int newFocus) {
+    private void setFocus(int newFocus) {
         this.focus = newFocus;
     }
 
-    public int getFocus() {
+    private int getFocus() {
         return focus;
     }
 
-    public FileBufferView getFocusedView() {
+    private FileBufferView getFocusedView() {
         Layout lay = getLayout();
         return lay.getFocusedView(getFocus());
+    }
+
+    private FileBufferView getView(int position) {
+        return layout.getFocusedView(position);
     }
 
     private Point getSize() throws IOException {
@@ -119,6 +124,19 @@ public class Textr
         return new Point(heigth, width);
     }
 
+    private int nextFocus() {
+        if (getFocus() < countViews()) {
+            return getFocus() + 1;
+        }
+        return 1;
+    }
+
+    private int previousFocus() {
+        if (getFocus() > 1) {
+            return getFocus() - 1;
+        }
+        return countViews();
+    }
     private void show() {
         Terminal.clearScreen();
         Layout lay = getLayout();
@@ -130,6 +148,10 @@ public class Textr
 
     private void initViewPositions() {
         layout.initViewPosition(1);
+    }
+
+    private void updateSize(int heigth, int width) {
+        layout.updateSize(heigth, width, new Point(1,1));
     }
 
     private void showCursor() {
@@ -149,7 +171,7 @@ public class Textr
     }
 
     private void run() throws IOException {
-        while (getLayout().countViews() > 0) {
+        while (countViews() > 0) {
             int c = Terminal.readByte();
             if (c == 10 || c == 13) {
                 addNewLineBreak();
@@ -182,10 +204,10 @@ public class Textr
                 }
             }
             else if (c == 14) {
-                changeFocus(1);
+                changeFocusNext();
             }
             else if (c == 16) {     //  Ctrl + P
-                changeFocus(-1);
+                changeFocusPrevious();
             }
             else if (c == 18) {     //  Ctrl + R
                 rotateView(1);
@@ -214,8 +236,7 @@ public class Textr
      * @param c : the char which needs to be added
      */
     private void addNewChar(char c) {
-        Layout newLayout = getLayout().addNewChar(c, getFocus());
-        setLayout(newLayout);
+        getLayout().addNewChar(c, getFocus());
         show();
     }
 
@@ -223,12 +244,36 @@ public class Textr
 
     }
 
-    private void changeFocus(int dir) {
+    private void changeFocusNext() {
+        setFocus(nextFocus());
+        show();
+    }
 
+    private void changeFocusPrevious() {
+        setFocus(previousFocus());
+        show();
     }
 
     private void rotateView(int dir) {
-
+        int height = getLayout().getHeigth();
+        int width = getLayout().getWidth();
+        Layout newLayout = null;
+        if ( countViews() != 1) {
+            FileBufferView focus = getFocusedView();
+            FileBufferView next = getView(nextFocus());
+            if (focus.getParent() == next.getParent()) {
+                newLayout = getLayout().rotateView(dir, focus.getParent(), getFocus());
+            }
+        }
+        else {
+            newLayout = getLayout();
+        }
+        setLayout(newLayout);
+        updateSize(height, width);
+        FileBufferView focus = getFocusedView();
+        initViewPositions();
+        setFocus(focus.getPosition());
+        show();
     }
 
     private void safeBuffer() {
