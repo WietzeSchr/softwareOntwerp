@@ -223,7 +223,6 @@ public class Textr
             }
             else if (c == 19) {     //  Ctrl + S
                 safeBuffer();
-                System.out.println("saved");
             }
             else if (c >= 32 && c <= 126) {
                 addNewChar((char) c);

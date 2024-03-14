@@ -152,6 +152,7 @@ public class FileBuffer {
         String[] content = getContent();
         String[] newContent;
         if (getInsertionPoint().getY() == 1)  {
+            if(getInsertionPoint().getX() == 1) return;
             newContent = new String[content.length - 1];
             int j = 0;
             for (int i = 0; i < content.length; i++) {
