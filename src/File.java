@@ -1,4 +1,6 @@
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class File
 {
@@ -37,5 +39,14 @@ public class File
         FileBuffer buffer = getBuffer();
         buffer.addNewChar(c);
         setBuffer(buffer);
+    }
+
+    public void saveBuffer(String newLine) throws IOException {
+        FileOutputStream file = new FileOutputStream(getPath());
+        for (String row : getContent()){
+            file.write(row.getBytes());
+            file.write(newLine.getBytes());
+        }
+        file.close();
     }
 }
