@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FileBuffer {
     private String[] content;
@@ -10,30 +11,52 @@ public class FileBuffer {
     public FileBuffer(String path, String newLine) throws FileNotFoundException {
         ArrayList<String> content = new ArrayList<>();
         FileInputStream file = new FileInputStream(path);
+        byte[] newLineBytes = newLine.getBytes();
         int c;
         StringBuilder line = new StringBuilder();
         int column = 1;
         try {
             while ((c = file.read()) != -1) {
-                if (c != 10 && c != 13 && c < 32 || 127 <= c)
-                {
+                if (c != 10 && c != 13 && c < 32 || 127 <= c) {
                     throw new RuntimeException("File" + path + "contains an illegal byte");
-                }
-                else {
-                    if (c != 10) {
+                } else {
+                    if (c != 13 && c != 10) {
                         line.append((char) c);
-                    } else {
+                    } else if(isLineSeparator(c, newLineBytes, file)){
                         content.add(line.toString());
                         line = new StringBuilder();
                     }
                 }
             }
+            content.add(line.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         this.content = content.toArray(new String[0]);
-        this.insertionPoint = new Point(1,1);
+        this.insertionPoint = new Point(1, 1);
         this.dirty = false;
+    }
+
+    private boolean isLineSeparator(int c, byte[] lineSep, FileInputStream file) throws IOException {
+        if(c != lineSep[0]){return false;}
+        if(c == 13) {
+            c = file.read();
+            return c==10;
+        }
+        return false;
+    }
+
+    public void insertLineBreak(){
+        int row = (int)getInsertionPoint().getX()-1;
+        int col = (int)getInsertionPoint().getY()-1;
+        ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
+        String currentRow = getContent()[row];
+        String firstPart = currentRow.substring(0, col);
+        String secondPart = currentRow.substring(col);
+        cont.set(row, firstPart);
+        cont.add(row + 1, secondPart);
+        setContent(cont.toArray(new String[0]));
+        setInsertionPoint(new Point((int)getInsertionPoint().getX()+1, 1));
     }
 
     public boolean getDirty() {
@@ -49,6 +72,14 @@ public class FileBuffer {
     }
 
     public void setInsertionPoint(Point insertionPoint) {
+        if (insertionPoint.getX()<1 || insertionPoint.getY()<1 || insertionPoint.getX() > content.length){
+            return;
+        }
+        //spring naar laatste character van target lijn
+        int currRowLength = content[(int)insertionPoint.getX()-1].length();
+        if (insertionPoint.getY()-1 > currRowLength){
+            insertionPoint = new Point((int)insertionPoint.getX(), currRowLength+1);
+        }
         this.insertionPoint = insertionPoint;
     }
 
