@@ -252,7 +252,7 @@ public class Textr
         show();
     }
 
-    private void closeBuffer() {
+    private void closeBuffer() throws IOException {
         int heigth = getLayout().getHeigth();
         int width = getLayout().getWidth();
         if (countViews() == 1) {
@@ -304,7 +304,8 @@ public class Textr
     }
 
     private void safeBuffer() throws IOException {
-        File file = getFocusedView().getFile();
-        file.saveBuffer(getNewLine());
+        FileBufferView focus = getFocusedView();
+        focus.getFile().saveBuffer(getNewLine());
+        focus.updateScrollStates();
     }
 }
