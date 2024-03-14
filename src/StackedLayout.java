@@ -26,13 +26,6 @@ public class StackedLayout extends CompositeLayout {
         return new Point((int) (getLeftUpperCorner().getX() + i * subHeight), (int) getLeftUpperCorner().getY());
     }
 
-    public void addNewChar(char c, int focus) {
-        Layout[] subLays = getSubLayouts();
-        for (int i = 0; i < getSubLayouts().length; i++) {
-            subLays[i].addNewChar(c, focus);
-        }
-    }
-
     @Override
     public CompositeLayout rotateView(int dir, CompositeLayout parent, int focus) {
         if (this == parent) {

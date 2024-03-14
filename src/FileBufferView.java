@@ -104,16 +104,22 @@ public class FileBufferView extends Layout
             if (row >= getRowCount()) {
                 break;
             }
-            if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
-                Terminal.printText((int) getLeftUpperCorner().getX() + i,
-                        (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
-            }
-            else {
-                Terminal.printText((int) getLeftUpperCorner().getX() + i,
-                        (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1));
+            if (cont[row] != null) {
+                if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
+                    Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                            (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
+                } else {
+                    Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                            (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1));
+                }
             }
         }
         showScrollbars();
+    }
+
+    public void addNewLineBreak() {
+        getBuffer().addNewLineBreak();
+        updateScrollStates();
     }
 
     private void showScrollbars() {
@@ -173,13 +179,11 @@ public class FileBufferView extends Layout
         return result.toString();
     }
 
-    public void addNewChar(char c, int focus) {
-        if (getPosition() == focus)  {
-            File file = getFile();
-            file.addNewChar(c);
-            setFile(file);
-            updateScrollStates();
-        }
+    public void addNewChar(char c) {
+        File file = getFile();
+        file.addNewChar(c);
+        setFile(file);
+        updateScrollStates();
     }
 
     @Override
