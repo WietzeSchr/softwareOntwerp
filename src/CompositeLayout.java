@@ -118,4 +118,34 @@ public abstract class CompositeLayout extends Layout
             getSubLayouts()[i].updateSize((int) subSize.getX(), (int) subSize.getY(), subLeftUp);
         }
     }
+
+    @Override
+    public Layout closeBuffer(int focus, CompositeLayout parent) {
+        if (this == parent) {
+            if (getSubLayouts().length == 2) {
+                if (getSubLayouts()[0].closeBuffer(focus, parent) != null) {
+                    return getSubLayouts()[0];
+                } else return getSubLayouts()[1];
+            } else {
+                Layout[] newSubLayouts = new Layout[countSubLayouts() - 1];
+                int i = 0;
+                for (int j = 0; j < getSubLayouts().length; j++) {
+                    if (getSubLayouts()[j].closeBuffer(focus, parent) != null) {
+                        newSubLayouts[i] = getSubLayouts()[j];
+                        i++;
+                    }
+                }
+                setSubLayouts(newSubLayouts);
+                return this;
+            }
+        }
+        else {
+            Layout[] newSubLayouts = getSubLayouts();
+            for (int i = 0; i < newSubLayouts.length; i++) {
+                newSubLayouts[i] = getSubLayouts()[i].closeBuffer(focus, parent);
+            }
+            setSubLayouts(newSubLayouts);
+            return this;
+        }
+    }
 }
