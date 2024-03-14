@@ -140,7 +140,7 @@ public class FileBufferView extends Layout
             }
         }
         else {
-            int start = (int) Math.floor((float) getVerticalScrollState() / ((float) getVerticalScrollState() + getHeigth()) * getHeigth() + 1);
+            int start = (int) Math.floor((float) getVerticalScrollState() / ((float) getVerticalScrollState() + getHeigth()) * getHeigth());
             int end = (int) Math.floor((float) (getVerticalScrollState() + getHeigth() - 1) / (float) getRowCount() * getHeigth());
             for (int i = 0; i < getHeigth() - 1; i++) {
                 if (i < start || i > end) {

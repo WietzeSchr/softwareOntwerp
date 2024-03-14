@@ -78,7 +78,7 @@ public class FileBuffer {
         }
         //spring naar laatste character van target lijn
         int currRowLength = content[(int)insertionPoint.getX()-1].length();
-        if (insertionPoint.getY()-1 > currRowLength){
+        if (insertionPoint.getY() > currRowLength){
             insertionPoint = new Point((int)insertionPoint.getX(), currRowLength+1);
         }
         this.insertionPoint = insertionPoint;
@@ -151,7 +151,7 @@ public class FileBuffer {
     public void deleteChar() {
         String[] content = getContent();
         String[] newContent;
-        if (content[(int) (getInsertionPoint().getX() - 1)] == null)  {
+        if (getInsertionPoint().getY() == 1)  {
             newContent = new String[content.length - 1];
             int j = 0;
             for (int i = 0; i < content.length; i++) {
@@ -159,8 +159,13 @@ public class FileBuffer {
                     newContent[j] = content[i];
                     j++;
                 }
+                else {
+                    String secondPart = String.copyValueOf(content[i].toCharArray());
+                    String firstPart = String.copyValueOf(content[i - 1].toCharArray());
+                    newContent[i - 1] = firstPart + secondPart;
+                }
             }
-            setInsertionPoint(new Point((int) (getInsertionPoint().getX() + 1), content[(int) (getInsertionPoint().getX() + 1)].length()));
+            setInsertionPoint(new Point((int) (getInsertionPoint().getX() - 1), content[(int) (getInsertionPoint().getX() - 2)].length() + 1));
         }
         else {
             newContent = new String[content.length];
