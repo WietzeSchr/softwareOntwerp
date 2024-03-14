@@ -48,5 +48,6 @@ public class File
             file.write(newLine.getBytes());
         }
         file.close();
+        getBuffer().setDirty(false);
     }
 }

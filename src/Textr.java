@@ -213,7 +213,7 @@ public class Textr
                 changeFocusNext();
             }
             else if (c == 16) {     //  Ctrl + P
-                closeBuffer();
+                changeFocusPrevious();
             }
             else if (c == 18) {     //  Ctrl + R
                 rotateView(1);
