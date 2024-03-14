@@ -166,7 +166,8 @@ public class Textr
         Point newInsert = new Point((int)insert.getX() + x, (int)insert.getY() + y);
         FileBuffer buffer = focus.getBuffer();
         buffer.setInsertionPoint(newInsert);
-        showCursor();
+        focus.updateScrollStates();
+        show();
     }
 
     private int countViews() {

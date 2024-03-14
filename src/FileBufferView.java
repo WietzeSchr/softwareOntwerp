@@ -99,7 +99,7 @@ public class FileBufferView extends Layout
 
     public void show() {
         String[] cont = getContent();
-        for (int i = 0; i < getHeigth() - 2; i++) {
+        for (int i = 0; i < getHeigth() - 1; i++) {
             int row = i + getVerticalScrollState() - 1;
             if (row >= getRowCount()) {
                 break;
@@ -195,18 +195,18 @@ public class FileBufferView extends Layout
         return this;
     }
 
-    private void updateScrollStates() {
+    public void updateScrollStates() {
         if (getInsertionPoint().getY() > getHorizontalScrollState() + getWidth() - 2) {
             setHorizontalScrollState((int) getInsertionPoint().getY());
         }
         else if (getInsertionPoint().getY() < getHorizontalScrollState()) {
-            setHorizontalScrollState((int) Math.floor(getHorizontalScrollState() - ((float) getWidth() / 2)));
+            setHorizontalScrollState(getHorizontalScrollState() -  getWidth() + 1);
         }
         if (getInsertionPoint().getX() > getVerticalScrollState() + getHeigth() - 2) {
             setVerticalScrollState((int) getInsertionPoint().getX());
         }
         else if (getInsertionPoint().getX() < getVerticalScrollState()) {
-            setVerticalScrollState((int) Math.floor(getVerticalScrollState() - ((float) getHeigth() / 2)));
+            setVerticalScrollState(getVerticalScrollState() - getHeigth() + 1);
         }
     }
 

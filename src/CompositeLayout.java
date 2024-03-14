@@ -16,6 +16,9 @@ public abstract class CompositeLayout extends Layout
     }
     public CompositeLayout(int height, int width, Point leftUpperCorner, Layout[] subLayouts) {
         super(height, width, leftUpperCorner);
+        for (int i = 0; i < subLayouts.length; i++) {
+            subLayouts[i].setParent(this);
+        }
         this.subLayouts = subLayouts;
     }
 
