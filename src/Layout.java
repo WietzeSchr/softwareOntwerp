@@ -1,7 +1,7 @@
 import java.awt.*;
 
 public abstract class Layout {
-    private int heigth;
+    private int height;
 
     private int width;
 
@@ -21,26 +21,26 @@ public abstract class Layout {
 
     public abstract Layout closeBuffer(int focus, CompositeLayout parent);
 
-    public Layout(int heigth, int width, Point leftUpperCorner) {
-        this.heigth = heigth;
+    public Layout(int height, int width, Point leftUpperCorner) {
+        this.height = height;
         this.width = width;
         this.parent = null;
         this.leftUpperCorner = leftUpperCorner;
     }
 
-    public Layout(int heigth, int width, CompositeLayout parent, Point leftUpperCorner) {
-        this.heigth = heigth;
+    public Layout(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
+        this.height = height;
         this.width = width;
         this.parent = parent;
         this.leftUpperCorner = leftUpperCorner;
     }
 
-    public void setHeigth(int newHeigth) {
-        this.heigth = newHeigth;
+    public void setHeigth(int newHeight) {
+        this.height = newHeight;
     }
 
     public int getHeigth() {
-        return heigth;
+        return height;
     }
 
     public void setWidth(int newWidth) {

@@ -43,7 +43,7 @@ public class FileBuffer {
             c = file.read();
             return c==10;
         }
-        return false;
+        return c==10;
     }
 
     public void insertLineBreak(){

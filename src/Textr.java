@@ -1,6 +1,5 @@
 import io.github.btj.termios.Terminal;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 class TerminalParser {
@@ -224,6 +223,7 @@ public class Textr
             }
             else if (c == 19) {     //  Ctrl + S
                 safeBuffer();
+                System.out.println("saved");
             }
             else if (c >= 32 && c <= 126) {
                 addNewChar((char) c);
@@ -304,7 +304,8 @@ public class Textr
         show();
     }
 
-    private void safeBuffer() {
-
+    private void safeBuffer() throws IOException {
+        File file = getFocusedView().getFile();
+        file.saveBuffer(getNewLine());
     }
 }
