@@ -168,7 +168,6 @@ public class Textr
         buffer.setInsertionPoint(newInsert);
         focus.updateScrollStates();
         show();
-        showCursor();
     }
 
     private int countViews() {
