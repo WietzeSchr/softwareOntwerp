@@ -203,7 +203,7 @@ public class Textr
                     }
                 }
             }
-            else if (c == 14) {
+            else if (c == 14) {     //  Ctrl + N
                 changeFocusNext();
             }
             else if (c == 16) {     //  Ctrl + P
@@ -228,7 +228,8 @@ public class Textr
      *  cursor's position and optionally the scroll states if needed.
      */
     private void addNewLineBreak() {
-
+        getFocusedView().addNewLineBreak();
+        show();
     }
 
     /** Adds char c to the focused file buffer at the insertion point. It also changes
@@ -236,7 +237,7 @@ public class Textr
      * @param c : the char which needs to be added
      */
     private void addNewChar(char c) {
-        getLayout().addNewChar(c, getFocus());
+        getFocusedView().addNewChar(c);
         show();
     }
 

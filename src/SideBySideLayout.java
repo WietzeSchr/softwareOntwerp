@@ -28,14 +28,6 @@ public class SideBySideLayout extends CompositeLayout{
     }
 
     @Override
-    public void addNewChar(char c, int focus) {
-        Layout[] subLays = getSubLayouts();
-        for (Layout subLay : subLays) {
-            subLay.addNewChar(c, focus);
-        }
-    }
-
-    @Override
     public CompositeLayout rotateView(int dir, CompositeLayout parent, int focus) {
         if (this == parent) {
             FileBufferView focused = getFocusedView(focus);

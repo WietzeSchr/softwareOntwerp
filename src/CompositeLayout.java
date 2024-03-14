@@ -8,8 +8,6 @@ public abstract class CompositeLayout extends Layout
 
     public abstract Point calcLeftUpCorner(int i);
 
-    public abstract void addNewChar(char c, int focus);
-
     public abstract CompositeLayout rotateView(int dir, CompositeLayout parent, int focus);
 
     public CompositeLayout(int height, int width, Point leftUpperCorner, int subLayCount) {
@@ -28,7 +26,7 @@ public abstract class CompositeLayout extends Layout
         Point subSize = calcSubSize();
         for (int i = 0; i < length; i++) {
             Point leftUpCorner = calcLeftUpCorner(i);
-            setSubLayout(new FileBufferView((int) subSize.getX(), (int) subSize.getY(), this, calcLeftUpCorner(i), filepaths[i], newLine), i);
+            setSubLayout(new FileBufferView((int) subSize.getX(), (int) subSize.getY(), this, leftUpCorner, filepaths[i], newLine), i);
         }
     }
 

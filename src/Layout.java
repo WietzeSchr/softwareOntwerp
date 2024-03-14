@@ -17,8 +17,6 @@ public abstract class Layout {
 
     public abstract int countViews();
 
-    public abstract void addNewChar(char c, int focus);
-
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
     public Layout(int heigth, int width, Point leftUpperCorner) {
