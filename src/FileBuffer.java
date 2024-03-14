@@ -73,7 +73,7 @@ public class FileBuffer {
 
     public void setInsertionPoint(Point insertionPoint) {
         if (insertionPoint.getX()<1 || insertionPoint.getY()<1 || insertionPoint.getX() > content.length){
-            return;
+            return; //moet og aangepast worden als scrollstate wordt aangepast
         }
         //spring naar laatste character van target lijn
         int currRowLength = content[(int)insertionPoint.getX()-1].length();

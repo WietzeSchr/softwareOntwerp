@@ -195,7 +195,7 @@ public class FileBufferView extends Layout
         return this;
     }
 
-    private void updateScrollStates() {
+    public void updateScrollStates() {
         if (getInsertionPoint().getY() > getHorizontalScrollState() + getWidth() - 2) {
             setHorizontalScrollState((int) getInsertionPoint().getY());
         }
