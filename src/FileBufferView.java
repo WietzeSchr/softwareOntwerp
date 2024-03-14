@@ -24,7 +24,7 @@ public class FileBufferView extends Layout
         this.horizontalScrollState = 1;
     }
 
-    public FileBufferView(int heigth, int witdh, Layout parent, Point leftUpperCorner, String filepath, String newLine) {
+    public FileBufferView(int heigth, int witdh, CompositeLayout parent, Point leftUpperCorner, String filepath, String newLine) {
         super(heigth, witdh, parent, leftUpperCorner);
         try {
             this.file = new File(filepath, newLine);
@@ -93,7 +93,8 @@ public class FileBufferView extends Layout
 
     public Point getCursor() {
         Point insert = getInsertionPoint();
-        return new Point((int) (insert.getX() - getVerticalScrollState() + 1), (int) (insert.getY() - getHorizontalScrollState() + 1));
+        Point leftUp = getLeftUpperCorner();
+        return new Point((int) (leftUp.getX() + insert.getX() - getVerticalScrollState()), (int) (leftUp.getY() + insert.getY() - getHorizontalScrollState()));
     }
 
     public void show() {
@@ -103,22 +104,28 @@ public class FileBufferView extends Layout
             if (row >= getRowCount()) {
                 break;
             }
-            if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
-                Terminal.printText((int) getLeftUpperCorner().getX() + i,
-                        1, cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
-            }
-            else {
-                Terminal.printText((int) getLeftUpperCorner().getX() + i,
-                        1, cont[row].substring(getHorizontalScrollState() - 1));
+            if (cont[row] != null) {
+                if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
+                    Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                            (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
+                } else {
+                    Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                            (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1));
+                }
             }
         }
         showScrollbars();
     }
 
+    public void addNewLineBreak() {
+        getBuffer().addNewLineBreak();
+        updateScrollStates();
+    }
+
     private void showScrollbars() {
         char[] verticalScrollBar = makeVerticalScrollBar();
         String horizontalScrollBar = makeHorizontalScrollBar();
-        Terminal.printText((int) (getLeftUpperCorner().getX() + getHeigth()) - 1, 1, horizontalScrollBar);
+        Terminal.printText((int) (getLeftUpperCorner().getX() + getHeigth()) - 1, (int) getLeftUpperCorner().getY(), horizontalScrollBar);
         for (int i = 0; i < verticalScrollBar.length; i++) {
             Terminal.printText((int) (getLeftUpperCorner().getX() + i),
                     (int) (getLeftUpperCorner().getY() + getWidth() - 1), String.valueOf(verticalScrollBar[i]));
@@ -172,13 +179,19 @@ public class FileBufferView extends Layout
         return result.toString();
     }
 
-    public FileBufferView addNewChar(char c, int focus) {
-        if (getPosition() == focus)  {
-            File file = getFile();
-            file.addNewChar(c);
-            setFile(file);
-            updateScrollStates();
-        }
+    public void addNewChar(char c) {
+        File file = getFile();
+        file.addNewChar(c);
+        setFile(file);
+        updateScrollStates();
+    }
+
+    @Override
+    protected FileBufferView rotateView(int dir, CompositeLayout parent, int focus) {
+        return this;
+    }
+
+    public Layout rotateview(int dir, CompositeLayout parent, int focus) {
         return this;
     }
 
@@ -215,4 +228,13 @@ public class FileBufferView extends Layout
     public int countViews() {
         return 1;
     }
+
+    @Override
+    public void updateSize(int heigth, int width, Point leftUpperCorner) {
+        setHeigth(heigth);
+        setWidth(width);
+        setLeftUpperCorner(leftUpperCorner);
+        updateScrollStates();
+    }
+
 }

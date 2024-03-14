@@ -1,14 +1,13 @@
 import java.awt.*;
 
-public abstract class Layout
-{
+public abstract class Layout {
     private int heigth;
 
     private int width;
 
     private Point leftUpperCorner;
 
-    private Layout parent;
+    private CompositeLayout parent;
 
     public abstract void show();
 
@@ -18,7 +17,7 @@ public abstract class Layout
 
     public abstract int countViews();
 
-    public abstract Layout addNewChar(char c, int focus);
+    public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
     public Layout(int heigth, int width, Point leftUpperCorner) {
         this.heigth = heigth;
@@ -27,7 +26,7 @@ public abstract class Layout
         this.leftUpperCorner = leftUpperCorner;
     }
 
-    public Layout(int heigth, int width, Layout parent, Point leftUpperCorner) {
+    public Layout(int heigth, int width, CompositeLayout parent, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;
         this.parent = parent;
@@ -51,11 +50,11 @@ public abstract class Layout
     }
 
 
-    public void setParent(Layout newParent) {
+    public void setParent(CompositeLayout newParent) {
         this.parent = newParent;
     }
 
-    public Layout getParent() {
+    public CompositeLayout getParent() {
         return parent;
     }
 
@@ -67,4 +66,6 @@ public abstract class Layout
         return leftUpperCorner;
     }
 
+    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus);
 }
+

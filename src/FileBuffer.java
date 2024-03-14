@@ -84,11 +84,7 @@ public class FileBuffer {
     }
 
     public String[] getContent() {
-        String[] result = new String[content.length];
-        for (int i = 0; i < content.length; i++) {
-            result[i] = String.copyValueOf(content[i].toCharArray());
-        }
-        return result;
+        return content;
     }
 
     public void setContent(String[] newContent) {
@@ -103,11 +99,38 @@ public class FileBuffer {
         String[] cont = getContent();
         int result = 1;
         for (int i = 0; i < getRowCount(); i++) {
-            if (cont[i].length() > result) {
-                result = cont[i].length();
+            if (cont[i] != null) {
+                if (cont[i].length() > result) {
+                    result = cont[i].length();
+                }
             }
         }
         return result;
+    }
+
+    public void addNewLineBreak() {
+        String[] content = getContent();
+        String[] newContent = new String[getRowCount() + 1];
+        int j = 0;
+        for (int i = 0; i < content.length; i++) {
+            if (getInsertionPoint().getX() != i) {
+                newContent[j] = content[i];
+                j += 1;
+            }
+            else {
+                if (getInsertionPoint().getY() >= content[i].length()) {
+                    newContent[j] = content[i];
+                    newContent[j + 1] = new String("");
+                }
+                else {
+                    newContent[j] = content[i].substring(0, (int) getInsertionPoint().getY());
+                    newContent[j + 1] = content[i].substring((int) getInsertionPoint().getY());
+                }
+                j += 2;
+            }
+        }
+        setContent(newContent);
+        setInsertionPoint(new Point((int) getInsertionPoint().getX() + 1, 1));
     }
 
     public void moveInsertionPoint(Point dir) {
@@ -126,18 +149,23 @@ public class FileBuffer {
         }
         else {
             String row = content[(int) insert.getX() - 1];
-            StringBuilder eRow = new StringBuilder();
-            for (int i = 0; i < row.length(); i++) {
-                if (i == insert.getY() - 1) {
+            if (row == null) {
+                row = String.valueOf(c);
+                content[(int) getInsertionPoint().getX() - 1] = row;
+            }
+            else {
+                StringBuilder eRow = new StringBuilder();
+                for (int i = 0; i < row.length(); i++) {
+                    if (i == insert.getY() - 1) {
+                        eRow.append(c);
+                    }
+                    eRow.append(row.toCharArray()[i]);
+                }
+                if (insert.getY() > row.length()) {
                     eRow.append(c);
                 }
-                eRow.append(row.toCharArray()[i]);
+                content[(int) insert.getX() - 1] = eRow.toString();
             }
-            if (insert.getY() > row.length())
-            {
-                eRow.append(c);
-            }
-            content[(int) insert.getX() - 1] = eRow.toString();
         }
         setContent(content);
         moveInsertionPoint(new Point(0, 1));
