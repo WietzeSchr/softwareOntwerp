@@ -19,6 +19,8 @@ public abstract class Layout {
 
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
+    public abstract Layout closeBuffer(int focus, CompositeLayout parent);
+
     public Layout(int heigth, int width, Point leftUpperCorner) {
         this.heigth = heigth;
         this.width = width;

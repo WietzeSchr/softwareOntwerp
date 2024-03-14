@@ -51,7 +51,7 @@ public class SideBySideLayout extends CompositeLayout{
                     }
                     return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLays);
                 }
-            } else {    // this == parent && countViews > 2
+            } else {    // this == parent && countSubLayouts > 2
                 Layout[] newSubLays = new Layout[countSubLayouts() - 1];
                 int i = 0;
                 for (int j = 0; j < newSubLays.length; j++) {

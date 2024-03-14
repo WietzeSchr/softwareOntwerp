@@ -175,7 +175,7 @@ public class Textr
     }
 
     private void run() throws IOException {
-        while (countViews() > 0) {
+        while (getLayout() != null) {
             int c = Terminal.readByte();
             if (c == 13) {
                 addNewLineBreak();
@@ -211,7 +211,7 @@ public class Textr
                 changeFocusNext();
             }
             else if (c == 16) {     //  Ctrl + P
-                changeFocusPrevious();
+                closeBuffer();
             }
             else if (c == 18) {     //  Ctrl + R
                 rotateView(1);
@@ -246,7 +246,22 @@ public class Textr
     }
 
     private void closeBuffer() {
-
+        int heigth = getLayout().getHeigth();
+        int width = getLayout().getWidth();
+        if (countViews() == 1) {
+            setLayout(null);
+            return;
+        }
+        FileBufferView focus = getFocusedView();
+        CompositeLayout parent = focus.getParent();
+        Layout newLayout = getLayout().closeBuffer(getFocus(), parent);
+        setLayout(newLayout);
+        initViewPositions();
+        if (getFocus() > countViews()) {
+            setFocus(getFocus() - 1);
+        }
+        updateSize(heigth, width);
+        show();
     }
 
     private void changeFocusNext() {

@@ -237,4 +237,11 @@ public class FileBufferView extends Layout
         updateScrollStates();
     }
 
+    @Override
+    public FileBufferView closeBuffer(int focus, CompositeLayout parent) {
+        if (getPosition() != focus) {
+            return this;
+        }
+        return null;
+    }
 }
