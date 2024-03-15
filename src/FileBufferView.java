@@ -36,6 +36,13 @@ public class FileBufferView extends Layout
         this.horizontalScrollState = 1;
     }
 
+    public FileBufferView(int heigth, int width, Point leftUpperCorner, File file) {
+        super(heigth, width, leftUpperCorner);
+        this.file = file;
+        this.verticalScrollState = 1;
+        this.horizontalScrollState = 1;
+    }
+
     public void setVerticalScrollState(int newVerticalScrollState) {
         this.verticalScrollState = newVerticalScrollState;
     }
