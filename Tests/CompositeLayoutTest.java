@@ -37,7 +37,7 @@ class CompositeLayoutTest {
         assertEquals(fbv1.getLeftUpperCorner(), new Point(1,1));
         assertEquals(fbv2.getHeigth(), 10);
         assertEquals(fbv2.getWidth(), 20);
-        assertEquals(fbv2.getLeftUpperCorner(), new Point(21,1));
+        assertEquals(fbv2.getLeftUpperCorner(), new Point(1,21));
         assertEquals(fbv3.getHeigth(), 10);
         assertEquals(fbv3.getWidth(), 40);
         assertEquals(fbv3.getLeftUpperCorner(), new Point(11,1));

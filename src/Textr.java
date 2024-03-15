@@ -81,6 +81,17 @@ public class Textr
         run();
     }
 
+    /** This constructor creates a new Textr object that can be used for testing.
+     * @pre | newLine == "\n" || newLine == "\r\n"
+     * @post | getLayout() = layout
+     * @post | getNewLine() = newLine
+     */
+    public Textr(String newLine, Layout layout ) {
+        this.layout = layout;
+        this.newLine = newLine;
+        initViewPositions();
+    }
+
     /** This method sets the layout to newLayout
      * @return: void
      * @post : getLayout() == newLayout
@@ -129,7 +140,7 @@ public class Textr
     /** This method returns the focussed view
      * @return: FileBufferView
      */
-    private FileBufferView getFocusedView() {
+    protected FileBufferView getFocusedView() {
         Layout lay = getLayout();
         return lay.getFocusedView(getFocus());
     }
@@ -192,14 +203,14 @@ public class Textr
     /** This method initializes the view positions
      * @return: void 
      */
-    private void initViewPositions() {
+    void initViewPositions() {
         layout.initViewPosition(1);
     }
 
     /** This method updates the size of the layout
      * @return: void
      */
-    private void updateSize(int heigth, int width) {
+    void updateSize(int heigth, int width) {
         layout.updateSize(heigth, width, new Point(1,1));
     }
 
@@ -294,7 +305,7 @@ public class Textr
      *  cursor's position and optionally the scroll states if needed.
      * @return: void
      */
-    private void addNewLineBreak() {
+    void addNewLineBreak() {
         getFocusedView().addNewLineBreak();
         show();
     }
@@ -303,7 +314,7 @@ public class Textr
      * It also changes the cursor's position and optionally changes the scroll states and bars if needed
      * @return: void
      */
-    private void addNewChar(char c) {
+    protected void addNewChar(char c) {
         getFocusedView().addNewChar(c);
         show();
     }
