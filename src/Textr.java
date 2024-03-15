@@ -223,6 +223,7 @@ public class Textr
             }
             else if (c == 19) {     //  Ctrl + S
                 safeBuffer();
+                show();
             }
             else if (c >= 32 && c <= 126) {
                 addNewChar((char) c);
@@ -284,17 +285,23 @@ public class Textr
     private void rotateView(int dir) {
         int height = getLayout().getHeigth();
         int width = getLayout().getWidth();
-        Layout newLayout = null;
-        if ( countViews() != 1) {
+        Layout newLayout;
+        if (countViews() != 1) {
             FileBufferView focus = getFocusedView();
             FileBufferView next = getView(nextFocus());
             if (focus.getParent() == next.getParent()) {
-                newLayout = getLayout().rotateView(dir, focus.getParent(), getFocus());
+                newLayout = getLayout().rotateView(dir, focus.getParent(), getFocus(), nextFocus());
             }
+            else {
+                throw new RuntimeException("geen siblings");
+            }
+            CompositeLayout newCompLayout = (CompositeLayout)newLayout;
+            newLayout = newCompLayout.prune();
         }
         else {
             newLayout = getLayout();
         }
+        if(newLayout == null) throw new RuntimeException("newLayout = null");
         setLayout(newLayout);
         updateSize(height, width);
         FileBufferView focus = getFocusedView();
