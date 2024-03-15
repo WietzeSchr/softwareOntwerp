@@ -4,17 +4,33 @@ import java.io.IOException;
 public abstract class CompositeLayout extends Layout
 {
     private Layout[] subLayouts;
-
+    
+    /** This method returns the size of the subLayouts
+     * @return: Point
+     */
     public abstract Point calcSubSize();
 
+    /** This method returns the leftUpperCorner of the subLayouts
+     * @return: Point
+     */
     public abstract Point calcLeftUpCorner(int i);
 
+    /** This method rotates the view and updates the subLayouts
+     * @return: CompositeLayout || null
+     */
     public abstract CompositeLayout rotateView(int dir, CompositeLayout parent, int focus);
 
+    /** This constructor creates a new CompositeLayout with the given height, width, leftUpperCorner and subLayCount
+     * @post getSubLayouts().length == subLayCount
+     */
     public CompositeLayout(int height, int width, Point leftUpperCorner, int subLayCount) {
         super(height, width, leftUpperCorner);
         this.subLayouts = new Layout[subLayCount];
     }
+    
+    /** This constructor creates a new CompositeLayout with the given height, width, leftUpperCorner and subLayouts
+     * @post getSubLayouts() == subLayouts
+     */
     public CompositeLayout(int height, int width, Point leftUpperCorner, Layout[] subLayouts) {
         super(height, width, leftUpperCorner);
         for (int i = 0; i < subLayouts.length; i++) {
@@ -23,6 +39,9 @@ public abstract class CompositeLayout extends Layout
         this.subLayouts = subLayouts;
     }
 
+    /** This constructor creates a new CompositeLayout with the given height, width, leftUpperCorner, filepaths and newLine
+     * @post getSubLayouts().length == filepaths.length
+     */
     public CompositeLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
         super(height, width, leftUpperCorner);
         int length = filepaths.length;
@@ -34,6 +53,11 @@ public abstract class CompositeLayout extends Layout
         }
     }
 
+    /** This method replaces the view with the given parent with the given subView1 and subView2 
+     *  and sets the subLayouts to the new subLayouts
+     * @post getSubLayouts() == new.getSubLayouts()
+     * @return: void
+     */
     public void replaceView(CompositeLayout parent, Layout subView1, Layout subView2) {
         Layout[] newSubLays = new Layout[countSubLayouts() + 1];
         for (int i = 0; i < newSubLays.length - 1; i++) {
@@ -50,23 +74,40 @@ public abstract class CompositeLayout extends Layout
         setSubLayouts(newSubLays);
     }
 
+    /** This method sets the subLayouts to the given parameter newSubLayouts
+     * @post getSubLayouts() == newSubLayouts
+     * @return: void
+     */
     public void setSubLayouts(Layout[] newSubLayouts) {
         this.subLayouts = newSubLayouts;
     }
 
+    /** This method returns the subLayouts of the layout
+     * @return: Layout[]
+     */
     public Layout[] getSubLayouts() {
         return subLayouts;
     }
 
+    /** This method sets the subLayout at the given index to the given parameter newSubLayout
+     * @post getSubLayouts()[i] == newSubLayout
+     * @return: void
+     */
     public void setSubLayout(Layout newSubLayout, int i) {
         Layout[] oldSubLayouts = getSubLayouts();
         oldSubLayouts[i] = newSubLayout;
     }
 
+    /** This method returns the number of subLayouts
+     * @return: int
+     */
     public int countSubLayouts() {
         return subLayouts.length;
     }
 
+    /** This method shows the layout of the subLayouts
+     * @return: void
+     */
     public void show() {
         Layout[] subLays = getSubLayouts();
         for (int i = 0; i < countSubLayouts(); i++) {
@@ -74,6 +115,9 @@ public abstract class CompositeLayout extends Layout
         }
     }
 
+    /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
+     * @return: int
+     */
     @Override
     public int initViewPosition(int i) {
         Layout[] subLayouts = getSubLayouts();
@@ -86,6 +130,9 @@ public abstract class CompositeLayout extends Layout
         return i1;
     }
 
+    /** This method returns the focused view at the given index i
+     * @return: FileBufferView
+     */	
     @Override
     public FileBufferView getFocusedView(int i) {
         Layout[] subLayout = getSubLayouts();
@@ -98,6 +145,10 @@ public abstract class CompositeLayout extends Layout
         return res;
     }
 
+    /**
+     * This method returns the number of views
+     * @return: int
+     */
     @Override
     public int countViews() {
         int result  = 0;
@@ -108,6 +159,12 @@ public abstract class CompositeLayout extends Layout
         return result;
     }
 
+    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+     * @post getHeigth() == heigth
+     * @post getWidth() == width
+     * @post getLeftUpperCorner() == leftUpperCorner
+     * @return: void
+     */
     @Override
     public void updateSize(int heigth, int width, Point leftUpperCorner) {
         setHeigth(heigth);
@@ -120,6 +177,10 @@ public abstract class CompositeLayout extends Layout
         }
     }
 
+    /** This method closes the buffer at the given focus and returns the new focused layout and updates the subLayouts
+     * @post getSubLayouts().length == countSubLayouts() - 1
+     * @return: Layout
+     */
     @Override
     public Layout closeBuffer(int focus, CompositeLayout parent) throws IOException {
         if (this == parent) {

@@ -8,6 +8,10 @@ public class FileBuffer {
     private Point insertionPoint;
     private boolean dirty;
 
+    /** This constructor creates a new FileBuffer with the given path and newLine
+     * @post getDirty() == false
+     * @post getInsertionPoint() == new Point(1, 1) 
+     */
     public FileBuffer(String path, String newLine) throws FileNotFoundException {
         ArrayList<String> content = new ArrayList<>();
         FileInputStream file = new FileInputStream(path);
@@ -37,12 +41,19 @@ public class FileBuffer {
         this.dirty = false;
     }
 
+    /** This constructor creates a new FileBuffer with the given content
+     * @post getDirty() == false
+     * @post getInsertionPoint() == new Point(1, 1) 
+     */
     public FileBuffer(String[] content) {
         this.content = content;
         this.insertionPoint = new Point(1,1);
         this.dirty = false;
     }
 
+    /** This method returns true if the given parameter c is a line separator
+     * @return: boolean
+     */
     private boolean isLineSeparator(int c, byte[] lineSep, FileInputStream file) throws IOException {
         if(c != lineSep[0]){return false;}
         if(c == 13) {
@@ -52,6 +63,10 @@ public class FileBuffer {
         return c==10;
     }
 
+    /** This method inserts a line break at the insertion point and sets the buffer to dirty
+     * @post getDirty() == true
+     * @return: void
+     */
     public void insertLineBreak(){
         int row = (int)getInsertionPoint().getX()-1;
         int col = (int)getInsertionPoint().getY()-1;
@@ -66,18 +81,32 @@ public class FileBuffer {
         setDirty(true);
     }
 
+    /** This method returns true if the buffer is dirty and returns false if the buffer is not dirty
+     * @return: boolean
+     */
     public boolean getDirty() {
         return dirty;
     }
 
+    /** This method sets the buffer boolean value from parameter dirty
+     * @post getDirty() == dirty
+     * @return: void
+     */
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
     }
 
+    /** This method returns the insertion point of the buffer
+     * @return: Point
+     */
     public Point getInsertionPoint() {
         return new Point((int) insertionPoint.getX(), (int) insertionPoint.getY());
     }
 
+    /** This method sets the insertion point of the buffer to the given parameter insertionPoint
+     * @post getInsertionPoint() == insertionPoint
+     * @return: void
+     */
     public void setInsertionPoint(Point insertionPoint) {
         if (insertionPoint.getX()<1 || insertionPoint.getY()<1 || insertionPoint.getX() > content.length){
             return;
@@ -90,18 +119,31 @@ public class FileBuffer {
         this.insertionPoint = insertionPoint;
     }
 
+    /** This method returns the content of the buffer
+     * @return: String[]
+     */
     public String[] getContent() {
         return content;
     }
 
+    /** This method sets the content of the buffer to the given parameter newContent
+     * @post getContent() == newContent
+     * @return: void
+     */
     public void setContent(String[] newContent) {
         this.content = newContent;
     }
 
+    /** This method returns the number of rows 
+     * @return: int
+     */
     public int getRowCount() {
         return getContent().length;
     }
 
+     /** This method returns the number of columns 
+     * @return: int
+     */
     public int getColumnCount() {
         String[] cont = getContent();
         int result = 1;
@@ -114,7 +156,10 @@ public class FileBuffer {
         }
         return result;
     }
-
+ 
+    /** This method returns the number of characters in the buffer
+     * @return: int
+     */
     public int countCharacters() {
         int result = 0;
         for (String row : getContent()) {
@@ -123,12 +168,19 @@ public class FileBuffer {
         return result;
     }
 
+    /** This method moves the insertion point with the given parameter dir
+     * @return: void
+     */
     public void moveInsertionPoint(Point dir) {
         Point newInsertionPoint = new Point((int) (getInsertionPoint().getX() + dir.getX()),
                 (int) (getInsertionPoint().getY() + dir.getY()));
         setInsertionPoint(newInsertionPoint);
     }
 
+    /** This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
+     * @post getDirty() == true
+     * @return: void
+     */
     public void addNewChar(char c) {
         Point insert = getInsertionPoint();
         String[] content = getContent();
@@ -162,6 +214,10 @@ public class FileBuffer {
         setDirty(true);
     }
 
+    /** This method deletes a character from the buffer and sets the buffer to dirty and moves the insertion point
+     * @post getDirty() == true
+     * @return: void
+     */
     public void deleteChar() {
         String[] content = getContent();
         String[] newContent;

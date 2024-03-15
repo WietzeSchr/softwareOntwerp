@@ -4,28 +4,45 @@ import java.util.ArrayList;
 import static java.lang.Math.floor;
 
 public class StackedLayout extends CompositeLayout {
+
+    /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner and subLaysCount
+     */
     public StackedLayout(int height, int width, Point leftUpperCorner, int subLaysCount) {
         super(height, width, leftUpperCorner, subLaysCount);
     }
 
+    /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner, filepaths and newLine
+     */
     public StackedLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
         super(height, width, leftUpperCorner, filepaths, newLine);
     }
 
+    /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner and subLayouts
+     */
     public StackedLayout(int heigth, int width, Point leftUpperCorner, Layout[] subLayouts) {
         super(heigth, width, leftUpperCorner, subLayouts);
     }
 
+    /** This method returns the size of the subLayouts
+     * @return: Point
+     */
+    @Override
     public Point calcSubSize() {
         return new Point((int) Math.floor((float) getHeigth() / (float) countSubLayouts()), getWidth());
     }
 
-
+    /** This method returns the leftUpperCorner of the subLayouts
+     * @return: Point
+     */
+    @Override
     public Point calcLeftUpCorner(int i) {
         int subHeight = (int) floor((float) getHeigth() / (float) countSubLayouts());
         return new Point((int) (getLeftUpperCorner().getX() + i * subHeight), (int) getLeftUpperCorner().getY());
     }
 
+    /** This method rotates the view and updates the subLayouts
+     * @return: CompositeLayout || null
+     */
     @Override
     public CompositeLayout rotateView(int dir, CompositeLayout parent, int focus) {
         if (this == parent) {
