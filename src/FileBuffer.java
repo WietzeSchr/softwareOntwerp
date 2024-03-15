@@ -37,6 +37,12 @@ public class FileBuffer {
         this.dirty = false;
     }
 
+    public FileBuffer(String[] content) {
+        this.content = content;
+        this.insertionPoint = new Point(1,1);
+        this.dirty = false;
+    }
+
     private boolean isLineSeparator(int c, byte[] lineSep, FileInputStream file) throws IOException {
         if(c != lineSep[0]){return false;}
         if(c == 13) {
@@ -105,6 +111,14 @@ public class FileBuffer {
                     result = cont[i].length();
                 }
             }
+        }
+        return result;
+    }
+
+    public int countCharacters() {
+        int result = 0;
+        for (String row : getContent()) {
+            result += row.length();
         }
         return result;
     }
