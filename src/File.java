@@ -43,9 +43,11 @@ public class File
 
     public void saveBuffer(String newLine) throws IOException {
         FileOutputStream file = new FileOutputStream(getPath());
-        for (String row : getContent()){
-            file.write(row.getBytes());
-            file.write(newLine.getBytes());
+        for (int i = 0; i < getContent().length; i++){
+            file.write(getContent()[i].getBytes());
+            if (i != getContent().length - 1) {
+                file.write(newLine.getBytes());
+            }
         }
         file.close();
         getBuffer().setDirty(false);

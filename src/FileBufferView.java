@@ -192,6 +192,11 @@ public class FileBufferView extends Layout
         return 0;
     }
 
+    public void safeBuffer(String newLine) throws IOException {
+        getFile().saveBuffer(newLine);
+        updateScrollStates();
+    }
+
     public void addNewChar(char c) {
         File file = getFile();
         file.addNewChar(c);

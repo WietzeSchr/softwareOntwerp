@@ -304,8 +304,6 @@ public class Textr
     }
 
     private void safeBuffer() throws IOException {
-        FileBufferView focus = getFocusedView();
-        focus.getFile().saveBuffer(getNewLine());
-        focus.updateScrollStates();
+        getFocusedView().safeBuffer(getNewLine());
     }
 }
