@@ -3,22 +3,36 @@ import org.junit.jupiter.api.Test;
 public class TextrTest {
 
     @Test
-    void testUseCases() {
-        // Test Inspect Buffer Content
+    void testInspectBufferContent() {
 
-        // Test Edit Buffer Content
-            // Tests Add New Char
+    }
 
-            // Tests Add New Line Break
+    @Test
+    void testEditBufferContent() {
+        // Tests Add New Char
 
-            // Tests Delete Char
+        // Tests Add New Line Break
 
-        // Tests Change Focus
+        // Tests Delete Char
+    }
 
-        // Tests Close Buffer
+    @Test
+    void testChangeFocus() {
 
-        // Tests Safe Buffer
+    }
 
-        // Tests Rearrange Layout
+    @Test
+    void testCloseBuffer() {
+
+    }
+
+    @Test
+    void testSafeBuffer() {
+
+    }
+
+    @Test
+    void testRearrangeLayout() {
+
     }
 }
