@@ -137,23 +137,14 @@ public class FileBufferView extends Layout
     }
 
     private char[] makeVerticalScrollBar() {
-        char[] result = new char[getHeigth() - 1];
-        if (getHeigth() > getRowCount()) {
-            for (int i = 0; i < getHeigth() - 1; i++) {
-                result[i] = '#';
-            }
-        }
-        else {
-            int start = (int) Math.floor((float) getVerticalScrollState() / ((float) getVerticalScrollState() + getHeigth()) * getHeigth());
-            int end = (int) Math.floor((float) (getVerticalScrollState() + getHeigth() - 1) / (float) getRowCount() * getHeigth());
-            for (int i = 0; i < getHeigth() - 1; i++) {
-                if (i < start || i > end) {
-                    result[i] = '|';
-                }
-                else{
-                    result[i] = '#';
-                }
-            }
+        int h = getHeigth()-1;
+        int partsAbove = (int)getInsertionPoint().getX()-1 / h;
+        float chunkSize = ((float)h / (int) Math.ceil((float)getRowCount() / h));
+        char[] result = new char[h];
+        for (int i=0; i<h; i++) {
+            if(i<Math.floor(chunkSize*partsAbove)) result[i] = '|';
+            else if(i<Math.ceil(chunkSize*(partsAbove+1))) result[i] = '#';
+            else result[i] = '|';
         }
         return result;
     }
@@ -210,11 +201,7 @@ public class FileBufferView extends Layout
     }
 
     @Override
-    protected FileBufferView rotateView(int dir, CompositeLayout parent, int focus) {
-        return this;
-    }
-
-    public Layout rotateview(int dir, CompositeLayout parent, int focus) {
+    protected FileBufferView rotateView(int dir, CompositeLayout parent, int focus, int nextFocus) {
         return this;
     }
 
@@ -270,7 +257,7 @@ public class FileBufferView extends Layout
                 Terminal.clearScreen();
                 Terminal.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
                 int c = Terminal.readByte();
-                while (c != 121 || c != 89 || c != 78 || c != 110) {
+                while (c != 121 && c != 89 && c != 78 && c != 110) {
                     c = Terminal.readByte();
                 }
                 if (c == 121 || c == 89) {

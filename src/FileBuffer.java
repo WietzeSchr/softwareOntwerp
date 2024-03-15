@@ -203,4 +203,5 @@ public class FileBuffer {
         setContent(newContent);
         setDirty(true);
     }
+
 }

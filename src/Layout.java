@@ -69,6 +69,6 @@ public abstract class Layout {
         return leftUpperCorner;
     }
 
-    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus);
+    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
 }
 

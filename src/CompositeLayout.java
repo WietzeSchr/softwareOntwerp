@@ -9,8 +9,6 @@ public abstract class CompositeLayout extends Layout
 
     public abstract Point calcLeftUpCorner(int i);
 
-    public abstract CompositeLayout rotateView(int dir, CompositeLayout parent, int focus);
-
     public CompositeLayout(int height, int width, Point leftUpperCorner, int subLayCount) {
         super(height, width, leftUpperCorner);
         this.subLayouts = new Layout[subLayCount];
@@ -149,4 +147,27 @@ public abstract class CompositeLayout extends Layout
             return this;
         }
     }
+
+    public Layout prune(){
+        if(getSubLayouts().length == 1) {
+            if(this.getParent()==null) {
+                getSubLayouts()[0].setParent(this.getParent());
+                return getSubLayouts()[0];
+            }
+            else {
+                setSubLayouts(getSubLayouts()[0].getParent().getSubLayouts());
+            }
+        }
+        else {
+            for (int i=0; i<getSubLayouts().length; i++) {
+                if(getSubLayouts()[i] instanceof CompositeLayout){
+                    CompositeLayout subLay = (CompositeLayout) getSubLayouts()[i];
+                    setSubLayout(subLay.prune(), i);
+                }
+            }
+        }
+        return this;
+    }
+
+    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
 }
