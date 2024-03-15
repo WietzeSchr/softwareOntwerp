@@ -89,6 +89,7 @@ public class Textr
     public Textr(String newLine, Layout layout ) {
         this.layout = layout;
         this.newLine = newLine;
+        this.focus = 1;
         initViewPositions();
     }
 
@@ -133,7 +134,7 @@ public class Textr
     /** This method returns the focussed view
      * @return: int
      */
-    private int getFocus() {
+    int getFocus() {
         return focus;
     }
 
@@ -323,7 +324,7 @@ public class Textr
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void deleteChar() {
+    void deleteChar() {
         getFocusedView().deleteChar();
         show();
     }
@@ -355,7 +356,7 @@ public class Textr
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void changeFocusNext() {
+    void changeFocusNext() {
         setFocus(nextFocus());
         show();
     }
@@ -364,7 +365,7 @@ public class Textr
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void changeFocusPrevious() {
+    void changeFocusPrevious() {
         setFocus(previousFocus());
         show();
     }
