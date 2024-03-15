@@ -81,6 +81,18 @@ public class Textr
         run();
     }
 
+    /** This constructor creates a new Textr object that can be used for testing.
+     * @pre | newLine == "\n" || newLine == "\r\n"
+     * @post | getLayout() = layout
+     * @post | getNewLine() = newLine
+     */
+    public Textr(String newLine, Layout layout ) {
+        this.layout = layout;
+        this.newLine = newLine;
+        this.focus = 1;
+        initViewPositions();
+    }
+
     /** This method sets the layout to newLayout
      * @return: void
      * @post : getLayout() == newLayout
@@ -122,14 +134,14 @@ public class Textr
     /** This method returns the focussed view
      * @return: int
      */
-    private int getFocus() {
+    int getFocus() {
         return focus;
     }
 
     /** This method returns the focussed view
      * @return: FileBufferView
      */
-    private FileBufferView getFocusedView() {
+    protected FileBufferView getFocusedView() {
         Layout lay = getLayout();
         return lay.getFocusedView(getFocus());
     }
@@ -192,14 +204,14 @@ public class Textr
     /** This method initializes the view positions
      * @return: void 
      */
-    private void initViewPositions() {
+    void initViewPositions() {
         layout.initViewPosition(1);
     }
 
     /** This method updates the size of the layout
      * @return: void
      */
-    private void updateSize(int heigth, int width) {
+    void updateSize(int heigth, int width) {
         layout.updateSize(heigth, width, new Point(1,1));
     }
 
@@ -282,6 +294,7 @@ public class Textr
             }
             else if (c == 19) {     //  Ctrl + S
                 safeBuffer();
+                show();
             }
             else if (c >= 32 && c <= 126) {
                 addNewChar((char) c);
@@ -293,7 +306,7 @@ public class Textr
      *  cursor's position and optionally the scroll states if needed.
      * @return: void
      */
-    private void addNewLineBreak() {
+    void addNewLineBreak() {
         getFocusedView().addNewLineBreak();
         show();
     }
@@ -302,7 +315,7 @@ public class Textr
      * It also changes the cursor's position and optionally changes the scroll states and bars if needed
      * @return: void
      */
-    private void addNewChar(char c) {
+    protected void addNewChar(char c) {
         getFocusedView().addNewChar(c);
         show();
     }
@@ -311,7 +324,7 @@ public class Textr
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void deleteChar() {
+    void deleteChar() {
         getFocusedView().deleteChar();
         show();
     }
@@ -343,7 +356,7 @@ public class Textr
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void changeFocusNext() {
+    void changeFocusNext() {
         setFocus(nextFocus());
         show();
     }
@@ -352,7 +365,7 @@ public class Textr
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void changeFocusPrevious() {
+    void changeFocusPrevious() {
         setFocus(previousFocus());
         show();
     }
@@ -364,17 +377,23 @@ public class Textr
     private void rotateView(int dir) {
         int height = getLayout().getHeigth();
         int width = getLayout().getWidth();
-        Layout newLayout = null;
-        if ( countViews() != 1) {
+        Layout newLayout;
+        if (countViews() != 1) {
             FileBufferView focus = getFocusedView();
             FileBufferView next = getView(nextFocus());
             if (focus.getParent() == next.getParent()) {
-                newLayout = getLayout().rotateView(dir, focus.getParent(), getFocus());
+                newLayout = getLayout().rotateView(dir, focus.getParent(), getFocus(), nextFocus());
             }
+            else {
+                throw new RuntimeException("geen siblings");
+            }
+            CompositeLayout newCompLayout = (CompositeLayout)newLayout;
+            newLayout = newCompLayout.prune();
         }
         else {
             newLayout = getLayout();
         }
+        if(newLayout == null) throw new RuntimeException("newLayout = null");
         setLayout(newLayout);
         updateSize(height, width);
         FileBufferView focus = getFocusedView();

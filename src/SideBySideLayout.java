@@ -44,58 +44,41 @@ public class SideBySideLayout extends CompositeLayout{
      * @return: CompositeLayout || null
      */
     @Override
-    public CompositeLayout rotateView(int dir, CompositeLayout parent, int focus) {
+    public CompositeLayout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus) {
         if (this == parent) {
             FileBufferView focused = getFocusedView(focus);
-            FileBufferView next = getFocusedView(focus + 1);
-            if (countSubLayouts() == 2) {
-                if (getParent() != null) {
-                    if (dir == -1) {
-                        getParent().replaceView(parent, focused, next);
-                    } else {
-                        getParent().replaceView(parent, next, focused);
-                    }
-                    return null;
-                } else {
-                    Layout[] newSubLays = new Layout[2];
-                    if (dir == -1) {
-                        newSubLays[0] = focused;
-                        newSubLays[1] = next;
-                    } else {
-                        newSubLays[0] = next;
-                        newSubLays[1] = focused;
-                    }
-                    return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLays);
-                }
-            } else {    // this == parent && countSubLayouts > 2
-                Layout[] newSubLays = new Layout[countSubLayouts() - 1];
-                int i = 0;
-                for (int j = 0; j < newSubLays.length; j++) {
-                    if (getSubLayouts()[i] == focused) {
-                        Layout[] subSubLays = new Layout[2];
-                        subSubLays[0] = focused;
-                        subSubLays[1] = next;
-                        newSubLays[j] = new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), subSubLays);
-                        i += 2;
-                    }
-                    else {
-                        newSubLays[j] = getSubLayouts()[i];
-                        i += 1;
-                    }
-                }
-                setSubLayouts(newSubLays);
+            FileBufferView next = getFocusedView(nextFocus);
+            Layout[] newSubLays = new Layout[getSubLayouts().length - 1];
+            Layout[] subSubLays = new Layout[2];
+            if (dir == 1) {
+                subSubLays[0] = focused;
+                subSubLays[1] = next;
+            } else {
+                subSubLays[0] = next;
+                subSubLays[1] = focused;
             }
-        }
-        else {
-            ArrayList<Layout> newSubLays = new ArrayList<>();
-            for (int i = 0; i < getSubLayouts().length; i++) {
-                if (getSubLayouts()[i].rotateView(dir, parent, focus) != null) {
-                    newSubLays.add(getSubLayouts()[i].rotateView(dir, parent, focus));
+            StackedLayout stack = new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), subSubLays);
+            int i=0;
+            int j=0;
+            Layout[] temp = new Layout[newSubLays.length];
+            while (i<getSubLayouts().length) {
+                if(getSubLayouts()[i] != next) {
+                    temp[j++] = getSubLayouts()[i];
                 }
+                i++;
             }
-            setSubLayouts(newSubLays.toArray(new Layout[newSubLays.size()]));
-            return this;
+            setSubLayouts(temp);
+            for(int k=0; k<newSubLays.length; k++) {
+                if (getSubLayouts()[k] == focused) newSubLays[k] = stack;
+                else newSubLays[k] = getSubLayouts()[k];
+            }
+            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLays);
+        } else {
+            Layout[] newSubLay = new Layout[getSubLayouts().length];
+            for (int k=0; k<newSubLay.length; k++){
+                newSubLay[k] = getSubLayouts()[k].rotateView(dir, parent ,focus, nextFocus);
+            }
+            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLay);
         }
-        return null;
     }
 }

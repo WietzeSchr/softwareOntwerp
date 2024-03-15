@@ -131,5 +131,10 @@ public abstract class Layout {
      * @return: Layout
      */
     protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus);
+
+    /** This method rotates the view and updates the subLayouts
+     * @return: Layout
+     */
+    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
 }
 

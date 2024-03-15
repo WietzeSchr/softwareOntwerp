@@ -124,10 +124,11 @@ public abstract class CompositeLayout extends Layout
         int i1 = i;
         for (int j = 0; j < countSubLayouts(); j++)
         {
-            i1 += subLayouts[j].initViewPosition(i1);
+            subLayouts[j].initViewPosition(i1);
+            i1 += subLayouts[j].countViews();
         }
         setSubLayouts(subLayouts);
-        return i1;
+        return i + i1;
     }
 
     /** This method returns the focused view at the given index i
@@ -210,4 +211,27 @@ public abstract class CompositeLayout extends Layout
             return this;
         }
     }
+
+    public Layout prune(){
+        if(getSubLayouts().length == 1) {
+            if(this.getParent()==null) {
+                getSubLayouts()[0].setParent(this.getParent());
+                return getSubLayouts()[0];
+            }
+            else {
+                setSubLayouts(getSubLayouts()[0].getParent().getSubLayouts());
+            }
+        }
+        else {
+            for (int i=0; i<getSubLayouts().length; i++) {
+                if(getSubLayouts()[i] instanceof CompositeLayout){
+                    CompositeLayout subLay = (CompositeLayout) getSubLayouts()[i];
+                    setSubLayout(subLay.prune(), i);
+                }
+            }
+        }
+        return this;
+    }
+
+    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
 }
