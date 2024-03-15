@@ -189,7 +189,7 @@ public class FileBufferView extends Layout
     }
 
     private int getCharacterCount() {
-        return 0;
+        return getBuffer().countCharacters();
     }
 
     public void safeBuffer(String newLine) throws IOException {
