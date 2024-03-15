@@ -28,7 +28,7 @@ class SideBySideLayoutTest {
         assertEquals(fbv1.getLeftUpperCorner(), new Point(1,1));
         assertEquals(fbv2.getHeigth(), 10);
         assertEquals(fbv2.getWidth(), 10);
-        assertEquals(fbv2.getLeftUpperCorner(), new Point(11,1));
+        assertEquals(fbv2.getLeftUpperCorner(), new Point(1,11));
         assertEquals(sbsl1.calcSubSize(), new Point(10,10));
         // Tests voor rotateView
 
