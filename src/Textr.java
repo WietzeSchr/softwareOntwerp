@@ -305,5 +305,6 @@ public class Textr
 
     private void safeBuffer() throws IOException {
         getFocusedView().safeBuffer(getNewLine());
+        show();
     }
 }
