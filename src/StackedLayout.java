@@ -5,11 +5,9 @@ import static java.lang.Math.floor;
 
 public class StackedLayout extends CompositeLayout {
 
-    /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner and subLaysCount
-     */
-    public StackedLayout(int height, int width, Point leftUpperCorner, int subLaysCount) {
-        super(height, width, leftUpperCorner, subLaysCount);
-    }
+    /* ******************
+     *  CONSTRUCTORS    *
+     * ******************/
 
     /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner, filepaths and newLine
      */
@@ -23,22 +21,9 @@ public class StackedLayout extends CompositeLayout {
         super(heigth, width, leftUpperCorner, subLayouts);
     }
 
-    /** This method returns the size of the subLayouts
-     * @return: Point
-     */
-    @Override
-    public Point calcSubSize() {
-        return new Point((int) Math.floor((float) getHeigth() / (float) countSubLayouts()), getWidth());
-    }
-
-    /** This method returns the leftUpperCorner of the subLayouts
-     * @return: Point
-     */
-    @Override
-    public Point calcLeftUpCorner(int i) {
-        int subHeight = (int) floor((float) getHeigth() / (float) countSubLayouts());
-        return new Point((int) (getLeftUpperCorner().getX() + i * subHeight), (int) getLeftUpperCorner().getY());
-    }
+    /* *****************
+     *    ROTATE VIEW  *
+     * *****************/
 
     /** This method rotates the view and updates the subLayouts
      * @return: CompositeLayout || null
@@ -80,5 +65,26 @@ public class StackedLayout extends CompositeLayout {
             }
             return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLay);
         }
+    }
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
+
+    /** This method returns the size of the subLayouts
+     * @return: Point
+     */
+    @Override
+    public Point calcSubSize() {
+        return new Point((int) Math.floor((float) getHeigth() / (float) countSubLayouts()), getWidth());
+    }
+
+    /** This method returns the leftUpperCorner of the subLayouts
+     * @return: Point
+     */
+    @Override
+    public Point calcLeftUpCorner(int i) {
+        int subHeight = (int) floor((float) getHeigth() / (float) countSubLayouts());
+        return new Point((int) (getLeftUpperCorner().getX() + i * subHeight), (int) getLeftUpperCorner().getY());
     }
 }

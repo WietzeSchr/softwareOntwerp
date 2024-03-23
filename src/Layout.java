@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.io.IOException;
 
+/* **********
+ *  LAYOUT  *
+ * **********/
 public abstract class Layout {
     private int height;
 
@@ -10,6 +13,50 @@ public abstract class Layout {
 
     private CompositeLayout parent;
 
+    /* ******************
+     *  CONSTRUCTORS    *
+     * ******************/
+
+    /* **********************
+     *  GETTERS AND SETTERS *
+     * **********************/
+
+    /* **********************
+     *  DERIVED ATTRIBUTES  *
+     * **********************/
+
+    /* ******************
+     *  INSPECT CONTENT *
+     * ******************/
+
+    /* **********************
+     *  EDIT BUFFER CONTENT *
+     ************************/
+
+    /* ******************
+     *   CLOSE BUFFER   *
+     * ******************/
+
+    /* ******************
+     *    SAVE BUFFER   *
+     * ******************/
+
+    /* *****************
+     *    ROTATE VIEW  *
+     * *****************/
+
+    /* ******************
+     *  SHOW FUNCTIONS  *
+     * ******************/
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
+
+    public abstract int getNextFocus(int focus);
+
+    public abstract int getPreviousFocus(int focus);
+
     /** This method shows the layout of the subLayouts
      * @return: void
      */
@@ -18,7 +65,7 @@ public abstract class Layout {
      /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
      * @return: int
      */
-    public abstract int initViewPosition(int i);
+    public abstract void initViewPosition(int i);
 
     /** This method returns the focused view at the given index i
      * @return: FileBufferView
@@ -126,11 +173,6 @@ public abstract class Layout {
     public Point getLeftUpperCorner() {
         return leftUpperCorner;
     }
-
-    /** This method rotates the view and updates the subLayouts
-     * @return: Layout
-     */
-    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus);
 
     /** This method rotates the view and updates the subLayouts
      * @return: Layout

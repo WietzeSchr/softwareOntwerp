@@ -1,34 +1,32 @@
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
+/************
+ *  FILE    *
+ ************/
 public class File
 {
    
     private final String path;
 
-    private FileBuffer buffer;
+    /* **************
+     *  CONSTRUCTOR *
+     ****************/
 
     /** This constructor creates a new file with the given path and newLine
      *  and sets the buffer to a new FileBuffer with the given path and newLine.
      * @post getpath() == path
-     * @post getBuffer().getPath() == path
-     * @post getBuffer().getNewLine() == newLine
-     * @post getBuffer() == new FileBuffer(path, newLine)
     */
-    public File(String path, String newLine) throws FileNotFoundException {
+    public File(String path) {
         this.path = path;
-        this.buffer = new FileBuffer(path, newLine);
     }
 
-    /** This constructor creates a new file with the given path and buffer
-     * @post getpath() == path
-     * @post getBuffer() == buffer
-     */
-    public File(String path, FileBuffer buffer) {
-        this.path = path;
-        this.buffer = buffer;
-    }
+    /* **********************
+     *  GETTERS AND SETTERS *
+     ************************/
 
     /** This method returns the path of the file.
      * @return: String
@@ -37,49 +35,69 @@ public class File
         return this.path;
     }
 
-    /** This method returns the buffer of the file.
-     * @return: FileBuffer 
+    /** This method returns true if the given parameter c is a line separator
+     * @return: boolean
      */
-    public FileBuffer getBuffer() {
-        return buffer;
+
+    /****************
+     *  LOAD FILE   *
+     ****************/
+
+    public String[] load(String newLine) throws FileNotFoundException {
+        ArrayList<String> content = new ArrayList<>();
+        FileInputStream file = new FileInputStream(path);
+        byte[] newLineBytes = newLine.getBytes();
+        int c;
+        StringBuilder line = new StringBuilder();
+        int column = 1;
+        try {
+            while ((c = file.read()) != -1) {
+                if (c != 10 && c != 13 && c < 32 || 127 <= c) {
+                    throw new RuntimeException("File" + path + "contains an illegal byte");
+                } else {
+                    if (c != 13 && c != 10) {
+                        line.append((char) c);
+                    } else if(isLineSeparator(c, newLineBytes, file)){
+                        content.add(line.toString());
+                        line = new StringBuilder();
+                    }
+                }
+            }
+            content.add(line.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return content.toArray(new String[0]);
     }
 
-    /** This method sets the buffer of the file.
-     * @post: getBuffer() == newBuffer
-     * @return: void
-     */
-    public void setBuffer(FileBuffer newBuffer) {
-        this.buffer = newBuffer;
-    }
-
-    /** This method returns the content of the file.
-     * @return: String[]
-     */
-    public String[] getContent() {
-        return getBuffer().getContent();
-    }
-
-    /** This method adds a new character to the buffer of the file and sets the buffer to the new updated buffer
-     * @return: void
-     */
-    public void addNewChar(char c) {
-        FileBuffer buffer = getBuffer();
-        buffer.addNewChar(c);
-        setBuffer(buffer);
-    }
+    /* **************
+     *  SAVE BUFFER *
+     ****************/
 
     /** This method saves the buffer of the file to the file and sets the buffer to not dirty
      * @return: void
      */
-    public void saveBuffer(String newLine) throws IOException {
+    public void save(String newLine, String[] content) throws IOException {
         FileOutputStream file = new FileOutputStream(getPath());
-        for (int i = 0; i < getContent().length; i++){
-            file.write(getContent()[i].getBytes());
-            if (i != getContent().length - 1) {
+        for (int i = 0; i < content.length; i++){
+            file.write(content[i].getBytes());
+            if (i != content.length - 1) {
                 file.write(newLine.getBytes());
             }
         }
         file.close();
-        getBuffer().setDirty(false);
+    }
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     ********************/
+
+    private boolean isLineSeparator(int c, byte[] lineSep, FileInputStream file) throws IOException {
+        if(c != lineSep[0]){return false;}
+        if(c == 13) {
+            c = file.read();
+            return c==10;
+        }
+        return c==10;
     }
 }

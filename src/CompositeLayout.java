@@ -4,30 +4,11 @@ import java.io.IOException;
 public abstract class CompositeLayout extends Layout
 {
     private Layout[] subLayouts;
-    
-    /** This method returns the size of the subLayouts
-     * @return: Point
-     */
-    public abstract Point calcSubSize();
 
-    /** This method returns the leftUpperCorner of the subLayouts
-     * @return: Point
-     */
-    public abstract Point calcLeftUpCorner(int i);
+    /* ******************
+     *  CONSTRUCTORS    *
+     * ******************/
 
-    /** This method rotates the view and updates the subLayouts
-     * @return: CompositeLayout || null
-     */
-    public abstract CompositeLayout rotateView(int dir, CompositeLayout parent, int focus);
-
-    /** This constructor creates a new CompositeLayout with the given height, width, leftUpperCorner and subLayCount
-     * @post getSubLayouts().length == subLayCount
-     */
-    public CompositeLayout(int height, int width, Point leftUpperCorner, int subLayCount) {
-        super(height, width, leftUpperCorner);
-        this.subLayouts = new Layout[subLayCount];
-    }
-    
     /** This constructor creates a new CompositeLayout with the given height, width, leftUpperCorner and subLayouts
      * @post getSubLayouts() == subLayouts
      */
@@ -53,26 +34,9 @@ public abstract class CompositeLayout extends Layout
         }
     }
 
-    /** This method replaces the view with the given parent with the given subView1 and subView2 
-     *  and sets the subLayouts to the new subLayouts
-     * @post getSubLayouts() == new.getSubLayouts()
-     * @return: void
-     */
-    public void replaceView(CompositeLayout parent, Layout subView1, Layout subView2) {
-        Layout[] newSubLays = new Layout[countSubLayouts() + 1];
-        for (int i = 0; i < newSubLays.length - 1; i++) {
-            if (getSubLayouts()[i] == parent) {
-                newSubLays[i] = subView1;
-            }
-            else if (i > 0 && getSubLayouts()[i - 1] == parent) {
-                newSubLays[i] = subView2;
-            }
-            else {
-                newSubLays[i] = getSubLayouts()[i];
-            }
-        }
-        setSubLayouts(newSubLays);
-    }
+    /* **********************
+     *  GETTERS AND SETTERS *
+     * **********************/
 
     /** This method sets the subLayouts to the given parameter newSubLayouts
      * @post getSubLayouts() == newSubLayouts
@@ -98,6 +62,10 @@ public abstract class CompositeLayout extends Layout
         oldSubLayouts[i] = newSubLayout;
     }
 
+    /* **********************
+     *  DERIVED ATTRIBUTES  *
+     * **********************/
+
     /** This method returns the number of subLayouts
      * @return: int
      */
@@ -105,78 +73,9 @@ public abstract class CompositeLayout extends Layout
         return subLayouts.length;
     }
 
-    /** This method shows the layout of the subLayouts
-     * @return: void
-     */
-    public void show() {
-        Layout[] subLays = getSubLayouts();
-        for (int i = 0; i < countSubLayouts(); i++) {
-            subLays[i].show();
-        }
-    }
-
-    /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
-     * @return: int
-     */
-    @Override
-    public int initViewPosition(int i) {
-        Layout[] subLayouts = getSubLayouts();
-        int i1 = i;
-        for (int j = 0; j < countSubLayouts(); j++)
-        {
-            subLayouts[j].initViewPosition(i1);
-            i1 += subLayouts[j].countViews();
-        }
-        setSubLayouts(subLayouts);
-        return i + i1;
-    }
-
-    /** This method returns the focused view at the given index i
-     * @return: FileBufferView
-     */	
-    @Override
-    public FileBufferView getFocusedView(int i) {
-        Layout[] subLayout = getSubLayouts();
-        FileBufferView res = null;
-        for (Layout layout : subLayout) {
-            if (res == null) {
-                res = layout.getFocusedView(i);
-            }
-        }
-        return res;
-    }
-
-    /**
-     * This method returns the number of views
-     * @return: int
-     */
-    @Override
-    public int countViews() {
-        int result  = 0;
-        Layout[] subLays = getSubLayouts();
-        for (int i = 0; i < subLays.length; i++) {
-            result += subLays[i].countViews();
-        }
-        return result;
-    }
-
-    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * @post getHeigth() == heigth
-     * @post getWidth() == width
-     * @post getLeftUpperCorner() == leftUpperCorner
-     * @return: void
-     */
-    @Override
-    public void updateSize(int heigth, int width, Point leftUpperCorner) {
-        setHeigth(heigth);
-        setWidth(width);
-        setLeftUpperCorner(leftUpperCorner);
-        Point subSize = calcSubSize();
-        for (int i = 0; i < countSubLayouts(); i++) {
-            Point subLeftUp = calcLeftUpCorner(i);
-            getSubLayouts()[i].updateSize((int) subSize.getX(), (int) subSize.getY(), subLeftUp);
-        }
-    }
+    /* ******************
+     *   CLOSE BUFFER   *
+     * ******************/
 
     /** This method closes the buffer at the given focus and returns the new focused layout and updates the subLayouts
      * @post getSubLayouts().length == countSubLayouts() - 1
@@ -212,6 +111,12 @@ public abstract class CompositeLayout extends Layout
         }
     }
 
+    /* *****************
+     *    ROTATE VIEW  *
+     * *****************/
+
+    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
+
     public Layout prune(){
         if(getSubLayouts().length == 1) {
             if(this.getParent()==null) {
@@ -233,5 +138,130 @@ public abstract class CompositeLayout extends Layout
         return this;
     }
 
-    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
+    /* ******************
+     *  SHOW FUNCTIONS  *
+     * ******************/
+
+    /** This method shows the layout of the subLayouts
+     * @return: void
+     */
+    public void show() {
+        Layout[] subLays = getSubLayouts();
+        for (int i = 0; i < countSubLayouts(); i++) {
+            subLays[i].show();
+        }
+    }
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
+
+    /** This method returns the size of the subLayouts
+     * @return: Point
+     */
+    public abstract Point calcSubSize();
+
+    /** This method returns the leftUpperCorner of the subLayouts
+     * @return: Point
+     */
+    public abstract Point calcLeftUpCorner(int i);
+
+    /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
+     * @return: int
+     */
+    @Override
+    public void initViewPosition(int i) {
+        Layout[] subLayouts = getSubLayouts();
+        int i1 = i;
+        for (int j = 0; j < countSubLayouts(); j++)
+        {
+            subLayouts[j].initViewPosition(i1);
+            i1 += subLayouts[j].countViews();
+        }
+        setSubLayouts(subLayouts);
+    }
+
+    /** This method returns the focused view at the given index i
+     * @return: FileBufferView
+     */
+    @Override
+    public FileBufferView getFocusedView(int i) {
+        Layout[] subLayout = getSubLayouts();
+        FileBufferView res = null;
+        for (Layout layout : subLayout) {
+            if (res == null) {
+                res = layout.getFocusedView(i);
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public int getNextFocus(int focus) {
+        if (focus == countViews()) {
+            return 1;
+        }
+        return focus + 1;
+    }
+
+    @Override
+    public int getPreviousFocus(int focus) {
+        if (focus == 1) {
+            return countViews();
+        }
+        return focus - 1;
+    }
+
+    /**
+     * This method returns the number of views
+     * @return: int
+     */
+    @Override
+    public int countViews() {
+        int result  = 0;
+        Layout[] subLays = getSubLayouts();
+        for (int i = 0; i < subLays.length; i++) {
+            result += subLays[i].countViews();
+        }
+        return result;
+    }
+
+    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+     * @post getHeigth() == heigth
+     * @post getWidth() == width
+     * @post getLeftUpperCorner() == leftUpperCorner
+     * @return: void
+     */
+    @Override
+    public void updateSize(int heigth, int width, Point leftUpperCorner) {
+        setHeigth(heigth);
+        setWidth(width);
+        setLeftUpperCorner(leftUpperCorner);
+        Point subSize = calcSubSize();
+        for (int i = 0; i < countSubLayouts(); i++) {
+            Point subLeftUp = calcLeftUpCorner(i);
+            getSubLayouts()[i].updateSize((int) subSize.getX(), (int) subSize.getY(), subLeftUp);
+        }
+    }
+
+    /** This method replaces the view with the given parent with the given subView1 and subView2 
+     *  and sets the subLayouts to the new subLayouts
+     * @post getSubLayouts() == new.getSubLayouts()
+     * @return: void
+     */
+    public void replaceView(CompositeLayout parent, Layout subView1, Layout subView2) {
+        Layout[] newSubLays = new Layout[countSubLayouts() + 1];
+        for (int i = 0; i < newSubLays.length - 1; i++) {
+            if (getSubLayouts()[i] == parent) {
+                newSubLays[i] = subView1;
+            }
+            else if (i > 0 && getSubLayouts()[i - 1] == parent) {
+                newSubLays[i] = subView2;
+            }
+            else {
+                newSubLays[i] = getSubLayouts()[i];
+            }
+        }
+        setSubLayouts(newSubLays);
+    }
 }

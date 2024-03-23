@@ -8,9 +8,9 @@ class SideBySideLayoutTest {
     @Test
     void sideBySideLayoutTest() {
         // Tests voor constructors
-        File f1 = new File("test1", new FileBuffer(new String[] {"rij1", "rij2","rij3"}));
+        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
-        File f2 = new File("test2", new FileBuffer(new String[] {"t", "te", "tes", "test"}));
+        FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
         FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
         SideBySideLayout sbsl1 = new SideBySideLayout(1, 1, new Point(1,1), new Layout[] {fbv1, fbv2});
         sbsl1.initViewPosition(1);

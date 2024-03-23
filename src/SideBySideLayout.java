@@ -5,11 +5,9 @@ import static java.lang.Math.floor;
 
 public class SideBySideLayout extends CompositeLayout{
 
-    /** This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner and subLaysCount
-     */
-    public SideBySideLayout(int height, int width, Point leftUpperCorner, int subLaysCount) {
-        super(height, width, leftUpperCorner, subLaysCount);
-    }
+    /* ******************
+     *  CONSTRUCTORS    *
+     * ******************/
 
     /** This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner, filepaths and newLine
      */
@@ -23,22 +21,9 @@ public class SideBySideLayout extends CompositeLayout{
         super(height, width, leftUpperCorner, subLayouts);
     }
 
-    /** This method returns the size of the subLayouts
-     * @return: Point
-     */
-    @Override
-    public Point calcSubSize() {
-        return new Point(getHeigth(), (int) Math.floor((float) getWidth() / (float) countSubLayouts()));
-    }
-
-    /** This method returns the leftUpperCorner of the subLayouts
-     * @return: Point
-     */
-    @Override
-    public Point calcLeftUpCorner(int i) {
-        int subWidth = (int) floor((float) getWidth() / (float) countSubLayouts());
-        return new Point((int) getLeftUpperCorner().getX(), (int) getLeftUpperCorner().getY() + i * subWidth);
-    }
+    /* *****************
+     *    ROTATE VIEW  *
+     * *****************/
 
     /** This method rotates the view and updates the subLayouts
      * @return: CompositeLayout || null
@@ -80,5 +65,26 @@ public class SideBySideLayout extends CompositeLayout{
             }
             return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLay);
         }
+    }
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
+
+    /** This method returns the size of the subLayouts
+     * @return: Point
+     */
+    @Override
+    public Point calcSubSize() {
+        return new Point(getHeigth(), (int) Math.floor((float) getWidth() / (float) countSubLayouts()));
+    }
+
+    /** This method returns the leftUpperCorner of the subLayouts
+     * @return: Point
+     */
+    @Override
+    public Point calcLeftUpCorner(int i) {
+        int subWidth = (int) floor((float) getWidth() / (float) countSubLayouts());
+        return new Point((int) getLeftUpperCorner().getX(), (int) getLeftUpperCorner().getY() + i * subWidth);
     }
 }
