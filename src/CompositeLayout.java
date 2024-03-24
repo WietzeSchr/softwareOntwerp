@@ -70,7 +70,7 @@ public abstract class CompositeLayout extends Layout
      * @return: int
      */
     public int countSubLayouts() {
-        return subLayouts.length;
+        return getSubLayouts().length;
     }
 
     /* ******************
@@ -178,7 +178,6 @@ public abstract class CompositeLayout extends Layout
             subLayouts[j].initViewPosition(i1);
             i1 += subLayouts[j].countViews();
         }
-        setSubLayouts(subLayouts);
     }
 
     /** This method returns the focused view at the given index i
@@ -198,7 +197,7 @@ public abstract class CompositeLayout extends Layout
 
     @Override
     public int getNextFocus(int focus) {
-        if (focus == countViews()) {
+        if (focus >= countViews()) {
             return 1;
         }
         return focus + 1;
@@ -210,6 +209,14 @@ public abstract class CompositeLayout extends Layout
             return countViews();
         }
         return focus - 1;
+    }
+
+    @Override
+    public int getNewFocus(int focus) {
+        if (focus > countViews()) {
+            return focus - 1;
+        }
+        return focus;
     }
 
     /**

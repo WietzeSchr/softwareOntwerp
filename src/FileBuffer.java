@@ -44,6 +44,7 @@ public class FileBuffer {
     public void setFile(File newFile) {
         this.file = newFile;
     }
+        //  Kan handig zijn voor saven naar een andere file als waar van gelezen is (save as)
 
     public File getFile() {
         return file;

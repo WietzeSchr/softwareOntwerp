@@ -49,6 +49,10 @@ class TerminalParser {
     }
 }
 
+/* ******************
+ *      TEXTR       *
+ * ******************/
+
 public class Textr
 {
     private Layout layout;
@@ -67,19 +71,23 @@ public class Textr
      */
     public Textr(String newLine, String[] filepaths) throws IOException {
         Point size;
+        if (filepaths.length == 0) {
+            throw new RuntimeException("Textr can't be started without any files");
+        }
         try {
             size = getSize();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         if (filepaths.length > 1) {
-            this.layout = new StackedLayout((int) size.getX(), (int) size.getY(), new Point(1,1), filepaths, newLine);
+            this.layout = new StackedLayout(1,1, new Point(1,1), filepaths, newLine);
         }
         else {
-            this.layout = new FileBufferView((int) size.getX(), (int) size.getY(), new Point(1, 1), filepaths[0], newLine);
+            this.layout = new FileBufferView(1,1, new Point(1, 1), filepaths[0], newLine);
         }
         this.newLine = newLine;
         this.focus = 1;
+        updateSize((int) size.getX(), (int) size.getY());
         initViewPositions();
         show();
         run();
@@ -148,24 +156,21 @@ public class Textr
     private void run() throws IOException {
         while (getLayout() != null) {
             int c = Terminal.readByte();
-            if (c == 13) {
-                addNewLineBreak();
-            }
-            else if (c == 27) {
+            if (c == 27) {                          //  ARROWS
                 int c1 = Terminal.readByte();
                 if (c1 == 91) {
                     int c2 = Terminal.readByte();
                     if (c2 == 65) {
-                        updateCursor(-1, 0); //UP
+                        updateCursor(-1, 0);  //UP
                     } else if (c2 == 66) {
-                        updateCursor(1, 0); //DOWN
+                        updateCursor(1, 0);   //DOWN
                     } else if (c2 == 67) {
-                        updateCursor(0, 1); //RIGHT
+                        updateCursor(0, 1);   //RIGHT
                     } else if (c2 == 68) {
-                        updateCursor(0, -1); //LEFT
+                        updateCursor(0, -1);  //LEFT
                     }
                 }
-            }
+            }                               // Shift + F4
             else if (c == 59) {
                 int c1 = Terminal.readByte();
                 if (c1 == 50) {
@@ -175,26 +180,28 @@ public class Textr
                     }
                 }
             }
-            else if (c == 127) {
-                deleteChar();
+            else if (c == 13) {             //  ENTER
+                addNewLineBreak();
             }
-            else if (c == 14) {     //  Ctrl + N
+            else if (c == 127) {
+                deleteChar();               //  BACKSPACE
+            }
+            else if (c == 14) {             //  Ctrl + N
                 changeFocusNext();
             }
-            else if (c == 16) {     //  Ctrl + P
+            else if (c == 16) {             //  Ctrl + P
                 changeFocusPrevious();
             }
-            else if (c == 18) {     //  Ctrl + R
+            else if (c == 18) {             //  Ctrl + R
                 rotateView(1);
             }
-            else if (c == 20) {     //  Ctrl + T
+            else if (c == 20) {             //  Ctrl + T
                 rotateView(-1);
             }
-            else if (c == 19) {     //  Ctrl + S
+            else if (c == 19) {             //  Ctrl + S
                 saveBuffer();
-                show();
             }
-            else if (c >= 32 && c <= 126) {
+            else if (c >= 32 && c <= 126) { //  Legal Chars
                 addNewChar((char) c);
             }
         }
@@ -208,15 +215,14 @@ public class Textr
      * @return: FileBufferView
      */
     FileBufferView getFocusedView() {
-        Layout lay = getLayout();
-        return lay.getFocusedView(getFocus());
+        return getLayout().getFocusedView(getFocus());
     }
 
     /** This method returns the view at position
      * @return: FileBufferView
      */
     private FileBufferView getView(int position) {
-        return layout.getFocusedView(position);
+        return getLayout().getFocusedView(position);
     }
 
     /* ******************
@@ -244,12 +250,8 @@ public class Textr
     /** This method updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void updateCursor(int x, int y) throws IOException {
-        FileBufferView focus = getFocusedView();
-        Point insert = focus.getInsertionPoint();
-        Point newInsert = new Point((int)insert.getX() + x, (int)insert.getY() + y);
-        focus.setInsertionPoint(newInsert);
-        focus.updateScrollStates();
+    private void updateCursor(int x, int y) {
+        getFocusedView().moveInsertionPoint(new Point(x, y));
         show();
     }
 
@@ -295,18 +297,10 @@ public class Textr
     private void closeBuffer() throws IOException {
         int heigth = getLayout().getHeigth();
         int width = getLayout().getWidth();
-        if (countViews() == 1) {
-            setLayout(null);
-            return;
-        }
-        FileBufferView focus = getFocusedView();
-        CompositeLayout parent = focus.getParent();
-        Layout newLayout = getLayout().closeBuffer(getFocus(), parent);
-        setLayout(newLayout);
+        CompositeLayout parent = getFocusedView().getParent();
+        setLayout(getLayout().closeBuffer(getFocus(), parent));
         initViewPositions();
-        if (getFocus() > countViews()) {
-            setFocus(getFocus() - 1);
-        }
+        setFocus(getLayout().getNewFocus(getFocus()));
         updateSize(heigth, width);
         show();
     }
@@ -369,10 +363,7 @@ public class Textr
      */
     private void show() {
         Terminal.clearScreen();
-        Layout lay = getLayout();
-        int heigth = lay.getHeigth();
-        int width = lay.getWidth();
-        lay.show();
+        getLayout().show();
         showCursor();
     }
 
@@ -380,8 +371,7 @@ public class Textr
      * @return: void
      */
     private void showCursor() {
-        FileBufferView focus = getFocusedView();
-        Point cursor = focus.getCursor();
+        Point cursor = getFocusedView().getCursor();
         Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
     }
 
@@ -407,14 +397,14 @@ public class Textr
      * @return: void 
      */
     void initViewPositions() {
-        layout.initViewPosition(1);
+        getLayout().initViewPosition(1);
     }
 
     /** This method updates the size of the layout
      * @return: void
      */
     void updateSize(int heigth, int width) {
-        layout.updateSize(heigth, width, new Point(1,1));
+        getLayout().updateSize(heigth, width, new Point(1,1));
     }
 
     /** This method returns the number of views

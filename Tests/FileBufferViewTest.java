@@ -37,7 +37,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getVerticalScrollState(), 4);
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getCursor(), new Point(20, 10));
-        fbv1.safeBuffer("\n");
+        fbv1.saveBuffer("\n");
         assertFalse(fbv1.getBuffer().getDirty());
     }
 }

@@ -17,82 +17,11 @@ public abstract class Layout {
      *  CONSTRUCTORS    *
      * ******************/
 
-    /* **********************
-     *  GETTERS AND SETTERS *
-     * **********************/
-
-    /* **********************
-     *  DERIVED ATTRIBUTES  *
-     * **********************/
-
-    /* ******************
-     *  INSPECT CONTENT *
-     * ******************/
-
-    /* **********************
-     *  EDIT BUFFER CONTENT *
-     ************************/
-
-    /* ******************
-     *   CLOSE BUFFER   *
-     * ******************/
-
-    /* ******************
-     *    SAVE BUFFER   *
-     * ******************/
-
-    /* *****************
-     *    ROTATE VIEW  *
-     * *****************/
-
-    /* ******************
-     *  SHOW FUNCTIONS  *
-     * ******************/
-
-    /* ******************
-     *  HELP FUNCTIONS  *
-     * ******************/
-
-    public abstract int getNextFocus(int focus);
-
-    public abstract int getPreviousFocus(int focus);
-
-    /** This method shows the layout of the subLayouts
-     * @return: void
-     */
-    public abstract void show();
-    
-     /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
-     * @return: int
-     */
-    public abstract void initViewPosition(int i);
-
-    /** This method returns the focused view at the given index i
-     * @return: FileBufferView
-     */	
-    public abstract FileBufferView getFocusedView(int i);
-
-    /** This method returns the number of views
-     * @return: int
-     */
-    public abstract int countViews();
-
-    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * @return: void
-     */
-    public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
-
-    /** This method closes the buffer and updates the subLayouts
-     * @return: Layout
-     */
-    public abstract Layout closeBuffer(int focus, CompositeLayout parent) throws IOException;
-
-
     /** This constructor creates a new Layout with the given height, width and leftUpperCorner
      * @post getHeigth() == height
      * @post getWidth() == widthµ
      * @post getParent() == null
-     * @post getLeftUpperCorner() == leftUpperCorner 
+     * @post getLeftUpperCorner() == leftUpperCorner
      */
     public Layout(int height, int width, Point leftUpperCorner) {
         this.height = height;
@@ -105,7 +34,7 @@ public abstract class Layout {
      * @post getHeigth() == height
      * @post getWidth() == width
      * @post getParent() == parent
-     * @post getLeftUpperCorner() == leftUpperCorner 
+     * @post getLeftUpperCorner() == leftUpperCorner
      */
     public Layout(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
         this.height = height;
@@ -114,10 +43,10 @@ public abstract class Layout {
         this.leftUpperCorner = leftUpperCorner;
     }
 
-    /** This method sets the height of the layout to the given parameter newHeight
-     * @post getHeigth() == newHeight
-     * @return: void
-     */
+    /* **********************
+     *  GETTERS AND SETTERS *
+     * **********************/
+
     public void setHeigth(int newHeight) {
         this.height = newHeight;
     }
@@ -174,9 +103,66 @@ public abstract class Layout {
         return leftUpperCorner;
     }
 
+    /* ******************
+     *   CLOSE BUFFER   *
+     * ******************/
+
+    /** This method closes the buffer and updates the subLayouts
+     * @return: Layout
+     */
+    public abstract Layout closeBuffer(int focus, CompositeLayout parent) throws IOException;
+
+    /* *****************
+     *    ROTATE VIEW  *
+     * *****************/
+
     /** This method rotates the view and updates the subLayouts
      * @return: Layout
      */
     protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
+
+    /* ******************
+     *  SHOW FUNCTIONS  *
+     * ******************/
+
+    /** This method shows the layout of the subLayouts
+     * @return: void
+     */
+    public abstract void show();
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
+
+    public abstract int getNextFocus(int focus);
+
+    public abstract int getPreviousFocus(int focus);
+    
+     /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
+     * @return: int
+     */
+    public abstract void initViewPosition(int i);
+
+    /** This method returns the focused view at the given index i
+     * @return: FileBufferView
+     */	
+    public abstract FileBufferView getFocusedView(int i);
+
+    /** This method returns the number of views
+     * @return: int
+     */
+    public abstract int countViews();
+
+    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+     * @return: void
+     */
+    public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
+
+    /** This method sets the height of the layout to the given parameter newHeight
+     * @post getHeigth() == newHeight
+     * @return: void
+     */
+
+    public abstract int getNewFocus(int focus);
 }
 
