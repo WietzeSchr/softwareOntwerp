@@ -4,6 +4,9 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/* ******************
+ *  FILEBUFFERVIEW  *
+ ********************/
 public class FileBufferView extends Layout
 {
     private int verticalScrollState;
@@ -12,7 +15,13 @@ public class FileBufferView extends Layout
 
     private int position;
 
-    private File file;
+    private Point insertionPoint;
+
+    private FileBuffer fileBuffer;
+
+    /* ******************
+     *  CONSTRUCTORS    *
+     * ******************/
 
     /** This constructor creates a new FileBufferView with the given heigth, width, leftUpperCorner, filepath and newLine
      * @post getVerticalScrollState() == 1
@@ -21,12 +30,13 @@ public class FileBufferView extends Layout
     public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) {
         super(heigth, witdh, leftUpperCorner);
         try {
-            this.file = new File(filepath, newLine);
+            this.fileBuffer = new FileBuffer(filepath, newLine);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
+        this.insertionPoint = new Point(1,1);
     }
 
     /** This constructor creates a new FileBufferView with the given heigth, width, parent, leftUpperCorner, filepath and newLine
@@ -36,24 +46,30 @@ public class FileBufferView extends Layout
     public FileBufferView(int heigth, int witdh, CompositeLayout parent, Point leftUpperCorner, String filepath, String newLine) {
         super(heigth, witdh, parent, leftUpperCorner);
         try {
-            this.file = new File(filepath, newLine);
+            this.fileBuffer = new FileBuffer(filepath, newLine);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
+        this.insertionPoint = new Point(1,1);
     }
 
     /** This method sets the verticalScrollState of the FileBufferView
      * @post getVerticalScrollState() == newVerticalScrollState
      * @return: void
      */
-    public FileBufferView(int heigth, int width, Point leftUpperCorner, File file) {
+    public FileBufferView(int heigth, int width, Point leftUpperCorner, FileBuffer fileBuffer) {
         super(heigth, width, leftUpperCorner);
-        this.file = file;
+        this.fileBuffer = fileBuffer;
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
+        this.insertionPoint = new Point(1,1);
     }
+
+    /* **********************
+     *  GETTERS AND SETTERS *
+     * **********************/
 
     public void setVerticalScrollState(int newVerticalScrollState) {
         this.verticalScrollState = newVerticalScrollState;
@@ -85,21 +101,34 @@ public class FileBufferView extends Layout
      * @post getFile() == newFile
      * @return: void
      */
-    public void setFile(File newFile) {
-        this.file = newFile;
-    }
+    public void setBuffer(FileBuffer newFileBuffer) {
+        this.fileBuffer = newFileBuffer;
+    }       // Deze kan handig zijn in toekomst als we de wijzigingen ongedaan moeten maken en de file opnieuw zouden
+                // moeten inladen.
 
     /** This method returns the file of the FileBufferView
      * @return: File
      */
-    public File getFile() {
-        return file;
+    public FileBuffer getBuffer() {
+        return fileBuffer;
     }
 
     /** This method sets the position of the FileBufferView to parameter newPosition
      * @post getPosition() == newPosition
      * @return: void
      */
+
+    public Point getInsertionPoint() {
+        return insertionPoint;
+    }
+
+    public void setInsertionPoint(Point newInsertionPoint) {
+        Point insert = getBuffer().getNewInsertionPoint(newInsertionPoint);
+        if (insert != null) {
+            this.insertionPoint = insert;
+        }
+    }
+
     public void setPosition(int newPosition) {
         this.position = newPosition;
     }
@@ -111,25 +140,15 @@ public class FileBufferView extends Layout
         return this.position;
     }
 
+    /* **********************
+     *  DERIVED ATTRIBUTES  *
+     * **********************/
+
     /** This method returns the content of the FileBufferView
      * @return: String[]
      */
     public String[] getContent() {
-        return getFile().getContent();
-}
-
-    /** This method returns the buffer of the file
-     * @return: FileBuffer
-     */
-    public FileBuffer getBuffer() {
-        return getFile().getBuffer();
-    }
-
-    /** This method returns the insertion point of the buffer 
-     * @return: Point
-     */
-    public Point getInsertionPoint() {
-        return getBuffer().getInsertionPoint();
+        return getBuffer().getContent();
     }
 
     /** This method returns the number of rows
@@ -146,11 +165,24 @@ public class FileBufferView extends Layout
         return getBuffer().getColumnCount();
     }
 
+    /** This method returns the number of characters in the buffer
+     * @return: int
+     */
+    private int getCharacterCount() {
+        return getBuffer().countCharacters();
+    }
+
     /** This method returns the path of the file
      * @return: String
      */
     public String getPath() {
-        return getFile().getPath();
+        return getBuffer().getPath();
+    }
+
+    public String getFileName() {
+        String[] filepath = getPath().split("/");
+        filepath = filepath[filepath.length - 1].split("\\\\");
+        return filepath[filepath.length - 1];
     }
 
     /** This method returns the position of the cursor
@@ -162,7 +194,127 @@ public class FileBufferView extends Layout
         return new Point((int) (leftUp.getX() + insert.getX() - getVerticalScrollState()), (int) (leftUp.getY() + insert.getY() - getHorizontalScrollState()));
     }
 
-    /** This method shows the content of the FileBufferView and the updated scrollbars 
+    /* ******************
+     *  INSPECT CONTENT *
+     * ******************/
+
+    /** This method moves the insertion point with the given parameter dir
+     * @return: void
+     */
+    public void moveInsertionPoint(Point dir) {
+        Point newInsertionPoint = new Point((int) (getInsertionPoint().getX() + dir.getX()),
+                (int) (getInsertionPoint().getY() + dir.getY()));
+        setInsertionPoint(newInsertionPoint);
+    }
+
+    @Override
+    public int getNextFocus(int focus) {
+        return 1;
+    }
+
+    @Override
+    public int getPreviousFocus(int focus) {
+        return 1;
+    }
+
+    /* **********************
+     *  EDIT BUFFER CONTENT *
+     ************************/
+
+    /** This method adds a new line break to the buffer and updates the scroll states
+     * @return: void
+     */
+    public void addNewLineBreak() {
+        getBuffer().insertLineBreak(getInsertionPoint());
+        setInsertionPoint(new Point((int)getInsertionPoint().getX()+1, 1));
+    }
+
+    /** This method adds a new character to the file and updates the scroll states
+     * @return: void
+     */
+    public void addNewChar(char c) {
+        getBuffer().addNewChar(c, getInsertionPoint());
+        moveInsertionPoint(new Point(0, 1));
+    }
+
+    /** This method deletes a character of the buffer and updates the scroll states
+     * @return: void
+     */
+    public void deleteChar() {
+        if (! getInsertionPoint().equals(new Point(1,1))) {
+            getBuffer().deleteChar(getInsertionPoint());
+            if (getInsertionPoint().getY() == 1) {
+                setInsertionPoint(new Point((int) (getInsertionPoint().getX() - 1), getContent()[(int) (getInsertionPoint().getX() - 2)].length() + 1));
+            }
+            else {
+                moveInsertionPoint(new Point(0, -1));
+            }
+        }
+    }
+
+    /* ******************
+     *   CLOSE BUFFER   *
+     * ******************/
+
+    /** This method closes the buffer and updates the subLayouts
+     * @return: FileBufferView || null
+     */
+    @Override
+    public FileBufferView closeBuffer(int focus, CompositeLayout parent) throws IOException {
+        if (getPosition() != focus) {
+            return this;
+        }
+        else {
+            return null;
+            /*
+                if (getBuffer().getDirty()) {
+                    Terminal.clearScreen();
+                    Terminal.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
+                    int c = Terminal.readByte();
+                    while (c != 121 && c != 89 && c != 78 && c != 110) {
+                        c = Terminal.readByte();
+                    }
+                    if (c == 121 || c == 89) {
+                        return null;
+                    }
+                    return this;
+                }
+                else {
+                    return null;
+                }
+
+             */
+        }
+    }
+
+    /* ******************
+     *    SAVE BUFFER   *
+     * ******************/
+
+    /** This method saves the buffer of the file and updates the scroll states
+     * @return: void
+     */
+    public void saveBuffer(String newLine) throws IOException {
+        getBuffer().saveBuffer(newLine);
+    }
+
+    /* *****************
+     *    ROTATE VIEW  *
+     * *****************/
+
+    /** This method returns the focused Layout
+     * @return: FileBufferView
+     */
+     @Override
+    protected FileBufferView rotateView(int dir, CompositeLayout parent, int focus, int nextFocus) {
+        return this;
+    }
+
+    /* ******************
+     *  SHOW FUNCTIONS  *
+     * ******************/
+
+    /** This method shows the content of the FileBufferView and the updated scrollbars
      * @return: void
      */
     public void show() {
@@ -188,15 +340,7 @@ public class FileBufferView extends Layout
         showScrollbars();
     }
 
-    /** This method adds a new line break to the buffer and updates the scroll states
-     * @return: void
-     */
-    public void addNewLineBreak() {
-        getBuffer().insertLineBreak();
-        updateScrollStates();
-    }
-
-    /** This method shows the scrollbars 
+    /** This method shows the scrollbars
      * @return: void
      */
     private void showScrollbars() {
@@ -213,14 +357,17 @@ public class FileBufferView extends Layout
      * @return: char[]
      */
     private char[] makeVerticalScrollBar() {
-        int h = getHeigth()-1;
-        int partsAbove = (int)getInsertionPoint().getX()-1 / h;
-        float chunkSize = ((float)h / (int) Math.ceil((float)getRowCount() / h));
-        char[] result = new char[h];
-        for (int i=0; i<h; i++) {
-            if(i<Math.floor(chunkSize*partsAbove)) result[i] = '|';
-            else if(i<Math.ceil(chunkSize*(partsAbove+1))) result[i] = '#';
-            else result[i] = '|';
+        int rows = (int) (Math.ceil((float) getRowCount() / (float) (getHeigth() - 1)) * (getHeigth() - 1));
+        int start = (int) Math.floor((float) getVerticalScrollState() / ((float) rows) * getHeigth());
+        int end = (int) Math.ceil((float) (getVerticalScrollState()  + getHeigth() - 1 )/ (float) rows * (getHeigth())) - 1;
+        char[] result = new char[getHeigth() - 1];
+        for (int i = 0; i < result.length; i++) {
+            if (i < start || i > end) {
+                result[i] = '|';
+            }
+            else {
+                result[i] = '#';
+            }
         }
         return result;
     }
@@ -229,13 +376,7 @@ public class FileBufferView extends Layout
      * @return: String
      */
     private String makeHorizontalScrollBar() {
-        StringBuilder result = new StringBuilder();
-        String[] filepath = getPath().split("/");
-        String filename = filepath[filepath.length - 1];
-        if (getBuffer().getDirty()) {
-            result.append("* ");
-        }
-        result.append(filename + ", r: " + String.valueOf(getRowCount()) + ", char: " + String.valueOf(getCharacterCount()) + " ");
+        StringBuilder result = makeFileHeader();
         if (getWidth() - 1 > getColumnCount()) {
             while (result.length() < getWidth()) {
                 result.append('#');
@@ -258,54 +399,19 @@ public class FileBufferView extends Layout
         return result.toString();
     }
 
-    /** This method returns the number of characters in the buffer
-     * @return: int
-     */
-    private int getCharacterCount() {
-        return getBuffer().countCharacters();
+    public StringBuilder makeFileHeader() {     //  HIER MOET INSERTION POINT NOG AAN TOEGEVOEGD WORDEN !!!
+        StringBuilder result = new StringBuilder();
+        String filename = getFileName();
+        if (getBuffer().getDirty()) {
+            result.append("* ");
+        }
+        result.append(filename + ", r: " + String.valueOf(getRowCount()) + ", char: " + String.valueOf(getCharacterCount()) + " ");
+        return result;
     }
 
-    /** This method saves the buffer of the file and updates the scroll states
-     * @return: void
-     */
-    public void safeBuffer(String newLine) throws IOException {
-        getFile().saveBuffer(newLine);
-        updateScrollStates();
-    }
-
-    /** This method adds a new character to the file and updates the scroll states
-     * @return: void
-     */
-    public void addNewChar(char c) {
-        File file = getFile();
-        file.addNewChar(c);
-        setFile(file);
-        updateScrollStates();
-    }
-
-    /** This method deletes a character of the buffer and updates the scroll states
-     * @return: void
-     */
-    public void deleteChar() {
-        getBuffer().deleteChar();
-        updateScrollStates();
-    }
-
-    /** This method rotates the view and returns the new focused view 
-     * @return: FileBufferView
-     */
-    @Override
-    protected FileBufferView rotateView(int dir, CompositeLayout parent, int focus) {
-        return this;
-    }
-    
-    /** This method returns the focused Layout
-     * @return: FileBufferView
-     */
-     @Override
-    protected FileBufferView rotateView(int dir, CompositeLayout parent, int focus, int nextFocus) {
-        return this;
-    }
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
 
     /** This method updates the scroll states
      * @return: void
@@ -329,9 +435,8 @@ public class FileBufferView extends Layout
      * @return: int
      */
     @Override
-    public int initViewPosition(int i) {
+    public void initViewPosition(int i) {
         setPosition(i);
-        return 1;
     }
 
     /** This method returns the focused view at the given index i
@@ -343,6 +448,14 @@ public class FileBufferView extends Layout
             return this;
         }
         return null;
+    }
+
+    @Override
+    public int getNewFocus(int focus) {
+        if (focus > countViews()) {
+            return focus - 1;
+        }
+        return focus;
     }
 
     /** This method returns the number of views
@@ -365,33 +478,5 @@ public class FileBufferView extends Layout
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
-        updateScrollStates();
-    }
-
-    /** This method closes the buffer and updates the subLayouts
-     * @return: FileBufferView || null
-     */
-    @Override
-    public FileBufferView closeBuffer(int focus, CompositeLayout parent) throws IOException {
-        if (getPosition() != focus) {
-            return this;
-        }
-        else {
-            if (getBuffer().getDirty()) {
-                Terminal.clearScreen();
-                Terminal.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
-                int c = Terminal.readByte();
-                while (c != 121 && c != 89 && c != 78 && c != 110) {
-                    c = Terminal.readByte();
-                }
-                if (c == 121 || c == 89) {
-                    return null;
-                }
-                return this;
-            }
-            else {
-                return null;
-            }
-        }
     }
 }

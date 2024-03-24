@@ -15,7 +15,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getContent()[0], "test12");
         assertEquals(fbv1.getContent()[1], "");
         assertEquals(fbv1.getContent()[2], "test123");
-        assertEquals(fbv1.getFile().getPath(), "test1.txt");
+        assertEquals(fbv1.getPath(), "test1.txt");
         assertEquals(fbv1.getPosition(), 1);
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getVerticalScrollState(), 1);
@@ -26,7 +26,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getHeigth(), 4);
         assertEquals(fbv1.getWidth(), 5);
         // Tests voor getCursor
-        fbv1.getBuffer().setInsertionPoint(new Point(3,4));
+        fbv1.setInsertionPoint(new Point(3,4));
         assertEquals(fbv1.getInsertionPoint(), new Point(3, 4));
         assertEquals(fbv1.getCursor(), new Point(22, 13));
         // Tests voor updateScrollStates
@@ -37,7 +37,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getVerticalScrollState(), 4);
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getCursor(), new Point(20, 10));
-        fbv1.safeBuffer("\n");
+        fbv1.saveBuffer("\n");
         assertFalse(fbv1.getBuffer().getDirty());
     }
 }
