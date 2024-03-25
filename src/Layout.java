@@ -116,10 +116,11 @@ public abstract class Layout {
      *    ROTATE VIEW  *
      * *****************/
 
-    /** This method rotates the view and updates the subLayouts
-     * @return: Layout
-     */
-    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
+    protected abstract Layout rotateView(int dir, int focus);
+
+    protected abstract Layout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent);
+
+    protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
     /* ******************
      *  SHOW FUNCTIONS  *

@@ -29,42 +29,89 @@ public class StackedLayout extends CompositeLayout {
      * @return: CompositeLayout || null
      */
     @Override
-    public CompositeLayout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus) {
+    protected StackedLayout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
         if (this == parent) {
-            FileBufferView focused = getFocusedView(focus);
-            FileBufferView next = getFocusedView(nextFocus);
-            Layout[] newSubLays = new Layout[getSubLayouts().length - 1];
-            Layout[] subSubLays = new Layout[2];
-            if (dir == 1) {
-                subSubLays[0] = focused;
-                subSubLays[1] = next;
-            } else if(dir == -1){
-                subSubLays[0] = next;
-                subSubLays[1] = focused;
-            }
-            SideBySideLayout sbs = new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), subSubLays);
-            int i=0;
-            int j=0;
-            Layout[] temp = new Layout[newSubLays.length];
-            while (i<getSubLayouts().length) {
-                if(getSubLayouts()[i] != next) {
-                    temp[j++] = getSubLayouts()[i];
+            Layout[] newSubLayouts = new Layout[countSubLayouts() - 1];
+            int j = 0;
+            FileBufferView focusView = getFocusedView(focus);
+            FileBufferView nextView = getFocusedView(nextFocus);
+            for (int i= 0; i < countSubLayouts(); i++) {
+                if (getSubLayouts()[i] != nextView) {
+                    if (getSubLayouts()[i] == focusView) {
+                        if (dir == 1) {
+                            Layout[] subSubLayouts = new Layout[] {focusView, nextView};
+                            newSubLayouts[j] = new SideBySideLayout(getHeigth(),getWidth(),getLeftUpperCorner(),subSubLayouts);
+                        }
+                        else {
+                            Layout[] subSubLayouts = new Layout[] {nextView, focusView};
+                            newSubLayouts[j] = new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), subSubLayouts);
+                        }
+                        j += 1;
+                    }
+                    else {
+                        newSubLayouts[j] = getSubLayouts()[i];
+                        j += 1;
+                    }
                 }
-                i++;
             }
-            setSubLayouts(temp);
-            for(int k=0; k<newSubLays.length; k++) {
-                if (getSubLayouts()[k] == focused) newSubLays[k] = sbs;
-                else newSubLays[k] = getSubLayouts()[k];
-            }
-            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLays);
-        } else {
-            Layout[] newSubLay = new Layout[getSubLayouts().length];
-            for (int k=0; k<newSubLay.length; k++){
-                newSubLay[k] = getSubLayouts()[k].rotateView(dir, parent ,focus, nextFocus);
-            }
-            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLay);
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
         }
+        else {
+            Layout[] newSubLayouts = new Layout[countSubLayouts()];
+            for (int i = 0; i < countSubLayouts(); i++) {
+                newSubLayouts[i] = getSubLayouts()[i].rotateSiblings(dir, focus, nextFocus, parent);
+            }
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
+    }
+
+    /** This method rotates the view and updates the subLayouts
+     * @return: CompositeLayout || null
+     */
+    @Override
+    protected CompositeLayout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
+        if (this == parent) {
+            if (dir == 1) {
+                return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), getSubLayouts());
+            }
+            else {
+                return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(),
+                        new Layout[] {getSubLayouts()[1], getSubLayouts()[0]});
+            }
+        }
+        else if (contains(parent)) {
+            Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];
+            int j = 0;
+            for (int i = 0; i < countSubLayouts(); i++) {
+                if (getSubLayouts()[i] == parent) {
+                    if (dir == -1) {
+                        newSubLayouts[j] = parent.getFocusedView(focus);
+                        newSubLayouts[j + 1] = parent.getFocusedView(nextFocus);
+                    }
+                    else {
+                        newSubLayouts[j] = parent.getFocusedView(nextFocus);
+                        newSubLayouts[j + 1] = parent.getFocusedView(focus);
+                    }
+                    j += 2;
+                }
+                else {
+                    newSubLayouts[j] = getSubLayouts()[i];
+                    j += 1;
+                }
+            }
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
+        else {
+            Layout[] newSubLayouts = new Layout[countSubLayouts()];
+            for (int i = 0; i < countSubLayouts(); i++) {
+                newSubLayouts[i] = getSubLayouts()[i].rotateSiblingsFlip(dir, focus, nextFocus, parent);
+            }
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
+    }
+
+    protected CompositeLayout rotateNonSiblings(int dir, int focus) {
+        return null;
     }
 
     /* ******************

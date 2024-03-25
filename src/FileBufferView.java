@@ -306,9 +306,17 @@ public class FileBufferView extends Layout
      * @return: FileBufferView
      */
      @Override
-    protected FileBufferView rotateView(int dir, CompositeLayout parent, int focus, int nextFocus) {
+    protected FileBufferView rotateView(int dir, int focus) {
         return this;
-    }
+     }
+
+     public FileBufferView rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
+         return this;
+     }
+
+     public FileBufferView rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
+         return this;
+     }
 
     /* ******************
      *  SHOW FUNCTIONS  *
