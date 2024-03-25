@@ -423,7 +423,9 @@ public class FileBufferView extends Layout
         if (getBuffer().getDirty()) {
             result.append("* ");
         }
-        result.append(filename + ", r: " + String.valueOf(getRowCount()) + ", char: " + String.valueOf(getCharacterCount()) + " ");
+        result.append(filename + ", r: " + String.valueOf(getRowCount()) +
+                ", char: " + String.valueOf(getCharacterCount()) +
+                ", insert: (" + getInsertionPoint().getX() + ", " + getInsertionPoint().getY() + ") ");
         return result;
     }
 
