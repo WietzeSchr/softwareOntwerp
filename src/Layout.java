@@ -122,6 +122,10 @@ public abstract class Layout {
 
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
+    protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
+
+    protected abstract Layout rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
