@@ -310,13 +310,23 @@ public class FileBufferView extends Layout
         return this;
      }
 
-     public FileBufferView rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
+     protected FileBufferView rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
          return this;
      }
 
-     public FileBufferView rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
+     protected FileBufferView rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
          return this;
      }
+
+     protected FileBufferView rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+         return this;
+     }
+
+     protected FileBufferView rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+         return this;
+     }
+
+
 
     /* ******************
      *  SHOW FUNCTIONS  *

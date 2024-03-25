@@ -110,9 +110,68 @@ public class StackedLayout extends CompositeLayout {
         }
     }
 
-    protected CompositeLayout rotateNonSiblings(int dir, int focus) {
-        return null;
+    @Override
+    protected CompositeLayout rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+        if (this == parent1)
+        {
+            Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];
+            for (int i = 0; i < countSubLayouts(); i++) {
+                newSubLayouts[i] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            }
+            newSubLayouts[countSubLayouts()] = nextView;
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
+        else if (this == parent2) {
+            Layout[] newSubLayouts = new Layout[countSubLayouts() - 1];
+            int j = 0;
+            for (int i = 0; i < countSubLayouts(); i++) {
+                if (getSubLayouts()[i] != nextView) {
+                    newSubLayouts[j] = getSubLayouts()[i];
+                    j++;
+                }
+            }
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
+        else {
+            Layout[] newSubLayouts = new Layout[countSubLayouts()];
+            for (int i = 0; i < countSubLayouts(); i++) {
+                newSubLayouts[i] = getSubLayouts()[i].rotateNonSiblings(dir, focus, nextView, parent1, parent2);
+            }
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
     }
+
+    @Override
+    protected Layout rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+        if (this == parent1)
+        {
+            Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];
+            for (int i = 0; i < countSubLayouts(); i++) {
+                newSubLayouts[i] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            }
+            newSubLayouts[countSubLayouts()] = nextView;
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
+        else if (this == parent2) {
+            Layout result;
+            if (getSubLayouts()[0] == nextView) {
+                result = getSubLayouts()[1].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            }
+            else {
+                result = getSubLayouts()[0].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            }
+            result.setParent(getParent());
+            return result;
+        }
+        else {
+            Layout[] newSubLayouts = new Layout[countSubLayouts()];
+            for (int i = 0; i < countSubLayouts(); i++) {
+                newSubLayouts[i] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            }
+            return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+        }
+    }
+
 
     /* ******************
      *  HELP FUNCTIONS  *
