@@ -115,12 +115,38 @@ public abstract class CompositeLayout extends Layout
      *    ROTATE VIEW  *
      * *****************/
 
-    protected abstract Layout rotateView(int dir, CompositeLayout parent, int focus, int nextFocus);
+    @Override
+    protected CompositeLayout rotateView(int dir, int focus) {
+        int heigth = getHeigth();
+        int width = getWidth();
+        CompositeLayout result;
+        FileBufferView focusView = getFocusedView(focus);
+        FileBufferView nextView = getFocusedView(getNextFocus(focus));
+        if (focusView.getParent() == nextView.getParent()) {
+            if (focusView.getParent().countSubLayouts() == 2) {
+                result = rotateSiblingsFlip(dir, focus, getNextFocus(focus), focusView.getParent());
+            }
+            else {
+                result = rotateSiblings(dir, focus, getNextFocus(focus), focusView.getParent());
+            }
+        }
+        else {
+            result = rotateNonSiblings(dir, focus);
+        }
+        result.updateSize(heigth, width, new Point(1,1));
+        return result;
+    }
+
+    protected abstract CompositeLayout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent);
+
+    protected abstract CompositeLayout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
+
+    protected abstract CompositeLayout rotateNonSiblings(int dir, int focus);
 
     public Layout prune(){
         if(getSubLayouts().length == 1) {
             if(this.getParent()==null) {
-                getSubLayouts()[0].setParent(this.getParent());
+                getSubLayouts()[0].setParent(null);
                 return getSubLayouts()[0];
             }
             else {
@@ -193,6 +219,15 @@ public abstract class CompositeLayout extends Layout
             }
         }
         return res;
+    }
+
+    public boolean contains(Layout layout) {
+        for (int i = 0; i < countSubLayouts(); i++) {
+            if (getSubLayouts()[i] == layout) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

@@ -31,9 +31,11 @@ class FileBufferViewTest {
         assertEquals(fbv1.getCursor(), new Point(22, 13));
         // Tests voor updateScrollStates
         fbv1.addNewChar('c');
+        fbv1.updateScrollStates();
         assertEquals(fbv1.getHorizontalScrollState(), 5);
         assertTrue(fbv1.getBuffer().getDirty());
         fbv1.addNewLineBreak();
+        fbv1.updateScrollStates();
         assertEquals(fbv1.getVerticalScrollState(), 4);
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getCursor(), new Point(20, 10));

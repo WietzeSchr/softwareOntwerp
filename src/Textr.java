@@ -327,30 +327,8 @@ public class Textr
      * @return: void
      */
     private void rotateView(int dir) {
-        int height = getLayout().getHeigth();
-        int width = getLayout().getWidth();
-        Layout newLayout;
-        if (countViews() != 1) {
-            FileBufferView focus = getFocusedView();
-            FileBufferView next = getView(nextFocus());
-            if (focus.getParent() == next.getParent()) {
-                newLayout = getLayout().rotateView(dir, focus.getParent(), getFocus(), nextFocus());
-            }
-            else {
-                throw new RuntimeException("geen siblings");
-            }
-            CompositeLayout newCompLayout = (CompositeLayout)newLayout;
-            newLayout = newCompLayout.prune();
-        }
-        else {
-            newLayout = getLayout();
-        }
-        if(newLayout == null) throw new RuntimeException("newLayout = null");
+        Layout newLayout = getLayout().rotateView(dir, getFocus());
         setLayout(newLayout);
-        updateSize(height, width);
-        FileBufferView focus = getFocusedView();
-        initViewPositions();
-        setFocus(focus.getPosition());
         show();
     }
 
@@ -363,6 +341,9 @@ public class Textr
      */
     private void show() {
         Terminal.clearScreen();
+        FileBufferView focused = getFocusedView();
+        initViewPositions();
+        setFocus(focused.getPosition());
         getLayout().show();
         showCursor();
     }
