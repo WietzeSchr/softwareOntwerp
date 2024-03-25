@@ -14,6 +14,7 @@ public class SideBySideLayout extends CompositeLayout{
     public SideBySideLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
         super(height, width, leftUpperCorner, filepaths, newLine);
     }
+        //  Deze kunnen we bij houden voor initialisatie met SideBySide
 
     /** This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner and subLayouts
      */

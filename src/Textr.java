@@ -218,13 +218,6 @@ public class Textr
         return getLayout().getFocusedView(getFocus());
     }
 
-    /** This method returns the view at position
-     * @return: FileBufferView
-     */
-    private FileBufferView getView(int position) {
-        return getLayout().getFocusedView(position);
-    }
-
     /* ******************
      *  INSPECT CONTENT *
      * ******************/
