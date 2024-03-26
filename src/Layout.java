@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.IOException;
 
 /* **********
@@ -104,13 +103,76 @@ public abstract class Layout {
     }
 
     /* ******************
+     *  INSPECT CONTENT *
+     * ******************/
+
+    public void updateInsertionPoint(int x, int y, int focus) {
+        getFocusedView(focus).moveInsertionPoint(new Point(x, y));
+    }
+
+    public int getNextFocus(int focus) {
+        if (focus == countViews()) {
+            return 1;
+        }
+        return focus + 1;
+    }
+
+    public int getPreviousFocus(int focus) {
+        if (focus == 1) {
+            return countViews();
+        }
+        return focus - 1;
+    }
+
+    /* **********************
+     *  EDIT BUFFER CONTENT *
+     ************************/
+
+    public void addNewLineBreak(int focus) {
+        getFocusedView(focus).addNewLineBreak();
+    }
+
+    public void addNewChar(char c, int focus) {
+        getFocusedView(focus).addNewChar(c);
+    }
+
+    public void deleteChar(int focus) {
+        getFocusedView(focus).deleteChar();
+    }
+
+    /* ******************
      *   CLOSE BUFFER   *
      * ******************/
+
+    public Layout closeView(int focus) throws IOException {
+        int heigth = getHeigth();
+        int width = getWidth();
+        CompositeLayout parent = getFocusedView(focus).getParent();
+        Layout result = closeBuffer(focus, parent);
+        result.initViewPosition(1);
+        result.updateSize(heigth, width, new Point(1,1));
+        return result;
+    }
+
+    public int getNewFocus(int focus) {
+        if (focus > countViews()) {
+            return focus - 1;
+        }
+        return focus;
+    }
 
     /** This method closes the buffer and updates the subLayouts
      * @return: Layout
      */
     public abstract Layout closeBuffer(int focus, CompositeLayout parent) throws IOException;
+
+    /* ******************
+     *    SAVE BUFFER   *
+     * ******************/
+
+    public void saveBuffer(int focus, String newLine) throws IOException {
+        getFocusedView(focus).saveBuffer(newLine);
+    }
 
     /* *****************
      *    ROTATE VIEW  *
@@ -138,10 +200,6 @@ public abstract class Layout {
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
-
-    public abstract int getNextFocus(int focus);
-
-    public abstract int getPreviousFocus(int focus);
     
      /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
      * @return: int
@@ -163,11 +221,5 @@ public abstract class Layout {
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
-    /** This method sets the height of the layout to the given parameter newHeight
-     * @post getHeigth() == newHeight
-     * @return: void
-     */
-
-    public abstract int getNewFocus(int focus);
 }
 

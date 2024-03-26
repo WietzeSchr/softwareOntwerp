@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.IOException;
 
 public abstract class CompositeLayout extends Layout {
@@ -33,7 +32,7 @@ public abstract class CompositeLayout extends Layout {
         Point subSize = calcSubSize();
         for (int i = 0; i < length; i++) {
             Point leftUpCorner = calcLeftUpCorner(i);
-            setSubLayout(new FileBufferView((int) subSize.getX(), (int) subSize.getY(), this, leftUpCorner, filepaths[i], newLine), i);
+            setSubLayout(new FileBufferView(subSize.getX(), subSize.getY(), this, leftUpCorner, filepaths[i], newLine), i);
         }
     }
 
@@ -253,30 +252,6 @@ public abstract class CompositeLayout extends Layout {
         return false;
     }
 
-    @Override
-    public int getNextFocus(int focus) {
-        if (focus >= countViews()) {
-            return 1;
-        }
-        return focus + 1;
-    }
-
-    @Override
-    public int getPreviousFocus(int focus) {
-        if (focus == 1) {
-            return countViews();
-        }
-        return focus - 1;
-    }
-
-    @Override
-    public int getNewFocus(int focus) {
-        if (focus > countViews()) {
-            return focus - 1;
-        }
-        return focus;
-    }
-
     /**
      * This method returns the number of views
      *
@@ -308,7 +283,7 @@ public abstract class CompositeLayout extends Layout {
         Point subSize = calcSubSize();
         for (int i = 0; i < countSubLayouts(); i++) {
             Point subLeftUp = calcLeftUpCorner(i);
-            getSubLayouts()[i].updateSize((int) subSize.getX(), (int) subSize.getY(), subLeftUp);
+            getSubLayouts()[i].updateSize(subSize.getX(), subSize.getY(), subLeftUp);
         }
     }
 }

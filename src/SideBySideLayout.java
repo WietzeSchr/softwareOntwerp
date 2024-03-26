@@ -1,6 +1,3 @@
-import java.awt.*;
-import java.util.ArrayList;
-
 import static java.lang.Math.floor;
 
 public class SideBySideLayout extends CompositeLayout{
@@ -189,6 +186,6 @@ public class SideBySideLayout extends CompositeLayout{
     @Override
     public Point calcLeftUpCorner(int i) {
         int subWidth = (int) floor((float) getWidth() / (float) countSubLayouts());
-        return new Point((int) getLeftUpperCorner().getX(), (int) getLeftUpperCorner().getY() + i * subWidth);
+        return new Point(getLeftUpperCorner().getX(), getLeftUpperCorner().getY() + i * subWidth);
     }
 }

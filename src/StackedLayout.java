@@ -1,6 +1,3 @@
-import java.awt.*;
-import java.util.ArrayList;
-
 import static java.lang.Math.floor;
 
 public class StackedLayout extends CompositeLayout {
@@ -191,6 +188,6 @@ public class StackedLayout extends CompositeLayout {
     @Override
     public Point calcLeftUpCorner(int i) {
         int subHeight = (int) floor((float) getHeigth() / (float) countSubLayouts());
-        return new Point((int) (getLeftUpperCorner().getX() + i * subHeight), (int) getLeftUpperCorner().getY());
+        return new Point(getLeftUpperCorner().getX() + i * subHeight, getLeftUpperCorner().getY());
     }
 }

@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,10 +154,10 @@ public class FileBuffer {
             content[0] = String.valueOf(c);
         }
         else {
-            String row = content[(int) insert.getX() - 1];
+            String row = content[insert.getX() - 1];
             if (row == null) {
                 row = String.valueOf(c);
-                content[(int) insert.getX() - 1] = row;
+                content[insert.getX() - 1] = row;
             }
             else {
                 StringBuilder eRow = new StringBuilder();
@@ -171,7 +170,7 @@ public class FileBuffer {
                 if (insert.getY() > row.length()) {
                     eRow.append(c);
                 }
-                content[(int) insert.getX() - 1] = eRow.toString();
+                content[insert.getX() - 1] = eRow.toString();
             }
         }
         setContent(content);
@@ -244,9 +243,9 @@ public class FileBuffer {
             return null;
         }
         //spring naar laatste character van target lijn
-        int currRowLength = content[(int)insertionPoint.getX()-1].length();
+        int currRowLength = content[insertionPoint.getX()-1].length();
         if (insertionPoint.getY() > currRowLength){
-            insertionPoint = new Point((int)insertionPoint.getX(), currRowLength+1);
+            insertionPoint = new Point(insertionPoint.getX(), currRowLength+1);
         }
         return insertionPoint;
     }
