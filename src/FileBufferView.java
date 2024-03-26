@@ -1,6 +1,4 @@
 import io.github.btj.termios.Terminal;
-
-import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -191,7 +189,7 @@ public class FileBufferView extends Layout
     public Point getCursor() {
         Point insert = getInsertionPoint();
         Point leftUp = getLeftUpperCorner();
-        return new Point((int) (leftUp.getX() + insert.getX() - getVerticalScrollState()), (int) (leftUp.getY() + insert.getY() - getHorizontalScrollState()));
+        return leftUp.add(insert).minus(new Point(getVerticalScrollState(), getHorizontalScrollState()));
     }
 
     /* ******************
@@ -202,8 +200,7 @@ public class FileBufferView extends Layout
      * @return: void
      */
     public void moveInsertionPoint(Point dir) {
-        Point newInsertionPoint = new Point((int) (getInsertionPoint().getX() + dir.getX()),
-                (int) (getInsertionPoint().getY() + dir.getY()));
+        Point newInsertionPoint = getInsertionPoint().add(dir);
         setInsertionPoint(newInsertionPoint);
     }
 
@@ -226,7 +223,7 @@ public class FileBufferView extends Layout
      */
     public void addNewLineBreak() {
         getBuffer().insertLineBreak(getInsertionPoint());
-        setInsertionPoint(new Point((int)getInsertionPoint().getX()+1, 1));
+        setInsertionPoint(new Point(getInsertionPoint().getX()+1, 1));
     }
 
     /** This method adds a new character to the file and updates the scroll states
@@ -244,7 +241,7 @@ public class FileBufferView extends Layout
         if (! getInsertionPoint().equals(new Point(1,1))) {
             getBuffer().deleteChar(getInsertionPoint());
             if (getInsertionPoint().getY() == 1) {
-                setInsertionPoint(new Point((int) (getInsertionPoint().getX() - 1), getContent()[(int) (getInsertionPoint().getX() - 2)].length() + 1));
+                setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
             }
             else {
                 moveInsertionPoint(new Point(0, -1));
@@ -346,10 +343,10 @@ public class FileBufferView extends Layout
             if (cont[row] != null) {
                 if (cont[row].length() > getHorizontalScrollState() - 1) {
                     if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
-                        Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                        Terminal.printText(getLeftUpperCorner().getX() + i,
                                 (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
                     } else {
-                        Terminal.printText((int) getLeftUpperCorner().getX() + i,
+                        Terminal.printText( getLeftUpperCorner().getX() + i,
                                 (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1));
                     }
                 }
@@ -364,10 +361,10 @@ public class FileBufferView extends Layout
     private void showScrollbars() {
         char[] verticalScrollBar = makeVerticalScrollBar();
         String horizontalScrollBar = makeHorizontalScrollBar();
-        Terminal.printText((int) (getLeftUpperCorner().getX() + getHeigth()) - 1, (int) getLeftUpperCorner().getY(), horizontalScrollBar);
+        Terminal.printText( (getLeftUpperCorner().getX() + getHeigth()) - 1, getLeftUpperCorner().getY(), horizontalScrollBar);
         for (int i = 0; i < verticalScrollBar.length; i++) {
-            Terminal.printText((int) (getLeftUpperCorner().getX() + i),
-                    (int) (getLeftUpperCorner().getY() + getWidth() - 1), String.valueOf(verticalScrollBar[i]));
+            Terminal.printText(getLeftUpperCorner().getX() + i,
+                    getLeftUpperCorner().getY() + getWidth() - 1, String.valueOf(verticalScrollBar[i]));
         }
     }
 
@@ -468,14 +465,6 @@ public class FileBufferView extends Layout
             return this;
         }
         return null;
-    }
-
-    @Override
-    public int getNewFocus(int focus) {
-        if (focus > countViews()) {
-            return focus - 1;
-        }
-        return focus;
     }
 
     /** This method returns the number of views

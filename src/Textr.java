@@ -1,5 +1,4 @@
 import io.github.btj.termios.Terminal;
-import java.awt.*;
 import java.io.IOException;
 
 class TerminalParser {
@@ -176,12 +175,24 @@ public class Textr
                 if (c1 == 50) {
                     int c2 = Terminal.readByte();
                     if (c2 == 83) {
-                        closeBuffer();
+                        closeView();
                     }
                 }
             }
+            else if (c == 4) {
+                duplicateView();            //  Ctrl + D
+            }
+            else if (c == 7) {
+                openGameView();             //  Ctrl + G
+            }
             else if (c == 13) {             //  ENTER
                 addNewLineBreak();
+            }
+            else if (c == 21) {             //  Ctrl + U
+                redo();
+            }
+            else if (c == 26) {             //  Ctrl + Z
+                undo();
             }
             else if (c == 127) {
                 deleteChar();               //  BACKSPACE
@@ -204,6 +215,7 @@ public class Textr
             else if (c >= 32 && c <= 126) { //  Legal Chars
                 addNewChar((char) c);
             }
+            show();
         }
     }
 
@@ -228,7 +240,6 @@ public class Textr
      */
     void changeFocusNext() {
         setFocus(nextFocus());
-        show();
     }
 
     /** This method changes the focus to the previous view
@@ -237,15 +248,13 @@ public class Textr
      */
     void changeFocusPrevious() {
         setFocus(previousFocus());
-        show();
     }
 
     /** This method updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
     private void updateCursor(int x, int y) {
-        getFocusedView().moveInsertionPoint(new Point(x, y));
-        show();
+        getLayout().updateInsertionPoint(x, y, getFocus());
     }
 
     /* **********************
@@ -257,8 +266,7 @@ public class Textr
      * @return: void
      */
     void addNewLineBreak() {
-        getFocusedView().addNewLineBreak();
-        show();
+        getLayout().addNewLineBreak(getFocus());
     }
 
     /** This method adds char c to the focused file buffer at the insertion point
@@ -266,8 +274,7 @@ public class Textr
      * @return: void
      */
     protected void addNewChar(char c) {
-        getFocusedView().addNewChar(c);
-        show();
+        getLayout().addNewChar(c, getFocus());
     }
 
     /** This method deletes the character at the insertion point in the focused file buffer
@@ -275,8 +282,7 @@ public class Textr
      * @return: void
      */
     void deleteChar() {
-        getFocusedView().deleteChar();
-        show();
+        getLayout().deleteChar(getFocus());
     }
 
     /* ******************
@@ -287,15 +293,9 @@ public class Textr
      *  It also updates the layout and the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void closeBuffer() throws IOException {
-        int heigth = getLayout().getHeigth();
-        int width = getLayout().getWidth();
-        CompositeLayout parent = getFocusedView().getParent();
-        setLayout(getLayout().closeBuffer(getFocus(), parent));
-        initViewPositions();
+    private void closeView() throws IOException {
+        setLayout(getLayout().closeView(getFocus()));
         setFocus(getLayout().getNewFocus(getFocus()));
-        updateSize(heigth, width);
-        show();
     }
 
     /* ******************
@@ -307,8 +307,7 @@ public class Textr
      * @return: void
      */
     private void saveBuffer() throws IOException {
-        getFocusedView().saveBuffer(getNewLine());
-        show();
+        getLayout().saveBuffer(getFocus(), getNewLine());
     }
 
     /* *****************
@@ -320,9 +319,35 @@ public class Textr
      * @return: void
      */
     private void rotateView(int dir) {
-        Layout newLayout = getLayout().rotateView(dir, getFocus());
-        setLayout(newLayout);
-        show();
+        setLayout(getLayout().rotateView(dir, getFocus()));
+    }
+
+    /* ******************
+     *  DUPLICATE VIEW  *
+     * ******************/
+
+    void duplicateView() {
+        return;
+    }
+
+    /* ******************
+     *  OPEN GAME VIEW  *
+     * ******************/
+
+    void openGameView() {
+        return;
+    }
+
+    /* ******************
+     *   UNDO / REDO    *
+     * ******************/
+
+    void undo() {
+        return;
+    }
+
+    void redo() {
+        return;
     }
 
     /* ******************
@@ -346,7 +371,7 @@ public class Textr
      */
     private void showCursor() {
         Point cursor = getFocusedView().getCursor();
-        Terminal.moveCursor((int) cursor.getX(), (int) cursor.getY());
+        Terminal.moveCursor(cursor.getX(), cursor.getY());
     }
 
     /* ******************
@@ -379,13 +404,6 @@ public class Textr
      */
     void updateSize(int heigth, int width) {
         getLayout().updateSize(heigth, width, new Point(1,1));
-    }
-
-    /** This method returns the number of views
-     * @return: int 
-     */
-    private int countViews() {
-        return getLayout().countViews();
     }
 
     /** This method returns the size of the terminal
