@@ -153,7 +153,7 @@ public class Textr
      * @return: void
      */
     private void run() throws IOException {
-        while (getLayout() != null) {
+        while (true) {
             int c = Terminal.readByte();
             if (c == 27) {                          //  ARROWS
                 int c1 = Terminal.readByte();
@@ -215,6 +215,7 @@ public class Textr
             else if (c >= 32 && c <= 126) { //  Legal Chars
                 addNewChar((char) c);
             }
+            if (getLayout() == null) break;
             show();
         }
     }
@@ -295,7 +296,6 @@ public class Textr
      */
     private void closeView() throws IOException {
         setLayout(getLayout().closeView(getFocus()));
-        setFocus(getLayout().getNewFocus(getFocus()));
     }
 
     /* ******************
@@ -343,11 +343,11 @@ public class Textr
      * ******************/
 
     void undo() {
-        return;
+        getLayout().undo(getFocus());
     }
 
     void redo() {
-        return;
+        getLayout().redo(getFocus());
     }
 
     /* ******************
@@ -359,6 +359,7 @@ public class Textr
      */
     private void show() {
         Terminal.clearScreen();
+        setFocus(getLayout().getNewFocus(getFocus()));
         FileBufferView focused = getFocusedView();
         initViewPositions();
         setFocus(focused.getPosition());

@@ -1,6 +1,4 @@
 import org.junit.jupiter.api.Test;
-
-import java.awt.*;
 import java.io.FileNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +7,7 @@ class FileBufferTest {
     @Test
     void testConstructor() throws FileNotFoundException {
         // Tests voor de constructor
-        FileBuffer fb1 = new FileBuffer(new String[] {"testtest", "1", "", "2"});
+        FileBuffer fb1 = new FileBuffer(new String[] {"testtest", "1", "", "2"}, "test1.txt");
         assertEquals(fb1.getContent().length, 4);
         assertEquals(fb1.getContent()[0], "testtest");
         assertEquals(fb1.getContent()[1], "1");
