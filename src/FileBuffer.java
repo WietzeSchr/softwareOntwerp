@@ -12,6 +12,10 @@ public class FileBuffer {
 
     private boolean dirty;
 
+    private FileBuffer previous;
+
+    private FileBuffer next;
+
     /*****************
      *  CONSTRUCTORS *
      *****************/
@@ -20,21 +24,24 @@ public class FileBuffer {
         this.file = new File(path);
         this.content = getFile().load(newLine);
         this.dirty = false;
+        this.previous = null;
+        this.next = null;
     }
 
     public FileBuffer(String[] content, String path) {
         this.file = new File(path);
         this.content = content;
         this.dirty = false;
+        this.previous = null;
+        this.next = null;
     }
 
-    /** This constructor creates a new FileBuffer with the given content
-     * @post getDirty() == false
-     * @post getInsertionPoint() == new Point(1, 1) 
-     */
-    public FileBuffer(String[] content) {
+    public FileBuffer(String[] content, File file, boolean dirty) {
         this.content = content;
-        this.dirty = false;
+        this.file = file;
+        this.dirty = dirty;
+        this.previous = null;
+        this.next = null;
     }
 
     /* **********************
@@ -83,6 +90,22 @@ public class FileBuffer {
         this.content = newContent;
     }
 
+    public FileBuffer getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(FileBuffer newBuffer) {
+        this.previous = newBuffer;
+    }
+
+    public FileBuffer getNext() {
+        return next;
+    }
+
+    public void setNext(FileBuffer newBuffer) {
+        this.next = newBuffer;
+    }
+
     /* *********************
      *  DERIVED ATTRIBUTES *
      ***********************/
@@ -125,13 +148,20 @@ public class FileBuffer {
      *  EDIT BUFFER CONTENT *
      ************************/
 
+    public void insertLineBreak(Point insert) {
+        FileBuffer newBuffer = copy();
+        newBuffer.addLineBreak(insert);
+        setNext(newBuffer);
+        newBuffer.setPrevious(this);
+    }
+
     /** This method inserts a line break at the insertion point and sets the buffer to dirty
      * @post getDirty() == true
      * @return: void
      */
-    public void insertLineBreak(Point insert){
-        int row = (int)insert.getX()-1;
-        int col = (int)insert.getY()-1;
+    public void addLineBreak(Point insert){
+        int row = insert.getX()-1;
+        int col = insert.getY()-1;
         ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
         String currentRow = getContent()[row];
         String firstPart = currentRow.substring(0, col);
@@ -142,11 +172,18 @@ public class FileBuffer {
         setDirty(true);
     }
 
+    public void addNewChar(char c, Point insert) {
+        FileBuffer newBuffer = copy();
+        newBuffer.addChar(c, insert);
+        setNext(newBuffer);
+        newBuffer.setPrevious(this);
+    }
+
     /** This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
      * @post getDirty() == true
      * @return: void
      */
-    public void addNewChar(char c, Point insert) {
+    public void addChar(char c, Point insert) {
         String[] content = getContent();
         if (content.length == 0)
         {
@@ -177,11 +214,18 @@ public class FileBuffer {
         setDirty(true);
     }
 
+    public void deleteChar(Point insert) {
+        FileBuffer nextBuffer = copy();
+        nextBuffer.delete(insert);
+        nextBuffer.setPrevious(this);
+        setNext(nextBuffer);
+    }
+
     /** This method deletes a character from the buffer and sets the buffer to dirty and moves the insertion point
      * @post getDirty() == true
      * @return: void
      */
-    public void deleteChar(Point insert) {
+    public void delete(Point insert) {
         String[] content = getContent();
         String[] newContent;
         if (insert.getY() == 1)  {
@@ -231,6 +275,24 @@ public class FileBuffer {
     }
 
     /* ******************
+     *   UNDO / REDO    *
+     * ******************/
+
+    public FileBuffer undo() {
+        if (getPrevious() != null) {
+            return getPrevious();
+        }
+        return this;
+    }
+
+    public FileBuffer redo() {
+        if (getNext() != null) {
+            return getNext();
+        }
+        return this;
+    }
+
+    /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
 
@@ -248,5 +310,13 @@ public class FileBuffer {
             insertionPoint = new Point(insertionPoint.getX(), currRowLength+1);
         }
         return insertionPoint;
+    }
+
+    public FileBuffer copy() {
+        String[] contentCopy = new String[getRowCount()];
+        for (int i = 0; i < getRowCount(); i++) {
+            contentCopy[i] = String.copyValueOf(getContent()[i].toCharArray());
+        }
+        return new FileBuffer(contentCopy, getFile(), getDirty());
     }
 }

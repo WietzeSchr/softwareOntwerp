@@ -24,4 +24,20 @@ public class Point {
     public Point minus(Point other) {
         return new Point(getX() - other.getX(), getY() - other.getY());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != getClass()) {
+            return false;
+        }
+        else {
+            if (getX() != ((Point) o).getX()) {
+                return false;
+            }
+            if (getY() != ((Point) o).getY()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

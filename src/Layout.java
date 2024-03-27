@@ -149,8 +149,10 @@ public abstract class Layout {
         int width = getWidth();
         CompositeLayout parent = getFocusedView(focus).getParent();
         Layout result = closeBuffer(focus, parent);
-        result.initViewPosition(1);
-        result.updateSize(heigth, width, new Point(1,1));
+        if (result != null) {
+            result.initViewPosition(1);
+            result.updateSize(heigth, width, new Point(1, 1));
+        }
         return result;
     }
 
@@ -187,6 +189,18 @@ public abstract class Layout {
     protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     protected abstract Layout rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
+
+    /* ******************
+     *   UNDO / REDO    *
+     * ******************/
+
+    public void undo(int focus) {
+        getFocusedView(focus).undo();
+    }
+
+    public void redo(int focus) {
+        getFocusedView(focus).redo();
+    }
 
     /* ******************
      *  SHOW FUNCTIONS  *

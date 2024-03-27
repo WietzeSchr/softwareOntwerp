@@ -223,6 +223,7 @@ public class FileBufferView extends Layout
      */
     public void addNewLineBreak() {
         getBuffer().insertLineBreak(getInsertionPoint());
+        setBuffer(getBuffer().getNext());
         setInsertionPoint(new Point(getInsertionPoint().getX()+1, 1));
     }
 
@@ -231,6 +232,7 @@ public class FileBufferView extends Layout
      */
     public void addNewChar(char c) {
         getBuffer().addNewChar(c, getInsertionPoint());
+        setBuffer(getBuffer().getNext());
         moveInsertionPoint(new Point(0, 1));
     }
 
@@ -240,6 +242,7 @@ public class FileBufferView extends Layout
     public void deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
             getBuffer().deleteChar(getInsertionPoint());
+            setBuffer(getBuffer().getNext());
             if (getInsertionPoint().getY() == 1) {
                 setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
             }
@@ -323,7 +326,49 @@ public class FileBufferView extends Layout
          return this;
      }
 
+    /* ******************
+     *   UNDO / REDO    *
+     * ******************/
 
+    public void undo() {
+        int length = getContent().length;
+        int rowLength = getContent()[getInsertionPoint().getX() - 1].length();
+        setBuffer(getBuffer().undo());
+        if (getContent().length < length) {
+            setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
+        }
+        else if (getContent().length > length) {
+            setInsertionPoint(new Point(getInsertionPoint().getX() + 1, 1));
+        }
+        else {
+            if (rowLength < getContent()[getInsertionPoint().getX() - 1].length()) {
+                moveInsertionPoint(new Point(0, 1));
+            }
+            else {
+                moveInsertionPoint(new Point(0, -1));
+            }
+        }
+    }
+
+    public void redo() {
+        int length = getContent().length;
+        int rowLength = getContent()[getInsertionPoint().getX() - 1].length();
+        FileBuffer newBuffer = getBuffer().redo();
+        if (newBuffer != getBuffer()) {
+            setBuffer(newBuffer);
+            if (getContent().length == length) {
+                if (rowLength < getContent()[getInsertionPoint().getX() - 1].length()) {
+                    moveInsertionPoint(new Point(0, 1));
+                } else {
+                    moveInsertionPoint(new Point(0, -1));
+                }
+            } else if (getContent().length == length + 1) {
+                setInsertionPoint(new Point(getInsertionPoint().getX() + 1, 1));
+            } else {
+                setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() - rowLength + 1));
+            }
+        }
+    }
 
     /* ******************
      *  SHOW FUNCTIONS  *
@@ -435,13 +480,13 @@ public class FileBufferView extends Layout
      */
     public void updateScrollStates() {
         if (getInsertionPoint().getY() > getHorizontalScrollState() + getWidth() - 2) {
-            setHorizontalScrollState((int) getInsertionPoint().getY());
+            setHorizontalScrollState(getInsertionPoint().getY());
         }
         else if (getInsertionPoint().getY() < getHorizontalScrollState()) {
             setHorizontalScrollState(getHorizontalScrollState() -  getWidth() + 1);
         }
         if (getInsertionPoint().getX() > getVerticalScrollState() + getHeigth() - 2) {
-            setVerticalScrollState((int) getInsertionPoint().getX());
+            setVerticalScrollState(getInsertionPoint().getX());
         }
         else if (getInsertionPoint().getX() < getVerticalScrollState()) {
             setVerticalScrollState(getVerticalScrollState() - getHeigth() + 1);
