@@ -2,6 +2,62 @@ import io.github.btj.termios.Terminal;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+class Edit {
+
+    private final char change;
+
+    private final boolean deleted;
+
+    private final Point insertionPoint;
+
+    private final Point insertionPointAfter;
+
+    private Edit next;
+
+    private Edit previous;
+
+    public Edit(char c, boolean deleted, Point insert, Point insertAfter) {
+        this.change = 'c';
+        this.deleted = deleted;
+        this.insertionPoint = insert;
+        this.insertionPointAfter = insertAfter;
+        this.next = null;
+        this.previous = null;
+    }
+
+    public char getChange() {
+        return change;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public Point getInsertionPoint() {
+        return insertionPoint;
+    }
+
+    public Point getInsertionPointAfter() {
+        return insertionPointAfter;
+    }
+
+    public Edit getNext() {
+        return next;
+    }
+
+    public void setNext(Edit newNext) {
+        this.next = newNext;
+    }
+
+    public Edit getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(Edit newPrevious) {
+        this.previous = newPrevious;
+    }
+}
+
 /* ******************
  *  FILEBUFFERVIEW  *
  ********************/
@@ -16,6 +72,8 @@ public class FileBufferView extends Layout
     private Point insertionPoint;
 
     private FileBuffer fileBuffer;
+
+    private Edit lastEdit;
 
     /* ******************
      *  CONSTRUCTORS    *
@@ -32,9 +90,10 @@ public class FileBufferView extends Layout
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        this.verticalScrollState = 1;
-        this.horizontalScrollState = 1;
-        this.insertionPoint = new Point(1,1);
+        this.lastEdit = new Edit('c', false, null, null);  // This Edit object (with insert
+        this.verticalScrollState = 1;                                           // and insertAfter set tp null) is seen
+        this.horizontalScrollState = 1;                                         // interpreted as an "empty" edit, since
+        this.insertionPoint = new Point(1,1);                             // chars can't be null
     }
 
     /** This constructor creates a new FileBufferView with the given heigth, width, parent, leftUpperCorner, filepath and newLine
@@ -48,6 +107,7 @@ public class FileBufferView extends Layout
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        this.lastEdit = new Edit('c', false, null, null);
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
@@ -60,6 +120,7 @@ public class FileBufferView extends Layout
     public FileBufferView(int heigth, int width, Point leftUpperCorner, FileBuffer fileBuffer) {
         super(heigth, width, leftUpperCorner);
         this.fileBuffer = fileBuffer;
+        this.lastEdit = new Edit('c', false, null, null);
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
@@ -136,6 +197,14 @@ public class FileBufferView extends Layout
      */
     public int getPosition() {
         return this.position;
+    }
+
+    public void setLastEdit(Edit newLastEdit) {
+        this.lastEdit = newLastEdit;
+    }
+
+    public Edit getLastEdit() {
+        return lastEdit;
     }
 
     /* **********************
@@ -222,18 +291,27 @@ public class FileBufferView extends Layout
      * @return: void
      */
     public void addNewLineBreak() {
-        getBuffer().insertLineBreak(getInsertionPoint());
-        setBuffer(getBuffer().getNext());
-        setInsertionPoint(new Point(getInsertionPoint().getX()+1, 1));
+        char c = 13;
+        Point insert = getInsertionPoint();
+        getBuffer().insertLineBreak(insert);
+        setInsertionPoint(new Point(insert.getX()+1, 1));
+        Edit nextEdit = new Edit(c, false, insert, getInsertionPoint());
+        nextEdit.setPrevious(getLastEdit());
+        getLastEdit().setNext(nextEdit);
+        setLastEdit(nextEdit);
     }
 
     /** This method adds a new character to the file and updates the scroll states
      * @return: void
      */
     public void addNewChar(char c) {
-        getBuffer().addNewChar(c, getInsertionPoint());
-        setBuffer(getBuffer().getNext());
+        Point insert = getInsertionPoint();
+        getBuffer().addNewChar(c, insert);
         moveInsertionPoint(new Point(0, 1));
+        Edit nextEdit = new Edit(c, false, insert, getInsertionPoint());
+        nextEdit.setPrevious(getLastEdit());
+        getLastEdit().setNext(nextEdit);
+        setLastEdit(nextEdit);
     }
 
     /** This method deletes a character of the buffer and updates the scroll states
@@ -241,14 +319,24 @@ public class FileBufferView extends Layout
      */
     public void deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
+            Point insert = getInsertionPoint();
+            char c;
+            try {
+                c = getContent()[getInsertionPoint().getX() - 1].charAt(getInsertionPoint().getY() - 2);
+            } catch (IndexOutOfBoundsException e) {
+                c = 13;
+            }
             getBuffer().deleteChar(getInsertionPoint());
-            setBuffer(getBuffer().getNext());
             if (getInsertionPoint().getY() == 1) {
                 setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
             }
             else {
                 moveInsertionPoint(new Point(0, -1));
             }
+            Edit nextEdit = new Edit(c, true, insert, getInsertionPoint());
+            nextEdit.setPrevious(getLastEdit());
+            getLastEdit().setNext(nextEdit);
+            setLastEdit(nextEdit);
         }
     }
 
@@ -331,42 +419,37 @@ public class FileBufferView extends Layout
      * ******************/
 
     public void undo() {
-        int length = getContent().length;
-        int rowLength = getContent()[getInsertionPoint().getX() - 1].length();
-        setBuffer(getBuffer().undo());
-        if (getContent().length < length) {
-            setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
-        }
-        else if (getContent().length > length) {
-            setInsertionPoint(new Point(getInsertionPoint().getX() + 1, 1));
-        }
-        else {
-            if (rowLength < getContent()[getInsertionPoint().getX() - 1].length()) {
-                moveInsertionPoint(new Point(0, 1));
+        Edit lastEdit = getLastEdit();
+        if (lastEdit.getInsertionPoint() != null) {
+            if (lastEdit.getDeleted()) {
+                if (lastEdit.getChange() == 13) {
+                    getBuffer().insertLineBreak(lastEdit.getInsertionPointAfter());
+                }
+                else {
+                    getBuffer().addNewChar(lastEdit.getChange(), lastEdit.getInsertionPointAfter());
+                }
+            } else {
+                getBuffer().deleteChar(lastEdit.getInsertionPointAfter());
             }
-            else {
-                moveInsertionPoint(new Point(0, -1));
+            setInsertionPoint(lastEdit.getInsertionPoint());
+            setLastEdit(lastEdit.getPrevious());
+            if (getLastEdit().getInsertionPoint() == null) {
+                getBuffer().setDirty(false);
             }
         }
     }
 
     public void redo() {
-        int length = getContent().length;
-        int rowLength = getContent()[getInsertionPoint().getX() - 1].length();
-        FileBuffer newBuffer = getBuffer().redo();
-        if (newBuffer != getBuffer()) {
-            setBuffer(newBuffer);
-            if (getContent().length == length) {
-                if (rowLength < getContent()[getInsertionPoint().getX() - 1].length()) {
-                    moveInsertionPoint(new Point(0, 1));
-                } else {
-                    moveInsertionPoint(new Point(0, -1));
-                }
-            } else if (getContent().length == length + 1) {
-                setInsertionPoint(new Point(getInsertionPoint().getX() + 1, 1));
-            } else {
-                setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() - rowLength + 1));
+        Edit lastUndo = getLastEdit().getNext();
+        if (lastUndo != null) {
+            if (lastUndo.getDeleted()) {
+                getBuffer().deleteChar(lastUndo.getInsertionPoint());
             }
+            else {
+                getBuffer().addNewChar(lastUndo.getChange(), lastUndo.getInsertionPoint().add(new Point(0, -1)));
+            }
+            setInsertionPoint(lastUndo.getInsertionPointAfter());
+            setLastEdit(lastUndo);
         }
     }
 
