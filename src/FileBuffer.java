@@ -148,18 +148,11 @@ public class FileBuffer {
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    public void insertLineBreak(Point insert) {
-        FileBuffer newBuffer = copy();
-        newBuffer.addLineBreak(insert);
-        setNext(newBuffer);
-        newBuffer.setPrevious(this);
-    }
-
     /** This method inserts a line break at the insertion point and sets the buffer to dirty
      * @post getDirty() == true
      * @return: void
      */
-    public void addLineBreak(Point insert){
+    public void insertLineBreak(Point insert){
         int row = insert.getX()-1;
         int col = insert.getY()-1;
         ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
@@ -172,18 +165,12 @@ public class FileBuffer {
         setDirty(true);
     }
 
-    public void addNewChar(char c, Point insert) {
-        FileBuffer newBuffer = copy();
-        newBuffer.addChar(c, insert);
-        setNext(newBuffer);
-        newBuffer.setPrevious(this);
-    }
 
     /** This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
      * @post getDirty() == true
      * @return: void
      */
-    public void addChar(char c, Point insert) {
+    public void addNewChar(char c, Point insert) {
         String[] content = getContent();
         if (content.length == 0)
         {
@@ -214,18 +201,11 @@ public class FileBuffer {
         setDirty(true);
     }
 
-    public void deleteChar(Point insert) {
-        FileBuffer nextBuffer = copy();
-        nextBuffer.delete(insert);
-        nextBuffer.setPrevious(this);
-        setNext(nextBuffer);
-    }
-
     /** This method deletes a character from the buffer and sets the buffer to dirty and moves the insertion point
      * @post getDirty() == true
      * @return: void
      */
-    public void delete(Point insert) {
+    public void deleteChar(Point insert) {
         String[] content = getContent();
         String[] newContent;
         if (insert.getY() == 1)  {
@@ -278,19 +258,7 @@ public class FileBuffer {
      *   UNDO / REDO    *
      * ******************/
 
-    public FileBuffer undo() {
-        if (getPrevious() != null) {
-            return getPrevious();
-        }
-        return this;
-    }
 
-    public FileBuffer redo() {
-        if (getNext() != null) {
-            return getNext();
-        }
-        return this;
-    }
 
     /* ******************
      *  HELP FUNCTIONS  *
