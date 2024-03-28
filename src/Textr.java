@@ -215,6 +215,7 @@ public class Textr
             else if (c >= 32 && c <= 126) { //  Legal Chars
                 addNewChar((char) c);
             }
+            if (getLayout() == null) break;
             show();
         }
     }
@@ -295,7 +296,6 @@ public class Textr
      */
     private void closeView() throws IOException {
         setLayout(getLayout().closeView(getFocus()));
-        setFocus(getLayout().getNewFocus(getFocus()));
     }
 
     /* ******************
@@ -343,11 +343,11 @@ public class Textr
      * ******************/
 
     void undo() {
-        return;
+        getLayout().undo(getFocus());
     }
 
     void redo() {
-        return;
+        getLayout().redo(getFocus());
     }
 
     /* ******************
@@ -359,6 +359,7 @@ public class Textr
      */
     private void show() {
         terminalHandler.clearScreen();
+        setFocus(getLayout().getNewFocus(getFocus()));
         View focused = getFocusedView();
         initViewPositions();
         setFocus(focused.getPosition());

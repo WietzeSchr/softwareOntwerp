@@ -12,6 +12,10 @@ public class FileBuffer {
 
     private boolean dirty;
 
+    private FileBuffer previous;
+
+    private FileBuffer next;
+
     /*****************
      *  CONSTRUCTORS *
      *****************/
@@ -20,21 +24,24 @@ public class FileBuffer {
         this.file = new File(path);
         this.content = getFile().load(newLine);
         this.dirty = false;
+        this.previous = null;
+        this.next = null;
     }
 
     public FileBuffer(String[] content, String path) {
         this.file = new File(path);
         this.content = content;
         this.dirty = false;
+        this.previous = null;
+        this.next = null;
     }
 
-    /** This constructor creates a new FileBuffer with the given content
-     * @post getDirty() == false
-     * @post getInsertionPoint() == new Point(1, 1) 
-     */
-    public FileBuffer(String[] content) {
+    public FileBuffer(String[] content, File file, boolean dirty) {
         this.content = content;
-        this.dirty = false;
+        this.file = file;
+        this.dirty = dirty;
+        this.previous = null;
+        this.next = null;
     }
 
     /* **********************
@@ -81,6 +88,22 @@ public class FileBuffer {
      */
     public void setContent(String[] newContent) {
         this.content = newContent;
+    }
+
+    public FileBuffer getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(FileBuffer newBuffer) {
+        this.previous = newBuffer;
+    }
+
+    public FileBuffer getNext() {
+        return next;
+    }
+
+    public void setNext(FileBuffer newBuffer) {
+        this.next = newBuffer;
     }
 
     /* *********************
@@ -132,7 +155,7 @@ public class FileBuffer {
     public void insertLineBreak(Point insert){
         int row = insert.getX()-1;
         int col = insert.getY()-1;
-        ArrayList<String> cont = new ArrayList<>(Arrays.asList(getContent()));
+        ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
         String currentRow = getContent()[row];
         String firstPart = currentRow.substring(0, col);
         String secondPart = currentRow.substring(col);
@@ -141,6 +164,7 @@ public class FileBuffer {
         setContent(cont.toArray(new String[0]));
         setDirty(true);
     }
+
 
     /** This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
      * @post getDirty() == true
@@ -231,6 +255,12 @@ public class FileBuffer {
     }
 
     /* ******************
+     *   UNDO / REDO    *
+     * ******************/
+
+
+
+    /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
 
@@ -248,5 +278,13 @@ public class FileBuffer {
             insertionPoint = new Point(insertionPoint.getX(), currRowLength+1);
         }
         return insertionPoint;
+    }
+
+    public FileBuffer copy() {
+        String[] contentCopy = new String[getRowCount()];
+        for (int i = 0; i < getRowCount(); i++) {
+            contentCopy[i] = String.copyValueOf(getContent()[i].toCharArray());
+        }
+        return new FileBuffer(contentCopy, getFile(), getDirty());
     }
 }
