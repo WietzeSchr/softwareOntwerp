@@ -130,9 +130,9 @@ public class FileBuffer {
      * @return: void
      */
     public void insertLineBreak(Point insert){
-        int row = (int)insert.getX()-1;
-        int col = (int)insert.getY()-1;
-        ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
+        int row = insert.getX()-1;
+        int col = insert.getY()-1;
+        ArrayList<String> cont = new ArrayList<>(Arrays.asList(getContent()));
         String currentRow = getContent()[row];
         String firstPart = currentRow.substring(0, col);
         String secondPart = currentRow.substring(col);

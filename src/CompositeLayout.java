@@ -131,8 +131,8 @@ public abstract class CompositeLayout extends Layout {
         int heigth = getHeigth();
         int width = getWidth();
         Layout result;
-        FileBufferView focusView = getFocusedView(focus);
-        FileBufferView nextView = getFocusedView(getNextFocus(focus));
+        View focusView = getFocusedView(focus);
+        View nextView = getFocusedView(getNextFocus(focus));
         if (focusView.getParent() == nextView.getParent()) {
             if (focusView.getParent().countSubLayouts() == 2) {
                 result = rotateSiblingsFlip(dir, focus, getNextFocus(focus), focusView.getParent());
@@ -154,9 +154,9 @@ public abstract class CompositeLayout extends Layout {
 
     protected abstract CompositeLayout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
-    protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
+    protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
-    protected abstract CompositeLayout rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
+    protected abstract CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     public Layout prune() {
         if (getSubLayouts().length == 1) {
@@ -232,9 +232,9 @@ public abstract class CompositeLayout extends Layout {
      * @return: FileBufferView
      */
     @Override
-    public FileBufferView getFocusedView(int i) {
+    public View getFocusedView(int i) {
         Layout[] subLayout = getSubLayouts();
-        FileBufferView res = null;
+        View res = null;
         for (Layout layout : subLayout) {
             if (res == null) {
                 res = layout.getFocusedView(i);

@@ -30,8 +30,8 @@ public class StackedLayout extends CompositeLayout {
         if (this == parent) {
             Layout[] newSubLayouts = new Layout[countSubLayouts() - 1];
             int j = 0;
-            FileBufferView focusView = getFocusedView(focus);
-            FileBufferView nextView = getFocusedView(nextFocus);
+            View focusView = getFocusedView(focus);
+            View nextView = getFocusedView(nextFocus);
             for (int i= 0; i < countSubLayouts(); i++) {
                 if (getSubLayouts()[i] != nextView) {
                     if (getSubLayouts()[i] == focusView) {
@@ -108,7 +108,7 @@ public class StackedLayout extends CompositeLayout {
     }
 
     @Override
-    protected CompositeLayout rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+    protected CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
         {
             Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];
@@ -139,7 +139,7 @@ public class StackedLayout extends CompositeLayout {
     }
 
     @Override
-    protected Layout rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+    protected Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
         {
             Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];

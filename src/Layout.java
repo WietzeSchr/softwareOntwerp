@@ -107,7 +107,8 @@ public abstract class Layout {
      * ******************/
 
     public void updateInsertionPoint(int x, int y, int focus) {
-        getFocusedView(focus).moveInsertionPoint(new Point(x, y));
+        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        focussed.moveInsertionPoint(new Point(x, y));
     }
 
     public int getNextFocus(int focus) {
@@ -129,15 +130,18 @@ public abstract class Layout {
      ************************/
 
     public void addNewLineBreak(int focus) {
-        getFocusedView(focus).addNewLineBreak();
+        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        focussed.addNewLineBreak();
     }
 
     public void addNewChar(char c, int focus) {
-        getFocusedView(focus).addNewChar(c);
+        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        focussed.addNewChar(c);
     }
 
     public void deleteChar(int focus) {
-        getFocusedView(focus).deleteChar();
+        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        focussed.deleteChar();
     }
 
     /* ******************
@@ -171,7 +175,8 @@ public abstract class Layout {
      * ******************/
 
     public void saveBuffer(int focus, String newLine) throws IOException {
-        getFocusedView(focus).saveBuffer(newLine);
+        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        focussed.saveBuffer(newLine);
     }
 
     /* *****************
@@ -184,9 +189,9 @@ public abstract class Layout {
 
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
-    protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
+    protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
-    protected abstract Layout rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2);
+    protected abstract Layout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     /* ******************
      *  SHOW FUNCTIONS  *
@@ -209,7 +214,7 @@ public abstract class Layout {
     /** This method returns the focused view at the given index i
      * @return: FileBufferView
      */	
-    public abstract FileBufferView getFocusedView(int i);
+    public abstract View getFocusedView(int i);
 
     /** This method returns the number of views
      * @return: int
