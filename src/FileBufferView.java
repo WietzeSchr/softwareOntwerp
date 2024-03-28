@@ -1,4 +1,3 @@
-import io.github.btj.termios.Terminal;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -61,7 +60,7 @@ class Edit {
 /* ******************
  *  FILEBUFFERVIEW  *
  ********************/
-public class FileBufferView extends Layout
+public class FileBufferView extends View
 {
     private int verticalScrollState;
 
@@ -72,6 +71,7 @@ public class FileBufferView extends Layout
     private Point insertionPoint;
 
     private FileBuffer fileBuffer;
+    TerminalHandler terminalHandler = new TerminalHandler();
 
     private Edit lastEdit;
 
@@ -356,11 +356,11 @@ public class FileBufferView extends Layout
             return null;
             /*
                 if (getBuffer().getDirty()) {
-                    Terminal.clearScreen();
-                    Terminal.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
-                    int c = Terminal.readByte();
+                    terminalHandler.clearScreen();
+                    terminalHandler.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
+                    int c = terminalHandler.readByte();
                     while (c != 121 && c != 89 && c != 78 && c != 110) {
-                        c = Terminal.readByte();
+                        c = terminalHandler.readByte();
                     }
                     if (c == 121 || c == 89) {
                         return null;
@@ -406,11 +406,12 @@ public class FileBufferView extends Layout
          return this;
      }
 
-     protected FileBufferView rotateNonSiblings(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+
+    protected FileBufferView rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
          return this;
      }
 
-     protected FileBufferView rotateNonSiblingsPromote(int dir, int focus, FileBufferView nextView, CompositeLayout parent1, CompositeLayout parent2) {
+     protected FileBufferView rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
          return this;
      }
 
@@ -457,12 +458,13 @@ public class FileBufferView extends Layout
      *  SHOW FUNCTIONS  *
      * ******************/
 
-    /** This method shows the content of the FileBufferView and the updated scrollbars
-     * @return: void
-     */
-    public void show() {
+
+    @Override
+    String[] makeShow() {
         updateScrollStates();
+        String[] result = new String[getHeigth()];
         String[] cont = getContent();
+        char[] verticalScrollBar = makeVerticalScrollBar();
         for (int i = 0; i < getHeigth() - 1; i++) {
             int row = i + getVerticalScrollState() - 1;
             if (row >= getRowCount()) {
@@ -471,29 +473,25 @@ public class FileBufferView extends Layout
             if (cont[row] != null) {
                 if (cont[row].length() > getHorizontalScrollState() - 1) {
                     if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
-                        Terminal.printText(getLeftUpperCorner().getX() + i,
-                                (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3));
+                        result[i] = cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3);
                     } else {
-                        Terminal.printText( getLeftUpperCorner().getX() + i,
-                                (int) getLeftUpperCorner().getY(), cont[row].substring(getHorizontalScrollState() - 1));
+                        result[i] = cont[row].substring(getHorizontalScrollState() - 1);
                     }
                 }
             }
         }
-        showScrollbars();
-    }
 
-    /** This method shows the scrollbars
-     * @return: void
-     */
-    private void showScrollbars() {
-        char[] verticalScrollBar = makeVerticalScrollBar();
-        String horizontalScrollBar = makeHorizontalScrollBar();
-        Terminal.printText( (getLeftUpperCorner().getX() + getHeigth()) - 1, getLeftUpperCorner().getY(), horizontalScrollBar);
-        for (int i = 0; i < verticalScrollBar.length; i++) {
-            Terminal.printText(getLeftUpperCorner().getX() + i,
-                    getLeftUpperCorner().getY() + getWidth() - 1, String.valueOf(verticalScrollBar[i]));
+        for(int i=0; i<result.length-1; i++){
+            if(result[i] == null){
+                result[i] = "";
+            }
+            while(result[i].length() < getWidth()-2){
+                result[i] = result[i] + ' ';
+            }
+            result[i] = result[i] + verticalScrollBar[i];
         }
+        result[getHeigth()-1] = makeHorizontalScrollBar();
+        return result;
     }
 
     /** This method returns the created vertical scrollbar
@@ -574,46 +572,5 @@ public class FileBufferView extends Layout
         else if (getInsertionPoint().getX() < getVerticalScrollState()) {
             setVerticalScrollState(getVerticalScrollState() - getHeigth() + 1);
         }
-    }
-
-    /** This method returns the focused view at the given index i
-     * @return: int
-     */
-    @Override
-    public void initViewPosition(int i) {
-        setPosition(i);
-    }
-
-    /** This method returns the focused view at the given index i
-     * @return: FileBufferView || null
-     */
-    @Override
-    public FileBufferView getFocusedView(int i) {
-        if (getPosition() == i) {
-            return this;
-        }
-        return null;
-    }
-
-    /** This method returns the number of views
-     * @return: int
-     */
-    @Override
-    public int countViews() {
-        return 1;
-    }
-
-    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * and updates the scroll states
-     * @post getHeigth() == heigth
-     * @post getWidth() == width
-     * @post getLeftUpperCorner() == leftUpperCorner
-     * @return: void
-     */
-    @Override
-    public void updateSize(int heigth, int width, Point leftUpperCorner) {
-        setHeigth(heigth);
-        setWidth(width);
-        setLeftUpperCorner(leftUpperCorner);
     }
 }

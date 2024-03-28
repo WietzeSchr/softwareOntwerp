@@ -1,12 +1,11 @@
-import io.github.btj.termios.Terminal;
-
 import java.io.IOException;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        Terminal.enterRawInputMode();
-        Terminal.clearScreen();
+        TerminalHandler terminalHandler = new TerminalHandler();
+        terminalHandler.enterRawInputMode();
+        terminalHandler.clearScreen();
         String newLine = "";
         if (args[0].equals("--lf") || args[0].equals("-lf")) {
             newLine = "\n";
@@ -18,8 +17,8 @@ public class Main {
             newLine = System.lineSeparator();
         }
         new Textr(newLine, args);
-        Terminal.clearScreen();
-        Terminal.leaveRawInputMode();
+        terminalHandler.clearScreen();
+        terminalHandler.leaveRawInputMode();
     }
 }
 

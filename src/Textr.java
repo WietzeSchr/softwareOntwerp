@@ -1,13 +1,12 @@
-import io.github.btj.termios.Terminal;
 import java.io.IOException;
 
 class TerminalParser {
     int buffer;
     boolean bufferFull;
-
+    TerminalHandler terminalHandler = new TerminalHandler();
     int peekByte() throws IOException {
         if (! bufferFull) {
-            buffer = Terminal.readByte();
+            buffer = terminalHandler.readByte();
             bufferFull = true;
         }
         return  buffer;
@@ -59,6 +58,7 @@ public class Textr
     private String newLine;
 
     private int focus;
+    TerminalHandler terminalHandler = new TerminalHandler();
 
     /* ******************
      *  CONSTRUCTORS    *
@@ -153,12 +153,12 @@ public class Textr
      * @return: void
      */
     private void run() throws IOException {
-        while (true) {
-            int c = Terminal.readByte();
+        while (getLayout() != null) {
+            int c = terminalHandler.readByte();
             if (c == 27) {                          //  ARROWS
-                int c1 = Terminal.readByte();
+                int c1 = terminalHandler.readByte();
                 if (c1 == 91) {
-                    int c2 = Terminal.readByte();
+                    int c2 = terminalHandler.readByte();
                     if (c2 == 65) {
                         updateCursor(-1, 0);  //UP
                     } else if (c2 == 66) {
@@ -171,9 +171,9 @@ public class Textr
                 }
             }                               // Shift + F4
             else if (c == 59) {
-                int c1 = Terminal.readByte();
+                int c1 = terminalHandler.readByte();
                 if (c1 == 50) {
-                    int c2 = Terminal.readByte();
+                    int c2 = terminalHandler.readByte();
                     if (c2 == 83) {
                         closeView();
                     }
@@ -227,7 +227,7 @@ public class Textr
     /** This method returns the focussed view
      * @return: FileBufferView
      */
-    FileBufferView getFocusedView() {
+    View getFocusedView() {
         return getLayout().getFocusedView(getFocus());
     }
 
@@ -358,9 +358,9 @@ public class Textr
      * @return: void
      */
     private void show() {
-        Terminal.clearScreen();
+        terminalHandler.clearScreen();
         setFocus(getLayout().getNewFocus(getFocus()));
-        FileBufferView focused = getFocusedView();
+        View focused = getFocusedView();
         initViewPositions();
         setFocus(focused.getPosition());
         getLayout().show();
@@ -371,8 +371,9 @@ public class Textr
      * @return: void
      */
     private void showCursor() {
-        Point cursor = getFocusedView().getCursor();
-        Terminal.moveCursor(cursor.getX(), cursor.getY());
+        FileBufferView focussed = (FileBufferView) getFocusedView();
+        Point cursor = focussed.getCursor();
+        terminalHandler.moveCursor(cursor.getX(), cursor.getY());
     }
 
     /* ******************
@@ -407,11 +408,11 @@ public class Textr
         getLayout().updateSize(heigth, width, new Point(1,1));
     }
 
-    /** This method returns the size of the terminal
+    /** This method returns the size of the terminalHandler
      * @return: Point
      */
     private Point getSize() throws IOException {
-        Terminal.reportTextAreaSize();
+        terminalHandler.reportTextAreaSize();
         TerminalParser parser = new TerminalParser();
         for (int i = 0; i < 4; i++) {
             parser.eatByte();

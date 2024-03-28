@@ -22,7 +22,8 @@ public class TextrTest {
         test1.initViewPositions();
         test1.updateSize(20, 40);
         // Tests Add New Char
-        test1.getFocusedView().setInsertionPoint(new Point(1,5));
+        FileBufferView focus = (FileBufferView)test1.getFocusedView();
+       focus.setInsertionPoint(new Point(1,5));
         test1.addNewChar('!');
         assertEquals(fbv1.getContent()[0], "rij1!");
         // Tests Add New Line Break
