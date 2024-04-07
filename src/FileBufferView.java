@@ -255,6 +255,7 @@ public class FileBufferView extends View
     /** This method returns the position of the cursor
      * @return: Point
      */
+    @Override
     public Point getCursor() {
         Point insert = getInsertionPoint();
         Point leftUp = getLeftUpperCorner();
@@ -268,7 +269,8 @@ public class FileBufferView extends View
     /** This method moves the insertion point with the given parameter dir
      * @return: void
      */
-    public void moveInsertionPoint(Point dir) {
+    @Override
+    public void move(Point dir) {
         Point newInsertionPoint = getInsertionPoint().add(dir);
         setInsertionPoint(newInsertionPoint);
     }
@@ -307,7 +309,7 @@ public class FileBufferView extends View
     public void addNewChar(char c) {
         Point insert = getInsertionPoint();
         getBuffer().addNewChar(c, insert);
-        moveInsertionPoint(new Point(0, 1));
+        move(new Point(0, 1));
         Edit nextEdit = new Edit(c, false, insert, getInsertionPoint());
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
@@ -331,7 +333,7 @@ public class FileBufferView extends View
                 setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
             }
             else {
-                moveInsertionPoint(new Point(0, -1));
+                move(new Point(0, -1));
             }
             Edit nextEdit = new Edit(c, true, insert, getInsertionPoint());
             nextEdit.setPrevious(getLastEdit());
@@ -454,10 +456,22 @@ public class FileBufferView extends View
         }
     }
 
+    /* ****************
+     *    RUN SNAKE   *
+     * ****************/
+
+    @Override
+    public long getTick() {
+        return 0;
+    }
+
+    public void tick() {
+        return;
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
-
 
     @Override
     String[] makeShow() {
@@ -572,5 +586,19 @@ public class FileBufferView extends View
         else if (getInsertionPoint().getX() < getVerticalScrollState()) {
             setVerticalScrollState(getVerticalScrollState() - getHeigth() + 1);
         }
+    }
+
+    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+     * and updates the scroll states
+     * @post getHeigth() == heigth
+     * @post getWidth() == width
+     * @post getLeftUpperCorner() == leftUpperCorner
+     * @return: void
+     */
+    @Override
+    public void updateSize(int heigth, int width, Point leftUpperCorner) {
+        setHeigth(heigth);
+        setWidth(width);
+        setLeftUpperCorner(leftUpperCorner);
     }
 }

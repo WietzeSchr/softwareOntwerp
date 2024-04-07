@@ -178,6 +178,14 @@ public abstract class CompositeLayout extends Layout {
     }
 
     /* ******************
+     *  OPEN GAME VIEW  *
+     * ******************/
+
+    public Layout openNewGame(int focus) {
+        return this;
+    }
+
+    /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
 

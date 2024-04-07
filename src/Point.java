@@ -40,4 +40,13 @@ public class Point {
         }
         return true;
     }
+
+    public Point copy() {
+        return new Point(getX(), getY());
+    }
+
+    @Override
+    public String toString() {
+        return "(" + getX() + ", " + getY() + ")";
+    }
 }
