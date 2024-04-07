@@ -106,9 +106,9 @@ public abstract class Layout {
      *  INSPECT CONTENT *
      * ******************/
 
-    public void updateInsertionPoint(int x, int y, int focus) {
-        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
-        focussed.moveInsertionPoint(new Point(x, y));
+    public void arrowPressed(int x, int y, int focus) {
+        View focussed = getFocusedView(focus);
+        focussed.move(new Point(x, y));
     }
 
     public int getNextFocus(int focus) {
@@ -130,17 +130,17 @@ public abstract class Layout {
      ************************/
 
     public void addNewLineBreak(int focus) {
-        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        View focussed = getFocusedView(focus);
         focussed.addNewLineBreak();
     }
 
     public void addNewChar(char c, int focus) {
-        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        View focussed = getFocusedView(focus);
         focussed.addNewChar(c);
     }
 
     public void deleteChar(int focus) {
-        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        View focussed = getFocusedView(focus);
         focussed.deleteChar();
     }
 
@@ -177,7 +177,7 @@ public abstract class Layout {
      * ******************/
 
     public void saveBuffer(int focus, String newLine) throws IOException {
-        FileBufferView focussed = (FileBufferView)getFocusedView(focus);
+        View focussed = getFocusedView(focus);
         focussed.saveBuffer(newLine);
     }
 
@@ -208,6 +208,28 @@ public abstract class Layout {
     }
 
     /* ******************
+     *  OPEN GAME VIEW  *
+     * ******************/
+
+    public Layout newGame(int focus) {
+        View focussed = getFocusedView(focus);
+        Layout result = openNewGame(focus, focussed.getParent());
+        result.updateSize(getHeigth(), getWidth(), new Point(1,1));
+        result.initViewPosition(1);
+        return result;
+    }
+
+    public abstract Layout openNewGame(int focus, Layout parent);
+
+    /* ****************
+     *    RUN SNAKE   *
+     * ****************/
+
+    public void tick(int focus) throws IOException {
+        getFocusedView(focus).tick();
+    }
+
+    /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
 
@@ -234,6 +256,10 @@ public abstract class Layout {
      * @return: int
      */
     public abstract int countViews();
+
+    public long getNextDeadline(int focus) {
+        return System.currentTimeMillis() + getFocusedView(focus).getTick();
+    }
 
     /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
      * @return: void

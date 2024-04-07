@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 class TerminalParser {
     int buffer;
@@ -70,15 +71,16 @@ public class Textr
      */
     public Textr(String newLine, String[] filepaths) throws IOException {
         Point size;
-        if (filepaths.length == 0) {
-            throw new RuntimeException("Textr can't be started without any files");
-        }
         try {
             size = getSize();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (filepaths.length > 1) {
+        if (filepaths.length == 0) {
+            this.layout = new GameView(size.getX(), size.getY(), new Point(1,1));
+            throw new RuntimeException("Textr can't be started without any files");
+        }
+        else if (filepaths.length > 1) {
             this.layout = new StackedLayout(1,1, new Point(1,1), filepaths, newLine);
         }
         else {
@@ -86,7 +88,7 @@ public class Textr
         }
         this.newLine = newLine;
         this.focus = 1;
-        updateSize((int) size.getX(), (int) size.getY());
+        updateSize(size.getX(), size.getY());
         initViewPositions();
         show();
         run();
@@ -154,19 +156,26 @@ public class Textr
      */
     private void run() throws IOException {
         while (getLayout() != null) {
-            int c = terminalHandler.readByte();
+            int c = 0;
+            try {
+                c = terminalHandler.readByte(getNextDeadline());
+            } catch (TimeoutException e) {
+                tick();
+                if (getFocusedView().getTick() != 0) show();
+            }
+
             if (c == 27) {                          //  ARROWS
                 int c1 = terminalHandler.readByte();
                 if (c1 == 91) {
                     int c2 = terminalHandler.readByte();
                     if (c2 == 65) {
-                        updateCursor(-1, 0);  //UP
+                        arrowPressed(-1, 0);  //UP
                     } else if (c2 == 66) {
-                        updateCursor(1, 0);   //DOWN
+                        arrowPressed(1, 0);   //DOWN
                     } else if (c2 == 67) {
-                        updateCursor(0, 1);   //RIGHT
+                        arrowPressed(0, 1);   //RIGHT
                     } else if (c2 == 68) {
-                        updateCursor(0, -1);  //LEFT
+                        arrowPressed(0, -1);  //LEFT
                     }
                 }
             }                               // Shift + F4
@@ -184,6 +193,7 @@ public class Textr
             }
             else if (c == 7) {
                 openGameView();             //  Ctrl + G
+                changeFocusNext();
             }
             else if (c == 13) {             //  ENTER
                 addNewLineBreak();
@@ -216,7 +226,8 @@ public class Textr
                 addNewChar((char) c);
             }
             if (getLayout() == null) break;
-            show();
+            if (getFocusedView().getTick() == 0 && c != 0) show();
+            else if (getFocusedView().getTick() != 0) show();
         }
     }
 
@@ -254,8 +265,8 @@ public class Textr
     /** This method updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void updateCursor(int x, int y) {
-        getLayout().updateInsertionPoint(x, y, getFocus());
+    private void arrowPressed(int x, int y) {
+        getLayout().arrowPressed(x, y, getFocus());
     }
 
     /* **********************
@@ -335,7 +346,7 @@ public class Textr
      * ******************/
 
     void openGameView() {
-        return;
+        setLayout(getLayout().newGame(getFocus()));
     }
 
     /* ******************
@@ -348,6 +359,14 @@ public class Textr
 
     void redo() {
         getLayout().redo(getFocus());
+    }
+
+    /* ****************
+     *    RUN SNAKE   *
+     * ****************/
+
+    void tick() throws IOException {
+        getLayout().tick(getFocus());
     }
 
     /* ******************
@@ -371,7 +390,7 @@ public class Textr
      * @return: void
      */
     private void showCursor() {
-        FileBufferView focussed = (FileBufferView) getFocusedView();
+        View focussed = getFocusedView();
         Point cursor = focussed.getCursor();
         terminalHandler.moveCursor(cursor.getX(), cursor.getY());
     }
@@ -406,6 +425,10 @@ public class Textr
      */
     void updateSize(int heigth, int width) {
         getLayout().updateSize(heigth, width, new Point(1,1));
+    }
+
+    long getNextDeadline() {
+        return getLayout().getNextDeadline(getFocus());
     }
 
     /** This method returns the size of the terminalHandler

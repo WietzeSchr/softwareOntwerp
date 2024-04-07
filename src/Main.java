@@ -9,8 +9,7 @@ public class Main {
         String newLine = "";
         if (args[0].equals("--lf") || args[0].equals("-lf")) {
             newLine = "\n";
-        }
-        else if (args[0].equals("--crlf") || args[0].equals("-crlf")) {
+        } else if (args[0].equals("--crlf") || args[0].equals("-crlf")) {
             newLine = "\r\n";
         }
         else {

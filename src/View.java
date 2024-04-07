@@ -1,4 +1,3 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public abstract class View extends Layout{
@@ -29,6 +28,91 @@ public abstract class View extends Layout{
     }
 
     /* ******************
+     *  INSPECT CONTENT *
+     * ******************/
+
+    public abstract void move(Point dir);
+
+    /* **********************
+     *  EDIT BUFFER CONTENT *
+     ************************/
+
+    public abstract void addNewLineBreak();
+
+    public abstract void addNewChar(char c);
+
+    public abstract void deleteChar();
+
+    /* ******************
+     *   CLOSE BUFFER   *
+     * ******************/
+
+    /* ******************
+     *    SAVE BUFFER   *
+     * ******************/
+
+    public abstract void saveBuffer(String newLine) throws IOException;
+
+    /* *****************
+     *    ROTATE VIEW  *
+     * *****************/
+
+    /** This method returns the focused Layout
+     * @return: FileBufferView
+     */
+    @Override
+    protected View rotateView(int dir, int focus) {
+        return this;
+    }
+
+    protected View rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
+        return this;
+    }
+
+    protected View rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
+        return this;
+    }
+
+
+    protected View rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
+        return this;
+    }
+
+    protected View rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
+        return this;
+    }
+
+    /* ******************
+     *   UNDO / REDO    *
+     * ******************/
+
+    public abstract void undo();
+
+    public abstract void redo();
+
+    /* ******************
+     *  OPEN GAME VIEW  *
+     * ******************/
+
+    public Layout openNewGame(int focus, Layout parent) {
+        if (getPosition() == focus) {
+            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(),
+                    new Layout[]{this, new GameView(getHeigth(), getWidth() / 2, new Point(1, getWidth() / 2))});
+        }
+        else {
+            return this;
+        }
+    }
+
+    /* ****************
+     *    RUN SNAKE   *
+     * ****************/
+
+    public abstract long getTick();
+
+    public abstract void tick() throws IOException;
+
+    /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
 
@@ -45,6 +129,11 @@ public abstract class View extends Layout{
         }
     }
 
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
+
+    public abstract Point getCursor();
 
     @Override
     public void initViewPosition(int i) {
