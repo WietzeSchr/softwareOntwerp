@@ -85,4 +85,19 @@ public class TextrTest {
     void testRearrangeLayout() {
 
     }
+
+    @Test
+    void testDuplicateView() {
+
+    }
+
+    @Test
+    void testNewGame() {
+
+    }
+
+    @Test
+    void testUndoRedo() {
+
+    }
 }

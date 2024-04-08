@@ -499,7 +499,7 @@ public class FileBufferView extends View
             if(result[i] == null){
                 result[i] = "";
             }
-            while(result[i].length() < getWidth()-2){
+            while(result[i].length() < getWidth()-1){
                 result[i] = result[i] + ' ';
             }
             result[i] = result[i] + verticalScrollBar[i];

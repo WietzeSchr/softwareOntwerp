@@ -140,6 +140,21 @@ public class Snake extends Object{
         return result;
     }
 
+    public Point getOuterBox() {
+        Point[] snake = abstractList();
+        int up = getHead().getX();
+        int down = getHead().getX();
+        int rigth = getHead().getY();
+        int left = getHead().getY();
+        for (int i = 0; i < snake.length; i++) {
+            if (snake[i].getX() < up) up = snake[i].getX();
+            else if (snake[i].getX() > down) down = snake[i].getX();
+            if (snake[i].getY() < left) left = snake[i].getY();
+            else if (snake[i].getY() > rigth) rigth = snake[i].getY();
+        }
+        return new Point(down - up + 1, rigth - left + 1);
+    }
+
     public boolean contains(Point p) {
         if (getHead().equals(p)) {
             return true;
