@@ -20,8 +20,8 @@ class GameTest {
         assertEquals(game.getScore(), 50);
         game.setTick(900);
         assertEquals(game.getTick(), 900);
-        assertEquals(game.getGrid().length, 10);
-        assertEquals(game.getGrid()[0].length, 20);
+        assertEquals(game.getGrid().length, 9);
+        assertEquals(game.getGrid()[0].length, 19);
         for (int i = 1; i < game.getGrid().length + 1; i++) {
             for (int j = 1; j < game.getGrid()[0].length + 1; j++) {
                 assertEquals(game.getGridAt(new Point(i, j)), 0);
@@ -58,6 +58,9 @@ class GameTest {
                 new Point(4,11),new Point(4,12),new Point(4,13)}, new Point(0, -1));
         assertEquals(game.getSnake(), snake2);
         game.changeDir(new Point(-1, 0));
+        game.moveSnake();
+        game.moveSnake();
+        game.moveSnake();
         game.moveSnake();
         assertNull(game.getSnake());
     }

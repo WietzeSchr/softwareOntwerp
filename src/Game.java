@@ -142,7 +142,7 @@ public class Game {
         Point newHead = getSnake().moveHead();
         Point oldDir = getSnake().getDir();
         Point[] newBody;
-        if (isValid(getSnake().getHead())) {
+        if (isValid(newHead)) {
             if (eatApple()) {
                 setGridAt(0, newHead);
                 newBody = getSnake().extendBody();
@@ -209,6 +209,41 @@ public class Game {
     public Point randomFreePoint() {
         Point[] freeSpace = getFreeSpace();
         return freeSpace[(int) Math.floor(Math.random() * freeSpace.length)];
+    }
+
+    public void updateSize(int heigth, int width) {
+        Point snakeBox = getSnake().getOuterBox();
+        if (snakeBox.getX() < heigth && snakeBox.getY() < width) {
+            findBestFit(heigth, width, snakeBox);
+            int appleCount = countApples();
+            updateGrid(heigth, width);
+            for (int i = 0; i < appleCount; i++) {
+                spawnApple();
+            }
+        }
+        else {
+            loseGame();
+        }
+    }
+
+    private int countApples() {
+        int counter = 0;
+        for (int i = 0; i < getGrid().length; i++) {
+            for (int j = 0; j < getGrid()[0].length; j++) {
+                if (getGridAt(new Point(i + 1, j + 1)) == 1) {
+                    counter += 1;
+                }
+            }
+        }
+        return counter;
+    }
+
+    private void updateGrid(int heigth, int width) {
+        return;
+    }
+
+    public void findBestFit(int heigth, int width, Point snakeBox) {
+        return;
     }
 
     public boolean isValid(Point point) {

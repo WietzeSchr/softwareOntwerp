@@ -111,7 +111,33 @@ public class GameView extends View{
     }
 
     public String[] showLoss() {
-        return new String[0];
+        String lossStr = "GAME OVER! Press enter to restart";
+        String[] result = new String[getHeigth()];
+        if (getWidth() - 1 > lossStr.length()) {
+            for (int i = 0; i < result.length - 1; i++) {
+                StringBuilder str = new StringBuilder();
+                for (int j = 0; j < getWidth() - 1; j++) {
+                    str.append(" ");
+                }
+                str.append("#");
+                result[i] = str.toString();
+            }
+            result[getHeigth() - 1] = "Score: " + getGame().getScore() + " ";
+            while (result[getHeigth() - 1].length() < getWidth()) {
+                result[getHeigth() - 1] += "#";
+            }
+            StringBuilder lossString = new StringBuilder();
+            for (int i = 0; i < Math.floor((float) (getWidth() - lossString.length() - 1) / 2); i++) {
+                lossString.append(" ");
+            }
+            lossString.append(lossStr);
+            while (lossString.length() < getWidth() - 1) {
+                lossString.append(" ");
+            }
+            lossString.append("#");
+            result[(int) Math.floor((float) (getHeigth() - 1) / 2)] = lossString.toString();
+        }
+        return result;
     }
 
     /* ****************
@@ -135,26 +161,6 @@ public class GameView extends View{
         setGame(new Game(getHeigth(), getWidth()));
     }
 
-    public void loseGame() throws IOException {
-        boolean rerun = false;
-        boolean close = false;
-        while (! rerun && ! close) {
-            int c = terminalHandler.readByte();
-            if (c == 13) {
-                rerun = true;
-            }
-            else if (c == 17) {
-                close = true;
-            }
-        }
-        if (rerun) {
-            runNewGame();
-        }
-        if (close) {
-            terminalHandler.clearScreen();
-        }
-    }
-
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
@@ -175,5 +181,6 @@ public class GameView extends View{
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
+        getGame().updateSize(heigth, width);
     }
 }
