@@ -120,7 +120,7 @@ public class FileBuffer {
      * @post getDirty() == true
      * @return: void
      */
-    public void insertLineBreak(Point insert){
+    public void insertLineBreak(Point insert){  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
         int row = insert.getX()-1;
         int col = insert.getY()-1;
         ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
@@ -144,6 +144,13 @@ public class FileBuffer {
         {
             content = new String[1];
             content[0] = String.valueOf(c);
+        }
+        else if (insert.getX() > getRowCount()) {
+            content = new String[getRowCount() + 1];
+            for (int i = 0; i < getRowCount(); i++) {
+                content[i] = getContent()[i];
+            }
+            content[getRowCount()] = String.valueOf(c);
         }
         else {
             String row = content[insert.getX() - 1];

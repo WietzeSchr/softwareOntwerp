@@ -1,10 +1,6 @@
-import io.github.btj.termios.Terminal;
-
 import java.io.IOException;
 
 public class GameView extends View{
-
-    TerminalHandler terminalHandler = new TerminalHandler();
     private Game game;
 
     /* ******************
@@ -45,7 +41,7 @@ public class GameView extends View{
     @Override
     public void addNewLineBreak() {
         if (getGame().getSnake() == null) {
-            setGame(new Game(getHeigth(), getWidth()));
+            runNewGame();
         }
     }
 
@@ -64,7 +60,7 @@ public class GameView extends View{
      * ******************/
 
     @Override
-    public Layout closeBuffer(int focus, CompositeLayout parent) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent) throws IOException {
         return null;
     }
 

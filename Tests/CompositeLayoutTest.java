@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestClassOrder;
 
 import java.awt.*;
 import java.io.IOException;
@@ -42,12 +43,62 @@ class CompositeLayoutTest {
         assertEquals(fbv3.getWidth(), 40);
         assertEquals(fbv3.getLeftUpperCorner(), new Point(11,1));
         // Tests voor closeBuffer
-        sl1.closeBuffer(1, sbsl1);
+        sl1.closeView(1, sbsl1);
         assertEquals(sl1.countViews(), 2);
         sl1.initViewPosition(1);
         assertEquals(sl1.getSubLayouts()[0], fbv2);
         assertEquals(fbv2.getPosition(), 1);
         assertEquals(sl1.getSubLayouts()[1], fbv3);
         assertEquals(fbv3.getPosition(), 2);
+    }
+
+    @Test
+    void testConstructor() {
+
+    }
+
+    @Test
+    void testSetters() {
+
+    }
+
+    @Test
+    void testCountSubLayouts() {
+
+    }
+
+    @Test
+    void testCloseView() {
+
+    }
+
+    @Test
+    void testRotateView() {
+
+    }
+
+    @Test
+    void testInitViewPositions() {
+
+    }
+
+    @Test
+    void testGetFocusedView() {
+
+    }
+
+    @Test
+    void testContains() {
+
+    }
+
+    @Test
+    void testCountViews() {
+
+    }
+
+    @Test
+    void testUpdateSize() {
+
     }
 }

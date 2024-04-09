@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class SideBySideLayoutTest {
@@ -31,6 +29,51 @@ class SideBySideLayoutTest {
         assertEquals(fbv2.getLeftUpperCorner(), new Point(1,11));
         assertEquals(sbsl1.calcSubSize(), new Point(10,10));
         // Tests voor rotateView
+
+    }
+
+    @Test
+    void testConstructor() {
+
+    }
+
+    @Test
+    void testSetters() {
+
+    }
+
+    @Test
+    void testRotateSiblings() {
+
+    }
+
+    @Test
+    void testRotateSiblingsFlip() {
+
+    }
+
+    @Test
+    void testRotateNonSiblings() {
+
+    }
+
+    @Test
+    void testRotateNonSiblingsPromote() {
+
+    }
+
+    @Test
+    void testOpenNewGame() {
+
+    }
+
+    @Test
+    void testCalcSubSize() {
+
+    }
+
+    @Test
+    void testCalcLeftUpperCorner() {
 
     }
 }

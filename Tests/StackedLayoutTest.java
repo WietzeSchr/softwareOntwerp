@@ -32,4 +32,48 @@ class StackedLayoutTest {
         assertEquals(sl1.calcSubSize(), new Point(5,20));
     }
 
+    @Test
+    void testConstructor() {
+
+    }
+
+    @Test
+    void testSetters() {
+
+    }
+
+    @Test
+    void testRotateSiblings() {
+
+    }
+
+    @Test
+    void testRotateSiblingsFlip() {
+
+    }
+
+    @Test
+    void testRotateNonSiblings() {
+
+    }
+
+    @Test
+    void testRotateNonSiblingsPromote() {
+
+    }
+
+    @Test
+    void testOpenNewGame() {
+
+    }
+
+    @Test
+    void testCalcSubSize() {
+
+    }
+
+    @Test
+    void testCalcLeftUpperCorner() {
+
+    }
 }

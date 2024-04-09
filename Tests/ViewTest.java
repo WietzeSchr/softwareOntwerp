@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LayoutTest {
+class ViewTest {
 
     @Test
     void testConstructor() {
@@ -10,37 +10,27 @@ class LayoutTest {
     }
 
     @Test
-    void testSetter() {
+    void testSetters() {
 
     }
 
     @Test
-    void testGetNePrFocus() {
-
+    void getNextFocus() {
     }
 
     @Test
-    void testArrowPressed() {
-
+    void getPreviousFocus() {
     }
 
     @Test
-    void testCloseView() {
-
+    void closeView() {
     }
 
     @Test
-    void testNewFocus() {
-
+    void getNewFocus() {
     }
 
     @Test
-    void testNewGame() {
-
-    }
-
-    @Test
-    void testGetNextDeadline() {
-
+    void openNewGame() {
     }
 }
