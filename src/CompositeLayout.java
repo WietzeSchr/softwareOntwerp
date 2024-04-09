@@ -84,7 +84,7 @@ public abstract class CompositeLayout extends Layout {
     }
 
     /* ******************
-     *   CLOSE BUFFER   *
+     *   CLOSE VIEW     *
      * ******************/
 
     /**
@@ -94,18 +94,18 @@ public abstract class CompositeLayout extends Layout {
      * @return: Layout
      */
     @Override
-    public Layout closeBuffer(int focus, CompositeLayout parent) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent) throws IOException {
         if (this == parent) {
             if (getSubLayouts().length == 2) {
-                if (getSubLayouts()[0].closeBuffer(focus, parent) != null) {
-                    return getSubLayouts()[0].closeBuffer(focus, parent);
-                } else return getSubLayouts()[1].closeBuffer(focus, parent);
+                if (getSubLayouts()[0].closeView(focus, parent) != null) {
+                    return getSubLayouts()[0].closeView(focus, parent);
+                } else return getSubLayouts()[1].closeView(focus, parent);
             } else {
                 Layout[] newSubLayouts = new Layout[countSubLayouts() - 1];
                 int i = 0;
                 for (int j = 0; j < getSubLayouts().length; j++) {
-                    if (getSubLayouts()[j].closeBuffer(focus, parent) != null) {
-                        newSubLayouts[i] = getSubLayouts()[j].closeBuffer(focus, parent);
+                    if (getSubLayouts()[j].closeView(focus, parent) != null) {
+                        newSubLayouts[i] = getSubLayouts()[j].closeView(focus, parent);
                         i++;
                     }
                 }
@@ -115,7 +115,7 @@ public abstract class CompositeLayout extends Layout {
         } else {
             Layout[] newSubLayouts = getSubLayouts();
             for (int i = 0; i < newSubLayouts.length; i++) {
-                newSubLayouts[i] = getSubLayouts()[i].closeBuffer(focus, parent);
+                newSubLayouts[i] = getSubLayouts()[i].closeView(focus, parent);
             }
             setSubLayouts(newSubLayouts);
             return this;
@@ -180,10 +180,6 @@ public abstract class CompositeLayout extends Layout {
     /* ******************
      *  OPEN GAME VIEW  *
      * ******************/
-
-    public Layout openNewGame(int focus) {
-        return this;
-    }
 
     /* ******************
      *  SHOW FUNCTIONS  *

@@ -33,6 +33,16 @@ public abstract class View extends Layout{
 
     public abstract void move(Point dir);
 
+    @Override
+    public int getNextFocus(int focus) {
+        return 1;
+    }
+
+    @Override
+    public int getPreviousFocus(int focus) {
+        return 1;
+    }
+
     /* **********************
      *  EDIT BUFFER CONTENT *
      ************************/
@@ -44,7 +54,7 @@ public abstract class View extends Layout{
     public abstract void deleteChar();
 
     /* ******************
-     *   CLOSE BUFFER   *
+     *   CLOSE VIEW     *
      * ******************/
 
     /* ******************

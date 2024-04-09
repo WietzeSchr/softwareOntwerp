@@ -16,7 +16,7 @@ class Edit {
     private Edit previous;
 
     public Edit(char c, boolean deleted, Point insert, Point insertAfter) {
-        this.change = 'c';
+        this.change = c;
         this.deleted = deleted;
         this.insertionPoint = insert;
         this.insertionPointAfter = insertAfter;
@@ -275,16 +275,6 @@ public class FileBufferView extends View
         setInsertionPoint(newInsertionPoint);
     }
 
-    @Override
-    public int getNextFocus(int focus) {
-        return 1;
-    }
-
-    @Override
-    public int getPreviousFocus(int focus) {
-        return 1;
-    }
-
     /* **********************
      *  EDIT BUFFER CONTENT *
      ************************/
@@ -343,14 +333,14 @@ public class FileBufferView extends View
     }
 
     /* ******************
-     *   CLOSE BUFFER   *
+     *   CLOSE VIEW     *
      * ******************/
 
     /** This method closes the buffer and updates the subLayouts
      * @return: FileBufferView || null
      */
     @Override
-    public FileBufferView closeBuffer(int focus, CompositeLayout parent) throws IOException {
+    public FileBufferView closeView(int focus, CompositeLayout parent) throws IOException {
         if (getPosition() != focus) {
             return this;
         }
@@ -395,23 +385,21 @@ public class FileBufferView extends View
     /** This method returns the focused Layout
      * @return: FileBufferView
      */
-     @Override
+    @Override
     protected FileBufferView rotateView(int dir, int focus) {
+         return this;
+    }
+    protected FileBufferView rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
         return this;
-     }
-
-     protected FileBufferView rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
-         return this;
-     }
-
-     protected FileBufferView rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
-         return this;
-     }
+    }
+    protected FileBufferView rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
+        return this;
+    }
 
 
     protected FileBufferView rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
-         return this;
-     }
+        return this;
+    }
 
      protected FileBufferView rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
          return this;

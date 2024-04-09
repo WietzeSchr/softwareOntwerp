@@ -40,4 +40,64 @@ class FileBufferViewTest {
         fbv1.saveBuffer("\n");
         assertFalse(fbv1.getBuffer().getDirty());
     }
+
+    @Test
+    void testConstructor() {
+
+    }
+
+    @Test
+    void testSetters() {
+
+    }
+
+    @Test
+    void testDerivedAttributes() {
+
+    }
+
+    @Test
+    void testMoveInsertionPoint() {
+
+    }
+
+    @Test
+    void testAddNewLineBreak() {
+
+    }
+
+    @Test
+    void testAddNewChar() {
+
+    }
+
+    @Test
+    void testDeleteChar() {
+
+    }
+
+    @Test
+    void testCloseBuffer() {
+
+    }
+
+    @Test
+    void testSaveBuffer() {
+
+    }
+
+    @Test
+    void testUndoRedo() {
+
+    }
+
+    @Test
+    void testUpdateScrollState() {
+
+    }
+
+    @Test
+    void testMakeShow() {
+
+    }
 }
