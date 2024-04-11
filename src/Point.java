@@ -41,7 +41,8 @@ public class Point {
         return true;
     }
 
-    public Point copy() {
+    @Override
+    public Point clone() {
         return new Point(getX(), getY());
     }
 

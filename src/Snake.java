@@ -1,8 +1,10 @@
+import java.util.ArrayList;
+
 public class Snake extends Object{
 
     private Point head;
 
-    private Point[] body;
+    private ArrayList<Point> body;
 
     private Point dir;
 
@@ -10,17 +12,22 @@ public class Snake extends Object{
      *  CONSTRUCTORS    *
      * ******************/
 
-    public Snake(Point[] snake, Point dir) {
-        this.head = snake[0];
-        Point[] body = new Point[snake.length - 1];
-        for (int i = 1; i < snake.length; i++) {
-            body[i - 1] = snake[i];
+    public Snake(ArrayList<Point> snake, Point dir) {
+        if (snake.size() >= 1) {
+            this.head = snake.get(0);
+            ArrayList<Point> body = new ArrayList<>();
+            for (int i = 1; i < snake.size(); i++) {
+                body.add(snake.get(i));
+            }
+            this.body = body;
+            this.dir = dir;
         }
-        this.body = body;
-        this.dir = dir;
+        else {
+            throw new RuntimeException("Illegal snake");
+        }
     }
 
-    public Snake(Point head, Point[] body, Point dir) {
+    public Snake(Point head, ArrayList<Point> body, Point dir) {
         this.head = head;
         this.body = body;
         this.dir = dir;
@@ -35,55 +42,48 @@ public class Snake extends Object{
     }
 
     public Point getHead() {
-        return head.copy();
+        return head.clone();
     }
 
-    public void setBody(Point[] newBody) {
+    public void setBody(ArrayList<Point> newBody) {
         this.body = newBody;
     }
 
-    public Point[] getBody() {
-        Point[] result = new Point[body.length];
-        for (int i = 0; i < body.length; i++) {
-            result[i] = body[i].copy();
+    public ArrayList<Point> getBody() {
+        ArrayList<Point> result = new ArrayList<>();
+        for (Point point : body) {
+            result.add(point.clone());
         }
         return result;
     }
 
     public void setDir(Point newDir) {
-        if (!  getHead().add(newDir).equals(getBody()[0])) {
+        if (!  getHead().add(newDir).equals(getBody().get(0))) {
             this.dir = newDir;
         }
     }
 
     public Point getDir() {
-        return dir.copy();
+        return dir.clone();
     }
 
     /* ****************
      *   MOVE SNAKE   *
      * ****************/
 
-    public Point moveHead() {
-        return getHead().add(getDir());
+    public void move() {
+        Point newHead = getHead().add(getDir());
+        ArrayList<Point> newBody = new ArrayList<>();
+        newBody.add(getHead());
+        newBody.addAll(getBody());
+        setHead(newHead);
+        setBody(newBody);
     }
 
-    public Point[] moveBody() {
-        Point[] result = new Point[getBody().length];
-        result[0] = getHead();
-        for (int i = 0; i < getBody().length - 1; i++) {
-            result[i + 1] = getBody()[i];
-        }
-        return result;
-    }
-
-    public Point[] extendBody() {
-        Point[] result = new Point[getBody().length + 1];
-        result[0] = getHead();
-        for (int i = 0; i < getBody().length; i++) {
-            result[i + 1] = getBody()[i];
-        }
-        return result;
+    public void removeTail() {
+        ArrayList<Point> oldBody = getBody();
+        oldBody.remove(oldBody.size() - 1);
+        setBody(oldBody);
     }
 
     /* ******************
@@ -109,13 +109,14 @@ public class Snake extends Object{
                 return '>';
             }
         }
-        for (int i = 0; i < getBody().length; i++) {
-            if (getBody()[i].equals(p)) {
-                if (i != getBody().length - 1) {
+        ArrayList<Point> body = getBody();
+        for (int i = 0; i < body.size(); i++) {
+            if (body.get(i).equals(p)) {
+                if (i != body.size() - 1) {
                     return 'o';
                 }
                 else {
-                    if (getBody()[i - 1].minus(getBody()[i]).equals(DOWN) || getBody()[i - 1].minus(getBody()[i]).equals(UP)) {
+                    if (body.get(i - 1).minus(body.get(i)).equals(DOWN) || body.get(i - 1).minus(body.get(i)).equals(UP)) {
                         return '|';
                     }
                     else {
@@ -132,10 +133,11 @@ public class Snake extends Object{
      * ******************/
 
     public Point[] abstractList() {
-        Point[] result = new Point[getBody().length + 1];
+        ArrayList<Point> body = getBody();
+        Point[] result = new Point[body.size()+ 1];
         result[0] = getHead();
-        for (int i = 0; i < getBody().length; i++) {
-            result[i + 1] = getBody()[i];
+        for (int i = 0; i < body.size(); i++) {
+            result[i + 1] = body.get(i);
         }
         return result;
     }
@@ -166,8 +168,9 @@ public class Snake extends Object{
     }
 
     public boolean bodyContains(Point p) {
-        for (int i = 0; i < getBody().length; i++) {
-            if (getBody()[i].equals(p)) {
+        ArrayList<Point> body = getBody();
+        for (int i = 0; i < body.size(); i++) {
+            if (body.get(i).equals(p)) {
                 return true;
             }
         }
@@ -183,18 +186,21 @@ public class Snake extends Object{
         if (getClass() != o.getClass()) {
             return false;
         }
-        if (! getHead().equals(((Snake) o).getHead())) {
+        Snake other = (Snake) o;
+        if (! getHead().equals(other.getHead())) {
             return false;
         }
-        if (getBody().length != ((Snake) o).getBody().length) {
+        ArrayList<Point> body = getBody();
+        ArrayList<Point> otherBody = other.getBody();
+        if (body.size() != otherBody.size()) {
             return false;
         }
-        for (int i = 0; i < getBody().length; i++) {
-            if (! getBody()[i].equals(((Snake) o).getBody()[i])) {
+        for (int i = 0; i < body.size(); i++) {
+            if (! body.get(i).equals(otherBody.get(i))) {
                 return false;
             }
         }
-        if (! getDir().equals(((Snake) o).getDir())) {
+        if (! getDir().equals(other.getDir())) {
             return false;
         }
         return true;

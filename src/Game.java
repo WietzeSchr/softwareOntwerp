@@ -3,6 +3,19 @@ import java.util.List;
 
 public class Game {
 
+    /*
+     *  Points added to score when apple is consumed
+     */
+    private final int K = 10;
+
+
+    private final int N = 1;
+
+    /*
+     *  Percent decrease in move delay when apple is consumed
+     */
+    private final int P = 1;
+
     private int[][] grid;
 
     private Snake snake;
@@ -23,7 +36,7 @@ public class Game {
             }
         }
         this.tick = 1000;
-        Point[] snake = new Point[6];
+        ArrayList<Point> snake = new ArrayList<>();
         int i = (int) Math.floor((float) (heigth - 1) / 2);
         int j = (int) Math.floor((float) (width - 1) / 2);
         Point dir;
@@ -33,8 +46,8 @@ public class Game {
         else {
             dir = new Point(0, 1);
         }
-        for (int k = 0; k < snake.length; k++) {
-            snake[k] = new Point(i, j);
+        for (int k = 0; k < 6; k++) {
+            snake.add(new Point(i, j));
             if (j == 1) {
                 i -= 1;
             }
@@ -133,24 +146,21 @@ public class Game {
                 if (c < 0.1) {
                     spawnApple();
                 }
-                setScore(getScore() + 1);
+                updateScore();
             }
         }
     }
 
+    private void updateScore() {
+        setScore(getScore() + 1);
+    }
+
     public void moveSnake() {
-        Point newHead = getSnake().moveHead();
-        Point oldDir = getSnake().getDir();
-        Point[] newBody;
-        if (isValid(newHead)) {
-            if (eatApple()) {
-                setGridAt(0, newHead);
-                newBody = getSnake().extendBody();
+        getSnake().move();
+        if (isValid(getSnake().getHead())) {
+            if (! eatApple()) {
+                getSnake().removeTail();
             }
-            else {
-                newBody = getSnake().moveBody();
-            }
-            setSnake(new Snake(newHead, newBody, oldDir));
         }
         else {
             loseGame();
@@ -163,10 +173,11 @@ public class Game {
     }
 
     public boolean eatApple() {
-        if (getGridAt(getSnake().getHead().add(getSnake().getDir())) == 1) {
-            setGridAt(0, getSnake().getHead().add(getSnake().getDir()));
-            setTick(getTick() - getTick() / 100);
-            setScore(getScore() + 10);
+        if (getGridAt(getSnake().getHead()) == 1) {
+            setGridAt(0, getSnake().getHead());
+            spawnApple();
+            setTick(getTick() * (100 - P) / 100);
+            setScore(getScore() + K);
             return true;
         }
         return false;

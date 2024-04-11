@@ -118,6 +118,8 @@ public abstract class View extends Layout{
      *    RUN SNAKE   *
      * ****************/
 
+    public abstract long getNextDeadline();
+
     public abstract long getTick();
 
     public abstract void tick() throws IOException;

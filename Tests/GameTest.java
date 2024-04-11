@@ -1,5 +1,8 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
@@ -8,11 +11,11 @@ class GameTest {
     void gettersAndSetters() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(points, new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
         Game game = new Game(10, 20);
         assertEquals(game.getTick(), 1000);
-        assertEquals(game.getSnake(), new Snake(new Point[] {new Point(4,9), new Point(4,10), new Point(4,11),
-                new Point(4,12),new Point(4,13),new Point(4,14)}, new Point(0,-1)));
+        assertEquals(game.getSnake(), new Snake(new ArrayList<>(List.of(new Point[] {new Point(4,9), new Point(4,10), new Point(4,11),
+                new Point(4,12),new Point(4,13),new Point(4,14)})), new Point(0,-1)));
         assertEquals(game.getScore(), 0);
         game.setSnake(snake);
         assertEquals(game.getSnake(), snake);
@@ -49,13 +52,13 @@ class GameTest {
         Game game = new Game(10, 20);
         game.changeDir(new Point(0, -1));
         game.moveSnake();
-        Snake snake1 = new Snake(new Point[] {new Point(4,8), new Point(4,9), new Point(4,10),
-                new Point(4,11),new Point(4,12),new Point(4,13)}, new Point(0, -1));
+        Snake snake1 = new Snake(new ArrayList<>(List.of(new Point[] {new Point(4,8), new Point(4,9), new Point(4,10),
+                new Point(4,11),new Point(4,12),new Point(4,13)})), new Point(0, -1));
         assertEquals(game.getSnake(), snake1);
         game.setGridAt(1, new Point(4, 7));
         game.moveSnake();
-        Snake snake2 = new Snake(new Point[] {new Point(4,7), new Point(4,8), new Point(4,9), new Point(4,10),
-                new Point(4,11),new Point(4,12),new Point(4,13)}, new Point(0, -1));
+        Snake snake2 = new Snake(new ArrayList<>(List.of(new Point[] {new Point(4,7), new Point(4,8), new Point(4,9), new Point(4,10),
+                new Point(4,11),new Point(4,12),new Point(4,13)})), new Point(0, -1));
         assertEquals(game.getSnake(), snake2);
         game.changeDir(new Point(-1, 0));
         game.moveSnake();
