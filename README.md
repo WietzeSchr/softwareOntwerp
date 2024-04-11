@@ -8,6 +8,8 @@
 
 ## :compass: Roadmap
 
+# usecases
+
 * [x] Open Textr with the given files
 * [x] Edit the focused view by typing characters, press enter to insert a linebreak and press backspace to delete a character
 * [x] Go to the next/previous view using Ctrl + N / Ctrl + P
@@ -18,8 +20,19 @@
 * [x] Save the focused view's buffer using Ctrl + S
 * [ ] Duplicate the focused view using Ctrl + D
 * [x] Open a new Snake game using Ctrl + G
+    - [ ] Resize the game, fitting the snake as centered as possible (if possible at all) in new grid
 * [x] Undo the last made edit (adding/deleting characters/linebreaks) using Ctrl + Z
 * [x] Redo the last undo using Ctrl + U
-    - [ ] Make edit class abstract to deal with different types of edits
-* [ ] Add tests to existing files
-* [ ] Add documentation
+
+# General
+
+* [ ] Tests
+* [ ] Documentation
+* [ ] Sequence Diagrams
+* [ ] Class Diagram
+
+# Extra ideas
+
+* [ ] Make a Listener class that checks wether something was updated to avoid unnecessary show() calls
+* [ ] Make show functions less 'heavy'
+* [ ] Make edit class abstract to deal with different types of edits
