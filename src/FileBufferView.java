@@ -1,67 +1,149 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-class Edit {
-
-    private final char change;
-
-    private final boolean deleted;
-
-    private final Point insertionPoint;
-
-    private final Point insertionPointAfter;
-
-    private Edit next;
-
-    private Edit previous;
-
-    public Edit(char c, boolean deleted, Point insert, Point insertAfter) {
-        this.change = c;
-        this.deleted = deleted;
-        this.insertionPoint = insert;
-        this.insertionPointAfter = insertAfter;
-        this.next = null;
-        this.previous = null;
-    }
-
-    public char getChange() {
-        return change;
-    }
-
-    public boolean getDeleted() {
-        return deleted;
-    }
-
-    public Point getInsertionPoint() {
-        return insertionPoint;
-    }
-
-    public Point getInsertionPointAfter() {
-        return insertionPointAfter;
-    }
-
-    public Edit getNext() {
-        return next;
-    }
-
-    public void setNext(Edit newNext) {
-        this.next = newNext;
-    }
-
-    public Edit getPrevious() {
-        return previous;
-    }
-
-    public void setPrevious(Edit newPrevious) {
-        this.previous = newPrevious;
-    }
-}
-
-/* ******************
- *  FILEBUFFERVIEW  *
- ********************/
 public class FileBufferView extends View
 {
+    /* *******************
+     *   ABSTRACT EDIT   *
+     * *******************/
+    private abstract static class Edit {
+
+        private Edit next;
+
+        private Edit previous;
+
+        public Edit() {
+            this.next = this;
+            this.previous = this;
+        }
+
+        public Edit getNext() {
+            return next;
+        }
+
+        public void setNext(Edit newNext) {
+            this.next = newNext;
+        }
+
+        public Edit getPrevious() {
+            return previous;
+        }
+
+        public void setPrevious(Edit newPrevious) {
+            this.previous = newPrevious;
+        }
+
+        public abstract void undo();
+
+        public abstract void redo();
+    }
+
+    /* ****************
+     *   EMPTY EDIT   *
+     * ****************/
+    private static class EmptyEdit extends Edit {
+        public EmptyEdit() {
+            super();
+        }
+
+        public void undo() {
+            return;
+        }
+
+        public void redo() {
+            return;
+        }
+    }
+
+    /* *******************
+     *   NON-EMPTY EDIT  *
+     * *******************/
+    private abstract static class NonEmptyEdit extends Edit {
+
+        private final char change;
+
+        private final Point insertionPoint;
+
+        private final Point insertionPointAfter;
+        public NonEmptyEdit(char c, Point insert, Point insertAfter) {
+            super();
+            this.change = c;
+            this.insertionPoint = insert;
+            this.insertionPointAfter = insertAfter;
+            setPrevious(new EmptyEdit());
+            setNext(new EmptyEdit());
+            getNext().setPrevious(this);
+            getPrevious().setNext(this);
+        }
+
+        public char getChange() {
+            return change;
+        }
+
+        public Point getInsertionPoint() {
+            return insertionPoint;
+        }
+
+        public Point getInsertionPointAfter() {
+            return insertionPointAfter;
+        }
+
+        public abstract void undo();
+
+        public abstract void redo();
+    }
+
+    /* *******************
+     *   INSERTION EDIT  *
+     * *******************/
+    private class Insertion extends NonEmptyEdit {
+        public Insertion(char c, Point insert, Point insertAfter) {
+            super(c, insert, insertAfter);
+        }
+
+        public void undo() {
+            fileBuffer.deleteChar(getInsertionPointAfter());
+            insertionPoint = getInsertionPoint();
+        }
+
+        public void redo() {
+            if (getChange() == 13) {
+                fileBuffer.insertLineBreak(getInsertionPoint());
+            }
+            else {
+                fileBuffer.addNewChar(getChange(), getInsertionPoint());
+            }
+            insertionPoint = getInsertionPointAfter();
+        }
+    }
+
+    /* *******************
+     *   DELETION EDIT   *
+     * *******************/
+    private class Deletion extends NonEmptyEdit {
+        public Deletion(char c, Point insert, Point insertAfter) {
+            super(c, insert, insertAfter);
+        }
+
+        public void undo() {
+            if (getChange() == 13) {
+                fileBuffer.insertLineBreak(getInsertionPoint());
+            }
+            else {
+                fileBuffer.addNewChar(getChange(), getInsertionPointAfter());
+            }
+            insertionPoint = getInsertionPointAfter();
+        }
+
+        public void redo() {
+            fileBuffer.deleteChar(getInsertionPoint());
+            insertionPoint = getInsertionPointAfter();
+        }
+    }
+
+    /* ******************
+     *  FILEBUFFERVIEW  *
+     ********************/
     private int verticalScrollState;
 
     private int horizontalScrollState;
@@ -71,7 +153,6 @@ public class FileBufferView extends View
     private Point insertionPoint;
 
     private FileBuffer fileBuffer;
-    TerminalHandler terminalHandler = new TerminalHandler();
 
     private Edit lastEdit;
 
@@ -90,10 +171,10 @@ public class FileBufferView extends View
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        this.lastEdit = new Edit('c', false, null, null);  // This Edit object (with insert
-        this.verticalScrollState = 1;                                           // and insertAfter set tp null) is seen
-        this.horizontalScrollState = 1;                                         // interpreted as an "empty" edit, since
-        this.insertionPoint = new Point(1,1);                             // chars can't be null
+        this.lastEdit = new EmptyEdit();
+        this.verticalScrollState = 1;
+        this.horizontalScrollState = 1;
+        this.insertionPoint = new Point(1,1);
     }
 
     /** This constructor creates a new FileBufferView with the given heigth, width, parent, leftUpperCorner, filepath and newLine
@@ -107,7 +188,7 @@ public class FileBufferView extends View
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        this.lastEdit = new Edit('c', false, null, null);
+        this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
@@ -120,7 +201,7 @@ public class FileBufferView extends View
     public FileBufferView(int heigth, int width, Point leftUpperCorner, FileBuffer fileBuffer) {
         super(heigth, width, leftUpperCorner);
         this.fileBuffer = fileBuffer;
-        this.lastEdit = new Edit('c', false, null, null);
+        this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
@@ -283,11 +364,10 @@ public class FileBufferView extends View
      * @return: void
      */
     public void addNewLineBreak() {
-        char c = 13;
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
-        Edit nextEdit = new Edit(c, false, insert, getInsertionPoint());
+        NonEmptyEdit nextEdit = new Insertion((char) 13, insert, getInsertionPoint());
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
@@ -300,7 +380,7 @@ public class FileBufferView extends View
         Point insert = getInsertionPoint();
         getBuffer().addNewChar(c, insert);
         move(new Point(0, 1));
-        Edit nextEdit = new Edit(c, false, insert, getInsertionPoint());
+        Edit nextEdit = new Insertion(c, insert, getInsertionPoint());
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
@@ -325,7 +405,7 @@ public class FileBufferView extends View
             else {
                 move(new Point(0, -1));
             }
-            Edit nextEdit = new Edit(c, true, insert, getInsertionPoint());
+            Edit nextEdit = new Deletion(c, insert, getInsertionPoint());
             nextEdit.setPrevious(getLastEdit());
             getLastEdit().setNext(nextEdit);
             setLastEdit(nextEdit);
@@ -410,38 +490,14 @@ public class FileBufferView extends View
      * ******************/
 
     public void undo() {
-        Edit lastEdit = getLastEdit();
-        if (lastEdit.getInsertionPoint() != null) {
-            if (lastEdit.getDeleted()) {
-                if (lastEdit.getChange() == 13) {
-                    getBuffer().insertLineBreak(lastEdit.getInsertionPointAfter());
-                }
-                else {
-                    getBuffer().addNewChar(lastEdit.getChange(), lastEdit.getInsertionPointAfter());
-                }
-            } else {
-                getBuffer().deleteChar(lastEdit.getInsertionPointAfter());
-            }
-            setInsertionPoint(lastEdit.getInsertionPoint());
-            setLastEdit(lastEdit.getPrevious());
-            if (getLastEdit().getInsertionPoint() == null) {
-                getBuffer().setDirty(false);
-            }
-        }
+        if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
+        getLastEdit().undo();
+        setLastEdit(getLastEdit().getPrevious());
     }
 
     public void redo() {
-        Edit lastUndo = getLastEdit().getNext();
-        if (lastUndo != null) {
-            if (lastUndo.getDeleted()) {
-                getBuffer().deleteChar(lastUndo.getInsertionPoint());
-            }
-            else {
-                getBuffer().addNewChar(lastUndo.getChange(), lastUndo.getInsertionPoint().add(new Point(0, -1)));
-            }
-            setInsertionPoint(lastUndo.getInsertionPointAfter());
-            setLastEdit(lastUndo);
-        }
+        getLastEdit().getNext().redo();
+        setLastEdit(getLastEdit().getNext());
     }
 
     /* ****************
