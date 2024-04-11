@@ -449,8 +449,8 @@ public class FileBufferView extends View
      * ****************/
 
     @Override
-    public long getTick() {
-        return 0;
+    public long getNextDeadline() {
+        return System.currentTimeMillis();
     }
 
     public void tick() {
@@ -588,5 +588,10 @@ public class FileBufferView extends View
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
+    }
+
+    @Override
+    public long getTick() {
+        return 0;
     }
 }

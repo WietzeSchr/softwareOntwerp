@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileTest {
     @Test
     void testConstructor() {
-        // Tests voor constructor
         File f1 = new File("test1.txt");
         assertEquals(f1.getPath(), "test1.txt");
     }

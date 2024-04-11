@@ -138,7 +138,7 @@ public class FileBuffer {
      * @post getDirty() == true
      * @return: void
      */
-    public void addNewChar(char c, Point insert) {
+    public void addNewChar(char c, Point insert) {  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
         String[] content = getContent();
         if (content.length == 0)
         {
@@ -228,12 +228,6 @@ public class FileBuffer {
         getFile().save(newLine, getContent());
         setDirty(false);
     }
-
-    /* ******************
-     *   UNDO / REDO    *
-     * ******************/
-
-
 
     /* ******************
      *  HELP FUNCTIONS  *

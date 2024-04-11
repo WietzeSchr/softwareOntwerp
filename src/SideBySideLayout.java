@@ -182,6 +182,7 @@ public class SideBySideLayout extends CompositeLayout{
                 if (getSubLayouts()[i] == focussed) {
                     newSubLayouts[j] = focussed;
                     newSubLayouts[j + 1] = new GameView(getHeigth(), getWidth(), getLeftUpperCorner());
+                                    //   = new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), getBuffer())
                     j += 2;
                 }
                 else {

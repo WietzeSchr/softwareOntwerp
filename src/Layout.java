@@ -257,7 +257,7 @@ public abstract class Layout {
     public abstract int countViews();
 
     public long getNextDeadline(int focus) {
-        return System.currentTimeMillis() + getFocusedView(focus).getTick();
+         return getFocusedView(focus).getNextDeadline();
     }
 
     /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner

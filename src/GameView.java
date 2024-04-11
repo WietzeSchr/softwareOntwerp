@@ -3,12 +3,15 @@ import java.io.IOException;
 public class GameView extends View{
     private Game game;
 
+    private long lastMove;
+
     /* ******************
      *  CONSTRUCTORS    *
      * ******************/
     public GameView(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
         this.game = new Game(height, width);
+        this.lastMove = System.currentTimeMillis();
     }
 
     /* **********************
@@ -23,14 +26,24 @@ public class GameView extends View{
         return game;
     }
 
+    public void setLastMove(long newLastMove) {
+        this.lastMove = newLastMove;
+    }
+
+    public long getLastMove() {
+        return lastMove;
+    }
+
     /* ******************
      *  INSPECT CONTENT *
      * ******************/
 
     public void move(Point dir) {
-        changeDir(dir);
-        if (getGame().getSnake().getDir().equals(dir)) {
-            tick();
+        if (getGame().getSnake() != null) {
+            changeDir(dir);
+            if (getGame().getSnake().getDir().equals(dir)) {
+                tick();
+            }
         }
     }
 
@@ -107,7 +120,7 @@ public class GameView extends View{
     }
 
     public String[] showLoss() {
-        String lossStr = "GAME OVER! Press enter to restart";
+        String lossStr = "GAME OVER - Press enter to restart";
         String[] result = new String[getHeigth()];
         if (getWidth() - 1 > lossStr.length()) {
             for (int i = 0; i < result.length - 1; i++) {
@@ -123,7 +136,7 @@ public class GameView extends View{
                 result[getHeigth() - 1] += "#";
             }
             StringBuilder lossString = new StringBuilder();
-            for (int i = 0; i < Math.floor((float) (getWidth() - lossString.length() - 1) / 2); i++) {
+            for (int i = 0; i < Math.floor((float) (getWidth() - lossStr.length() - 1) / 2); i++) {
                 lossString.append(" ");
             }
             lossString.append(lossStr);
@@ -141,12 +154,18 @@ public class GameView extends View{
      * ****************/
 
     @Override
+    public long getNextDeadline() {
+        return getLastMove() + getTick();
+    }
+
+    @Override
     public long getTick() {
         return getGame().getTick();
     }
 
     public void tick() {
         getGame().tick();
+        setLastMove(System.currentTimeMillis());
     }
 
     public void changeDir(Point newDir) {
