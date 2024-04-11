@@ -34,4 +34,9 @@
 
 * [ ] Make a Listener class that checks wether something was updated to avoid unnecessary show() calls
 * [ ] Make show functions less 'heavy'
-* [ ] Make edit class abstract to deal with different types of edits
+* [x] Make edit class abstract to deal with different types of edits
+* [ ] Check for use of ENUM classes
+
+### Found bugs
+
+* [ ] 
