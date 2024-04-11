@@ -3,12 +3,11 @@
 - [About the Project](#star2-about-the-project)
 - [Roadmap](#compass-roadmap)
 
-
 ## :star2: About the Project
 
 ## :compass: Roadmap
 
-# usecases
+### Usecases
 
 * [x] Open Textr with the given files
 * [x] Edit the focused view by typing characters, press enter to insert a linebreak and press backspace to delete a character
@@ -24,14 +23,14 @@
 * [x] Undo the last made edit (adding/deleting characters/linebreaks) using Ctrl + Z
 * [x] Redo the last undo using Ctrl + U
 
-# General
+### General
 
 * [ ] Tests
 * [ ] Documentation
 * [ ] Sequence Diagrams
 * [ ] Class Diagram
 
-# Extra ideas
+### Extra ideas
 
 * [ ] Make a Listener class that checks wether something was updated to avoid unnecessary show() calls
 * [ ] Make show functions less 'heavy'
