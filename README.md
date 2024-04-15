@@ -39,4 +39,4 @@
 
 ### Found bugs
 
-* [ ] 
+* [ ] NullPointerException bij Snake closeGame
