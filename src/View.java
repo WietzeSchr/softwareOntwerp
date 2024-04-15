@@ -31,7 +31,7 @@ public abstract class View extends Layout{
      *  INSPECT CONTENT *
      * ******************/
 
-    public abstract void move(Point dir);
+    public abstract void move(Direction dir);
 
     @Override
     public int getNextFocus(int focus) {

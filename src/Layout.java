@@ -106,9 +106,9 @@ public abstract class Layout {
      *  INSPECT CONTENT *
      * ******************/
 
-    public void arrowPressed(int x, int y, int focus) {
+    public void arrowPressed(Direction dir, int focus) {
         View focussed = getFocusedView(focus);
-        focussed.move(new Point(x, y));
+        focussed.move(dir);
     }
 
     public int getNextFocus(int focus) {

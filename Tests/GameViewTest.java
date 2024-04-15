@@ -22,13 +22,13 @@ class GameViewTest {
         GameView gv = new GameView(10, 20, new Point(5, 15));
         Game newGame = new Game(10, 20);
         Point[] points = new Point[] {new Point(1,4), new Point(1,3), new Point(1,2), new Point(1,1)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(0,1));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.EAST);
         newGame.setSnake(snake);
         gv.setGame(newGame);
-        gv.move(new Point(0, -1));
+        gv.move(Direction.WEST);
         assertEquals(gv.getGame().getSnake().getHead(), new Point(1,4));
         assertArrayEquals(gv.getGame().getSnake().getBody().toArray(), new Point[] {new Point(1,3), new Point(1,2), new Point(1,1)});
-        gv.move(new Point(0, 1));
+        gv.move(Direction.EAST);
         assertEquals(gv.getGame().getSnake().getHead(), new Point(1,5));
         assertArrayEquals(gv.getGame().getSnake().getBody().toArray(), new Point[] {new Point(1,4), new Point(1,3), new Point(1,2)});
     }

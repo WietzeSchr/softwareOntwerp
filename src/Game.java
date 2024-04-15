@@ -39,12 +39,12 @@ public class Game {
         ArrayList<Point> snake = new ArrayList<>();
         int i = (int) Math.floor((float) (heigth - 1) / 2);
         int j = (int) Math.floor((float) (width - 1) / 2);
-        Point dir;
+        Direction dir;
         if (i % 2 == 0) {
-            dir = new Point(0, -1);
+            dir = Direction.WEST;
         }
         else {
-            dir = new Point(0, 1);
+            dir = Direction.EAST;
         }
         for (int k = 0; k < 6; k++) {
             snake.add(new Point(i, j));
@@ -183,7 +183,7 @@ public class Game {
         return false;
     }
 
-    public void changeDir(Point newDir) {
+    public void changeDir(Direction newDir) {
         getSnake().setDir(newDir);
     }
 

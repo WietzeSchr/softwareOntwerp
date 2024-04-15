@@ -169,13 +169,13 @@ public class Textr
                 if (c1 == 91) {
                     int c2 = terminalHandler.readByte();
                     if (c2 == 65) {
-                        arrowPressed(-1, 0);  //UP
+                        arrowPressed(Direction.NORD);  //UP
                     } else if (c2 == 66) {
-                        arrowPressed(1, 0);   //DOWN
+                        arrowPressed(Direction.SOUTH);   //DOWN
                     } else if (c2 == 67) {
-                        arrowPressed(0, 1);   //RIGHT
+                        arrowPressed(Direction.EAST);   //RIGHT
                     } else if (c2 == 68) {
-                        arrowPressed(0, -1);  //LEFT
+                        arrowPressed(Direction.WEST);  //LEFT
                     }
                 }
             }                               // Shift + F4
@@ -265,8 +265,8 @@ public class Textr
     /** This method updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void arrowPressed(int x, int y) {
-        getLayout().arrowPressed(x, y, getFocus());
+    private void arrowPressed(Direction dir) {
+        getLayout().arrowPressed(dir, getFocus());
     }
 
     /* **********************

@@ -392,8 +392,8 @@ public class FileBufferView extends View
      * @return: void
      */
     @Override
-    public void move(Point dir) {
-        Point newInsertionPoint = getInsertionPoint().add(dir);
+    public void move(Direction dir) {
+        Point newInsertionPoint = getInsertionPoint().add(dir.point);
         setInsertionPoint(newInsertionPoint);
     }
 
@@ -420,7 +420,7 @@ public class FileBufferView extends View
     public void addNewChar(char c) {
         Point insert = getInsertionPoint();
         getBuffer().addNewChar(c, insert);
-        move(new Point(0, 1));
+        move(Direction.EAST);
         Edit nextEdit = new Insertion(c, insert, getInsertionPoint());
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
