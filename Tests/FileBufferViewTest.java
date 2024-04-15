@@ -62,15 +62,15 @@ class FileBufferViewTest {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
         fbv1.setPosition(1);
-        fbv1.move(new Point(-1, 0));
+        fbv1.move(Direction.NORD);
         assertEquals(fbv1.getInsertionPoint(), new Point(1,1));
-        fbv1.move(new Point(0, -1));
+        fbv1.move(Direction.WEST);
         assertEquals(fbv1.getInsertionPoint(), new Point(1,1));
-        fbv1.move(new Point(0, 1));
+        fbv1.move(Direction.EAST);
         assertEquals(fbv1.getInsertionPoint(), new Point(1,2));
-        fbv1.move(new Point(0, 1));
+        fbv1.move(Direction.EAST);
         assertEquals(fbv1.getInsertionPoint(), new Point(1,3));
-        fbv1.move(new Point(1, 0));
+        fbv1.move(Direction.SOUTH);
         assertEquals(fbv1.getInsertionPoint(), new Point(2,1));
     }
 
@@ -90,7 +90,7 @@ class FileBufferViewTest {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
         fbv1.setPosition(1);
-        fbv1.move(new Point(1,0));
+        fbv1.move(Direction.SOUTH);
         fbv1.addNewChar('c');
         assertArrayEquals(fbv1.getContent(), new String[] {"test12", "c", "test123"});
         assertTrue(fbv1.lastEditEquals('c', false, new Point(2,1), new Point(2,2)));
@@ -104,12 +104,12 @@ class FileBufferViewTest {
         fbv1.setPosition(1);
         fbv1.deleteChar();
         assertTrue(fbv1.lastEditIsEmptyEdit());
-        fbv1.move(new Point(0,1));
+        fbv1.move(Direction.EAST);
         fbv1.deleteChar();
         assertTrue(fbv1.getBuffer().getDirty());
         assertArrayEquals(fbv1.getContent(), new String[] {"est12", "", "test123"});
         assertTrue(fbv1.lastEditEquals('t', true, new Point(1,2), new Point(1,1)));
-        fbv1.move(new Point(1,0));
+        fbv1.move(Direction.SOUTH);
         fbv1.deleteChar();
         assertArrayEquals(fbv1.getContent(), new String[] {"est12", "test123"});
         assertTrue(fbv1.lastEditEquals((char) 13, true, new Point(2,1), new Point(1,6)));
@@ -128,7 +128,7 @@ class FileBufferViewTest {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
         fbv1.setPosition(1);
-        fbv1.move(new Point(0,1));
+        fbv1.move(Direction.EAST);
         fbv1.deleteChar();
         assertTrue(fbv1.getBuffer().getDirty());
         fbv1.saveBuffer("\n");
@@ -141,12 +141,12 @@ class FileBufferViewTest {
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
         fbv1.setPosition(1);
         fbv1.addNewChar('x');
-        fbv1.move(new Point(1,0));
+        fbv1.move(Direction.SOUTH);
         fbv1.deleteChar();
         fbv1.deleteChar();
-        fbv1.move(new Point(0,-1));
+        fbv1.move(Direction.WEST);
         fbv1.addNewLineBreak();
-        fbv1.move(new Point(1, 0));
+        fbv1.move(Direction.SOUTH);
         assertArrayEquals(fbv1.getContent(), new String[] {"xtest", "1", "test123"});
         fbv1.redo();
         assertArrayEquals(fbv1.getContent(), new String[] {"xtest", "1", "test123"});

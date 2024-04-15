@@ -6,13 +6,13 @@ public class Snake extends Object{
 
     private ArrayList<Point> body;
 
-    private Point dir;
+    private Direction dir;
 
     /* ******************
      *  CONSTRUCTORS    *
      * ******************/
 
-    public Snake(ArrayList<Point> snake, Point dir) {
+    public Snake(ArrayList<Point> snake, Direction dir) {
         if (snake.size() >= 1) {
             this.head = snake.get(0);
             ArrayList<Point> body = new ArrayList<>();
@@ -27,7 +27,7 @@ public class Snake extends Object{
         }
     }
 
-    public Snake(Point head, ArrayList<Point> body, Point dir) {
+    public Snake(Point head, ArrayList<Point> body, Direction dir) {
         this.head = head;
         this.body = body;
         this.dir = dir;
@@ -57,14 +57,14 @@ public class Snake extends Object{
         return result;
     }
 
-    public void setDir(Point newDir) {
-        if (!  getHead().add(newDir).equals(getBody().get(0))) {
+    public void setDir(Direction newDir) {
+        if (!  getHead().add(newDir.point).equals(getBody().get(0))) {
             this.dir = newDir;
         }
     }
 
     public Point getDir() {
-        return dir.clone();
+        return dir.point;
     }
 
     /* ****************

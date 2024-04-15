@@ -11,7 +11,7 @@ class SnakeTest {
     void gettersAndSetters() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         assertEquals(snake.getHead(), new Point(1,1));
         assertEquals(snake.getBody().size(), 4);
         assertArrayEquals(snake.getBody().toArray(), new Point[] {new Point(1,2), new Point(1,3),new Point(1,4),new Point(1,5)});
@@ -19,11 +19,11 @@ class SnakeTest {
         snake.setHead(new Point(2,5));
         assertEquals(snake.getHead(), new Point(2,5));
         snake.setHead(new Point(1,1));
-        snake.setDir(new Point(-1,0));
+        snake.setDir(Direction.NORD);
         assertEquals(snake.getDir(), new Point(-1,0));
-        snake.setDir(new Point(0,1));
+        snake.setDir(Direction.EAST);
         assertEquals(snake.getDir(), new Point(-1,0));
-        snake.setDir(new Point(0,-1));
+        snake.setDir(Direction.WEST);
         assertEquals(snake.getDir(), new Point(0,-1));
     }
 
@@ -31,7 +31,7 @@ class SnakeTest {
     void testMove() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         snake.move();
         assertEquals(snake.getHead(), new Point(2, 1));
         assertArrayEquals(snake.getBody().toArray(), new Point[] {new Point(1,1), new Point(1,2),
@@ -42,7 +42,7 @@ class SnakeTest {
     void testRemoveTail() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         snake.removeTail();
         assertEquals(snake.getHead(), new Point(1,1));
         assertArrayEquals(snake.getBody().toArray(), new Point[] {new Point(1,2),
@@ -53,8 +53,7 @@ class SnakeTest {
     void abstractList() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
-        snake.setDir(new Point(1, 0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         assertArrayEquals(snake.abstractList(), points);
     }
 
@@ -62,7 +61,7 @@ class SnakeTest {
     void bodyContains() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         assertTrue(snake.bodyContains(new Point(1,4)));
         assertFalse(snake.bodyContains(new Point(1,1)));
         assertFalse(snake.bodyContains(new Point(2,1)));
@@ -72,7 +71,7 @@ class SnakeTest {
     void bodyContainsHead() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         assertFalse(snake.bodyContainsHead());
         snake.setHead(new Point(1,2));
         assertTrue(snake.bodyContainsHead());
@@ -82,7 +81,7 @@ class SnakeTest {
     void contains() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         assertTrue(snake.contains(new Point(1,4)));
         assertTrue(snake.contains(new Point(1,1)));
         assertFalse(snake.contains(new Point(2,1)));
@@ -96,10 +95,10 @@ class SnakeTest {
     void equals() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
         Point[] points2 = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Snake snake2 = new Snake(new ArrayList<>(List.of(points2)), new Point(1, 0));
+        Snake snake2 = new Snake(new ArrayList<>(List.of(points2)), Direction.SOUTH);
         assertEquals(snake, snake2);
         snake.setHead(new Point(2,2));
         assertNotEquals(snake, snake2);

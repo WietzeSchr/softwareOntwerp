@@ -38,10 +38,10 @@ public class GameView extends View{
      *  INSPECT CONTENT *
      * ******************/
 
-    public void move(Point dir) {
+    public void move(Direction dir) {
         if (getGame().getSnake() != null) {
             changeDir(dir);
-            if (getGame().getSnake().getDir().equals(dir)) {
+            if (getGame().getSnake().getDir().equals(dir.point)) {
                 tick();
             }
         }
@@ -168,7 +168,7 @@ public class GameView extends View{
         setLastMove(System.currentTimeMillis());
     }
 
-    public void changeDir(Point newDir) {
+    public void changeDir(Direction newDir) {
         getGame().changeDir(newDir);
     }
 
