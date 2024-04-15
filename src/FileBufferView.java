@@ -36,6 +36,8 @@ public class FileBufferView extends View
         public abstract void undo();
 
         public abstract void redo();
+
+        public abstract boolean isFirst();
     }
 
     /* ****************
@@ -46,12 +48,19 @@ public class FileBufferView extends View
             super();
         }
 
+        @Override
         public void undo() {
             return;
         }
 
+        @Override
         public void redo() {
             return;
+        }
+
+        @Override
+        public boolean isFirst() {
+            return getPrevious() == this;
         }
     }
 
@@ -88,9 +97,10 @@ public class FileBufferView extends View
             return insertionPointAfter;
         }
 
-        public abstract void undo();
-
-        public abstract void redo();
+        @Override
+        public boolean isFirst() {
+            return false;
+        }
     }
 
     /* *******************
@@ -127,12 +137,12 @@ public class FileBufferView extends View
 
         public void undo() {
             if (getChange() == 13) {
-                fileBuffer.insertLineBreak(getInsertionPoint());
+                fileBuffer.insertLineBreak(getInsertionPointAfter());
             }
             else {
                 fileBuffer.addNewChar(getChange(), getInsertionPointAfter());
             }
-            insertionPoint = getInsertionPointAfter();
+            insertionPoint = getInsertionPoint();
         }
 
         public void redo() {
@@ -316,7 +326,7 @@ public class FileBufferView extends View
     /** This method returns the number of characters in the buffer
      * @return: int
      */
-    private int getCharacterCount() {
+    int getCharacterCount() {
         return getBuffer().countCharacters();
     }
 
@@ -341,6 +351,37 @@ public class FileBufferView extends View
         Point insert = getInsertionPoint();
         Point leftUp = getLeftUpperCorner();
         return leftUp.add(insert).minus(new Point(getVerticalScrollState(), getHorizontalScrollState()));
+    }
+
+    /* ******************
+     *   TEST LASTEDIT  *
+     * ******************/
+
+    boolean lastEditIsEmptyEdit() {
+        return getLastEdit().getClass() == EmptyEdit.class;
+    }
+
+    boolean lastEditEquals(char c, boolean deletion, Point insert, Point insertAfter) {
+        if (getLastEdit().getClass() == EmptyEdit.class) {
+            return false;
+        }
+        NonEmptyEdit lastEdit = (NonEmptyEdit) getLastEdit();
+        if (lastEdit.getChange() != c) {
+            return false;
+        }
+        if (deletion && lastEdit.getClass() == Insertion.class) {
+            return false;
+        }
+        if (! deletion && lastEdit.getClass() == Deletion.class) {
+            return false;
+        }
+        if (! lastEdit.getInsertionPoint().equals(insert)) {
+            return false;
+        }
+        if (! lastEdit.getInsertionPointAfter().equals(insertAfter)) {
+            return false;
+        }
+        return true;
     }
 
     /* ******************
@@ -393,18 +434,15 @@ public class FileBufferView extends View
         if (! getInsertionPoint().equals(new Point(1,1))) {
             Point insert = getInsertionPoint();
             char c;
-            try {
-                c = getContent()[getInsertionPoint().getX() - 1].charAt(getInsertionPoint().getY() - 2);
-            } catch (IndexOutOfBoundsException e) {
-                c = 13;
-            }
-            getBuffer().deleteChar(getInsertionPoint());
             if (getInsertionPoint().getY() == 1) {
+                c = (char) 13;
                 setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
             }
             else {
-                move(new Point(0, -1));
+                c = getContent()[getInsertionPoint().getX() - 1].charAt(getInsertionPoint().getY() - 2);
+                setInsertionPoint(new Point(getInsertionPoint().getX(), getInsertionPoint().getY() - 1));
             }
+            getBuffer().deleteChar(insert);
             Edit nextEdit = new Deletion(c, insert, getInsertionPoint());
             nextEdit.setPrevious(getLastEdit());
             getLastEdit().setNext(nextEdit);
@@ -493,6 +531,9 @@ public class FileBufferView extends View
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
         getLastEdit().undo();
         setLastEdit(getLastEdit().getPrevious());
+        if (getLastEdit().isFirst()) {
+            getBuffer().setDirty(false);
+        }
     }
 
     public void redo() {
@@ -538,7 +579,6 @@ public class FileBufferView extends View
                 }
             }
         }
-
         for(int i=0; i<result.length-1; i++){
             if(result[i] == null){
                 result[i] = "";
@@ -598,7 +638,7 @@ public class FileBufferView extends View
         return result.toString();
     }
 
-    public StringBuilder makeFileHeader() {     //  HIER MOET INSERTION POINT NOG AAN TOEGEVOEGD WORDEN !!!
+    public StringBuilder makeFileHeader() {
         StringBuilder result = new StringBuilder();
         String filename = getFileName();
         if (getBuffer().getDirty()) {

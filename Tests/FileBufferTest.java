@@ -1,15 +1,21 @@
 import org.junit.jupiter.api.Test;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileBufferTest {
 
     @Test
-    void testConstructor() {
+    void testConstructor() throws IOException {
         FileBuffer fb1 = new FileBuffer(new String[] {"testtest", "1", "", "2"}, "test1.txt");
+        File f = new File("test1.txt");
+        f.save("\n", new String[] {"1", "abc"});
+        FileBuffer fb2 = new FileBuffer("test1.txt", "\n");
         assertArrayEquals(fb1.getContent(), new String[] {"testtest", "1", "", "2"});
         assertFalse(fb1.getDirty());
+        assertArrayEquals(fb2.getContent(), new String[] {"1", "abc"});
+        assertFalse(fb2.getDirty());
     }
 
     @Test
@@ -48,6 +54,11 @@ class FileBufferTest {
     @Test
     void testAddNewChar() {
         FileBuffer fb1 = new FileBuffer(new String[] {"ha", "", "llo", ""}, "test1.txt");
+        FileBuffer fb2 = new FileBuffer(new String[] {}, "test2.txt");
+        fb2.addNewChar('c', new Point(1,1));
+        assertArrayEquals(fb2.getContent(), new String[] {"c"});
+        fb2.addNewChar('x', new Point(2,1));
+        assertArrayEquals(fb2.getContent(), new String[] {"c", "x"});
         fb1.addNewChar('w', new Point(2,1));
         assertArrayEquals(fb1.getContent(), new String[] {"ha", "w", "llo", ""});
         fb1.addNewChar('o', new Point(3,2));
@@ -68,6 +79,11 @@ class FileBufferTest {
 
     @Test
     void testGetNewInsertionPoint() {
-
+        FileBuffer fb1 = new FileBuffer(new String[] {"ha", "w", "lolo", ""}, "test1.txt");
+        assertNull(fb1.getNewInsertionPoint(new Point(0,1)));
+        assertNull(fb1.getNewInsertionPoint(new Point(1,0)));
+        assertNull(fb1.getNewInsertionPoint(new Point(5,1)));
+        assertEquals(fb1.getNewInsertionPoint(new Point(1,2)), new Point(1,2));
+        assertEquals(fb1.getNewInsertionPoint(new Point(4, 3)), new Point(4,1));
     }
 }

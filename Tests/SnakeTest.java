@@ -29,12 +29,24 @@ class SnakeTest {
 
     @Test
     void testMove() {
-
+        Point[] points = new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        snake.move();
+        assertEquals(snake.getHead(), new Point(2, 1));
+        assertArrayEquals(snake.getBody().toArray(), new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)});
     }
 
     @Test
     void testRemoveTail() {
-
+        Point[] points = new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), new Point(1,0));
+        snake.removeTail();
+        assertEquals(snake.getHead(), new Point(1,1));
+        assertArrayEquals(snake.getBody().toArray(), new Point[] {new Point(1,2),
+                new Point(1,3), new Point(1,4)});
     }
 
     @Test
