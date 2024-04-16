@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 
 /* **********
@@ -212,11 +213,21 @@ public abstract class Layout {
      * ******************/
 
     public void undo(int focus) {
-        getFocusedView(focus).undo();
+        View focussed = getFocusedView(focus);
+        if (focussed.undo()) {
+            FileBufferView f = (FileBufferView) focussed;
+            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit().getNext();
+            updateViews(focus, edit.getInsertionPointAfter(), edit.getChange(), edit.getClass() != FileBufferView.Deletion.class, f.getBuffer());
+        }
     }
 
     public void redo(int focus) {
-        getFocusedView(focus).redo();
+        View focussed =getFocusedView(focus);
+        if (focussed.redo()) {
+            FileBufferView f = (FileBufferView) focussed;
+            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
+            updateViews(focus, edit.getInsertionPoint(), edit.getChange(), edit.getClass() == FileBufferView.Insertion.class, f.getBuffer());
+        }
     }
 
     /* ******************

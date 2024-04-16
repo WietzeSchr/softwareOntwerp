@@ -34,9 +34,9 @@ public class FileBufferView extends View
             this.previous = newPrevious;
         }
 
-        public abstract void undo();
+        public abstract boolean undo();
 
-        public abstract void redo();
+        public abstract boolean redo();
 
         public abstract boolean isFirst();
     }
@@ -50,13 +50,13 @@ public class FileBufferView extends View
         }
 
         @Override
-        public void undo() {
-            return;
+        public boolean undo() {
+            return false;
         }
 
         @Override
-        public void redo() {
-            return;
+        public boolean redo() {
+            return false;
         }
 
         @Override
@@ -107,17 +107,18 @@ public class FileBufferView extends View
     /* *******************
      *   INSERTION EDIT  *
      * *******************/
-    private class Insertion extends NonEmptyEdit {
+    class Insertion extends NonEmptyEdit {
         public Insertion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
-        public void undo() {
+        public boolean undo() {
             fileBuffer.deleteChar(getInsertionPointAfter());
             insertionPoint = getInsertionPoint();
+            return true;
         }
 
-        public void redo() {
+        public boolean redo() {
             if (getChange() == 13) {
                 fileBuffer.insertLineBreak(getInsertionPoint());
             }
@@ -125,18 +126,19 @@ public class FileBufferView extends View
                 fileBuffer.addNewChar(getChange(), getInsertionPoint());
             }
             insertionPoint = getInsertionPointAfter();
+            return true;
         }
     }
 
     /* *******************
      *   DELETION EDIT   *
      * *******************/
-    private class Deletion extends NonEmptyEdit {
+    class Deletion extends NonEmptyEdit {
         public Deletion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
-        public void undo() {
+        public boolean undo() {
             if (getChange() == 13) {
                 fileBuffer.insertLineBreak(getInsertionPointAfter());
             }
@@ -144,11 +146,13 @@ public class FileBufferView extends View
                 fileBuffer.addNewChar(getChange(), getInsertionPointAfter());
             }
             insertionPoint = getInsertionPoint();
+            return true;
         }
 
-        public void redo() {
+        public boolean redo() {
             fileBuffer.deleteChar(getInsertionPoint());
             insertionPoint = getInsertionPointAfter();
+            return true;
         }
     }
 
@@ -517,18 +521,20 @@ public class FileBufferView extends View
      *   UNDO / REDO    *
      * ******************/
 
-    public void undo() {
+    public boolean undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
-        getLastEdit().undo();
+        boolean result = getLastEdit().undo();
         setLastEdit(getLastEdit().getPrevious());
         if (getLastEdit().isFirst()) {
             getBuffer().setDirty(false);
         }
+        return result;
     }
 
-    public void redo() {
-        getLastEdit().getNext().redo();
+    public boolean redo() {
+        boolean result = getLastEdit().getNext().redo();
         setLastEdit(getLastEdit().getNext());
+        return result;
     }
 
     /* ****************

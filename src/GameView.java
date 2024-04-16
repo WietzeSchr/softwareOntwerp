@@ -92,12 +92,12 @@ public class GameView extends View{
      *   UNDO / REDO    *
      * ******************/
 
-    public void undo() {
-        return;
+    public boolean undo() {
+        return false;
     }
 
-    public void redo() {
-        return;
+    public boolean redo() {
+        return false;
     }
 
     /* ************************

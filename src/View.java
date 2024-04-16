@@ -101,9 +101,9 @@ public abstract class View extends Layout {
      *   UNDO / REDO    *
      * ******************/
 
-    public abstract void undo();
+    public abstract boolean undo();
 
-    public abstract void redo();
+    public abstract boolean redo();
 
     /* ******************
      *  OPEN GAME VIEW  *
