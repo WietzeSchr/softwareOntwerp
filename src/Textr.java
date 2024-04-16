@@ -77,7 +77,7 @@ public class Textr
             throw new RuntimeException(e);
         }
         if (filepaths.length == 0) {
-            this.layout = new GameView(size.getX(), size.getY(), new Point(1,1));
+            //this.layout = new GameView(size.getX(), size.getY(), new Point(1,1));
             throw new RuntimeException("please give one or more filepaths to open");
         }
         else if (filepaths.length > 1) {

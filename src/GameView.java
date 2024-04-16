@@ -53,20 +53,21 @@ public class GameView extends View{
      ************************/
 
     @Override
-    public void addNewLineBreak() {
+    public boolean addNewLineBreak() {
         if (getGame().getSnake() == null) {
             runNewGame();
         }
+        return false;
     }
 
     @Override
-    public void addNewChar(char c) {
-        return;
+    public boolean addNewChar(char c) {
+        return false;
     }
 
     @Override
-    public void deleteChar() {
-        return;
+    public boolean deleteChar() {
+        return false;
     }
 
     /* ******************
@@ -98,6 +99,26 @@ public class GameView extends View{
     public void redo() {
         return;
     }
+
+    /* ************************
+     *  OPEN FILEBUFFER VIEW  *
+     * ************************/
+
+    @Override
+    public Layout openNewFileBuffer(int focus, Layout parent) {
+        return this;
+    }
+
+    @Override
+    public Layout[] duplicate() {
+        return new Layout[] {this};
+    }
+
+    @Override
+    public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
+        return;
+    }
+
 
     /* ******************
      *  SHOW FUNCTIONS  *

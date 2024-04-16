@@ -206,17 +206,19 @@ public class SideBySideLayout extends CompositeLayout{
      *  OPEN FILEBUFFER VIEW  *
      * ******************/
 
-    public Layout openNewFileBuffer(int focus, Layout parent, FileBuffer buffer) {
+    public Layout openNewFileBuffer(int focus, Layout parent) {
         View focussed = getFocusedView(focus);
         Layout[] newSubLayouts;
         if (this == parent) {
-            newSubLayouts = new Layout[countSubLayouts() + 1];
+            Layout[] subs = focussed.duplicate();
+            newSubLayouts = new Layout[countSubLayouts() + subs.length - 1];
             int j = 0;
             for (int i = 0; i < countSubLayouts(); i++) {
                 if (getSubLayouts()[i] == focussed) {
-                    newSubLayouts[j] = focussed;
-                    newSubLayouts[j + 1] = new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), buffer);
-                    j += 2;
+                    for (int k = 0; k < subs.length; k++) {
+                        newSubLayouts[j] = subs[k];
+                        j += 1;
+                    }
                 }
                 else {
                     newSubLayouts[j] = getSubLayouts()[i];
@@ -227,7 +229,7 @@ public class SideBySideLayout extends CompositeLayout{
         else {
             newSubLayouts = new Layout[countSubLayouts()];
             for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].openNewFileBuffer(focus, parent, buffer);
+                newSubLayouts[i] = getSubLayouts()[i].openNewFileBuffer(focus, parent);
             }
         }
         return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
