@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestClassOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,5 +42,22 @@ class PointTest {
         Point p3 = new Point(-7,1);
         assertEquals(p1.minus(p2), new Point(-5,8));
         assertEquals(p2.minus(p3), new Point(15,-4));
+    }
+
+    @Test
+    void testClone() {
+        Point p1 = new Point(3,5);
+        assertEquals(p1.clone(), p1);
+        assertNotEquals(p1, new File("file"));
+    }
+
+    @Test
+    void testToString() {
+        Point p1 = new Point(3,5);
+        Point p2 = new Point(8, -3);
+        Point p3 = new Point(-7,1);
+        assertEquals(p1.toString(), "(3, 5)");
+        assertEquals(p2.toString(), "(8, -3)");
+        assertEquals(p3.toString(), "(-7, 1)");
     }
 }

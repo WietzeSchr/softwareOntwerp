@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+
 import static java.lang.Math.floor;
 
 public class StackedLayout extends CompositeLayout {
@@ -8,7 +10,7 @@ public class StackedLayout extends CompositeLayout {
 
     /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner, filepaths and newLine
      */
-    public StackedLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
+    public StackedLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) throws FileNotFoundException {
         super(height, width, leftUpperCorner, filepaths, newLine);
     }
 

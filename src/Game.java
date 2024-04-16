@@ -237,7 +237,7 @@ public class Game {
         }
     }
 
-    private int countApples() {
+     int countApples() {
         int counter = 0;
         for (int i = 0; i < getGrid().length; i++) {
             for (int j = 0; j < getGrid()[0].length; j++) {

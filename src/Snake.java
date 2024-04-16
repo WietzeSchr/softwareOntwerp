@@ -91,18 +91,14 @@ public class Snake extends Object{
      * ******************/
 
     public char charAt(Point p) {
-        Point UP = new Point(-1, 0);
-        Point DOWN = new Point(1, 0);
-        Point LEFT = new Point(0, -1);
-        Point RIGHT = new Point(0, 1);
         if (getHead().equals(p)) {
-            if (getDir().equals(UP)) {
+            if (getDir().equals(Direction.NORD.point)) {
                 return (char) 94;
             }
-            else if (getDir().equals(DOWN)) {
+            else if (getDir().equals(Direction.SOUTH.point)) {
                 return 'v';
             }
-            else if (getDir().equals(LEFT)) {
+            else if (getDir().equals(Direction.WEST.point)) {
                 return '<';
             }
             else {
@@ -116,7 +112,7 @@ public class Snake extends Object{
                     return 'o';
                 }
                 else {
-                    if (body.get(i - 1).minus(body.get(i)).equals(DOWN) || body.get(i - 1).minus(body.get(i)).equals(UP)) {
+                    if (body.get(i - 1).minus(body.get(i)).equals(Direction.SOUTH.point) || body.get(i - 1).minus(body.get(i)).equals(Direction.NORD.point)) {
                         return '|';
                     }
                     else {

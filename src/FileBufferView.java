@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class FileBufferView extends View
 {
@@ -174,13 +175,9 @@ public class FileBufferView extends View
      * @post getVerticalScrollState() == 1
      * @post getHorizontalScrollState() == 1
      */
-    public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) {
+    public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) throws FileNotFoundException {
         super(heigth, witdh, leftUpperCorner);
-        try {
-            this.fileBuffer = new FileBuffer(filepath, newLine);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        this.fileBuffer = new FileBuffer(filepath, newLine);
         this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
@@ -190,19 +187,15 @@ public class FileBufferView extends View
     /** This constructor creates a new FileBufferView with the given heigth, width, parent, leftUpperCorner, filepath and newLine
      * @post getVerticalScrollState() == 1
      * @post getHorizontalScrollState() == 1
-     */
-    public FileBufferView(int heigth, int witdh, CompositeLayout parent, Point leftUpperCorner, String filepath, String newLine) {
+     */ /*
+    public FileBufferView(int heigth, int witdh, CompositeLayout parent, Point leftUpperCorner, String filepath, String newLine) throws FileNotFoundException {
         super(heigth, witdh, parent, leftUpperCorner);
-        try {
-            this.fileBuffer = new FileBuffer(filepath, newLine);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        this.fileBuffer = new FileBuffer(filepath, newLine);
         this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
-    }
+    } */
 
     /** This method sets the verticalScrollState of the FileBufferView
      * @post getVerticalScrollState() == newVerticalScrollState
@@ -507,21 +500,6 @@ public class FileBufferView extends View
     protected FileBufferView rotateView(int dir, int focus) {
          return this;
     }
-    protected FileBufferView rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
-        return this;
-    }
-    protected FileBufferView rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
-        return this;
-    }
-
-
-    protected FileBufferView rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
-        return this;
-    }
-
-     protected FileBufferView rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
-         return this;
-     }
 
     /* ******************
      *   UNDO / REDO    *
@@ -572,7 +550,7 @@ public class FileBufferView extends View
             if (cont[row] != null) {
                 if (cont[row].length() > getHorizontalScrollState() - 1) {
                     if (cont[row].length() >= getWidth() + getHorizontalScrollState() - 2) {
-                        result[i] = cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 3);
+                        result[i] = cont[row].substring(getHorizontalScrollState() - 1, getHorizontalScrollState() + getWidth() - 2);
                     } else {
                         result[i] = cont[row].substring(getHorizontalScrollState() - 1);
                     }
@@ -596,10 +574,14 @@ public class FileBufferView extends View
      * @return: char[]
      */
     private char[] makeVerticalScrollBar() {
+        char[] result = new char[getHeigth() - 1];
+        if (getHeigth() > getRowCount()) {
+            Arrays.fill(result, '#');
+            return result;
+        }
         int rows = (int) (Math.ceil((float) getRowCount() / (float) (getHeigth() - 1)) * (getHeigth() - 1));
         int start = (int) Math.floor((float) getVerticalScrollState() / ((float) rows) * getHeigth());
         int end = (int) Math.ceil((float) (getVerticalScrollState()  + getHeigth() - 1 )/ (float) rows * (getHeigth())) - 1;
-        char[] result = new char[getHeigth() - 1];
         for (int i = 0; i < result.length; i++) {
             if (i < start || i > end) {
                 result[i] = '|';
@@ -616,7 +598,7 @@ public class FileBufferView extends View
      */
     private String makeHorizontalScrollBar() {
         StringBuilder result = makeFileHeader();
-        if (getWidth() - 1 > getColumnCount()) {
+        if (getWidth() > getColumnCount()) {
             while (result.length() < getWidth()) {
                 result.append('#');
             }

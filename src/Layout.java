@@ -34,14 +34,15 @@ public abstract class Layout {
      * @post getWidth() == width
      * @post getParent() == parent
      * @post getLeftUpperCorner() == leftUpperCorner
-     */
+     */ /*
     public Layout(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
         this.height = height;
         this.width = width;
         this.parent = parent;
         this.leftUpperCorner = leftUpperCorner;
     }
-
+    */
+    
     /* **********************
      *  GETTERS AND SETTERS *
      * **********************/

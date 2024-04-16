@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-public abstract class View extends Layout{
+public abstract class View extends Layout {
 
     private int position;
     TerminalHandler terminalHandler = new TerminalHandler();
@@ -8,9 +8,10 @@ public abstract class View extends Layout{
     public View(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
     }
+    /*
     public View(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
         super(height, width, parent, leftUpperCorner);
-    }
+    } */
 
     /* **********************
      *  GETTERS AND SETTERS *
@@ -20,7 +21,9 @@ public abstract class View extends Layout{
         this.position = newPosition;
     }
 
-    /** This method returns the position of the FileBufferView
+    /**
+     * This method returns the position of the FileBufferView
+     *
      * @return: int
      */
     public int getPosition() {
@@ -67,7 +70,9 @@ public abstract class View extends Layout{
      *    ROTATE VIEW  *
      * *****************/
 
-    /** This method returns the focused Layout
+    /**
+     * This method returns the focused Layout
+     *
      * @return: FileBufferView
      */
     @Override
@@ -107,9 +112,8 @@ public abstract class View extends Layout{
     public Layout openNewGame(int focus, Layout parent) {
         if (getPosition() == focus) {
             return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(),
-                    new Layout[] {this, new GameView(getHeigth(), getWidth() / 2, new Point(1, getWidth() / 2))});
-        }
-        else {
+                    new Layout[]{this, new GameView(getHeigth(), getWidth() / 2, new Point(1, getWidth() / 2))});
+        } else {
             return this;
         }
     }
@@ -130,15 +134,24 @@ public abstract class View extends Layout{
 
     abstract String[] makeShow();
 
-    /** This method shows the content of the FileBufferView and the updated scrollbars
+    // abstract String makeHorizontalScrollBar()
+
+    // abstract char[] makeVerticalScrollBar()
+
+    /**
+     * This method shows the content of the FileBufferView and the updated scrollbars
+     *
      * @return: void
      */
-    public void show(){
+    public void show() {
         String[] toShow = makeShow();
-        for(int i=0; i<toShow.length; i++){
+        //String horizontalBar = makeHor
+        //char[] verticalBar = makeVer
+        for (int i = 0; i < toShow.length; i++) {
             terminalHandler.printText(getLeftUpperCorner().getX() + i,
                     getLeftUpperCorner().getY(), toShow[i]);
         }
+        //terminalHandler.printText(getLeftUpperCorner().getX() + getHeigth() - 1, horizontalBar);
     }
 
     /* ******************
@@ -152,7 +165,9 @@ public abstract class View extends Layout{
         setPosition(i);
     }
 
-    /** This method returns the focused view at the given index i
+    /**
+     * This method returns the focused view at the given index i
+     *
      * @return: FileBufferView || null
      */
     @Override
@@ -163,25 +178,13 @@ public abstract class View extends Layout{
         return null;
     }
 
-    /** This method returns the number of views
+    /**
+     * This method returns the number of views
+     *
      * @return: int
      */
     @Override
     public int countViews() {
         return 1;
-    }
-
-    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * and updates the scroll states
-     * @post getHeigth() == heigth
-     * @post getWidth() == width
-     * @post getLeftUpperCorner() == leftUpperCorner
-     * @return: void
-     */
-    @Override
-    public void updateSize(int heigth, int width, Point leftUpperCorner) {
-        setHeigth(heigth);
-        setWidth(width);
-        setLeftUpperCorner(leftUpperCorner);
     }
 }

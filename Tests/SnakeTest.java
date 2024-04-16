@@ -12,6 +12,9 @@ class SnakeTest {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
         Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
+        Point[] points2 = new Point[] {new Point(1,2), new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake2 = new Snake(new Point(1,1), new ArrayList<>(List.of(points2)), Direction.SOUTH);
+        assertEquals(snake, snake2);
         assertEquals(snake.getHead(), new Point(1,1));
         assertEquals(snake.getBody().size(), 4);
         assertArrayEquals(snake.getBody().toArray(), new Point[] {new Point(1,2), new Point(1,3),new Point(1,4),new Point(1,5)});
@@ -89,6 +92,23 @@ class SnakeTest {
 
     @Test
     void charAt() {
+        Point[] points = new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
+        assertEquals(snake.charAt(new Point(1,4)), 'o');
+        assertEquals(snake.charAt(new Point(1,5)), '-');
+        assertEquals(snake.charAt(new Point(1,1)), 'v');
+        snake.setDir(Direction.WEST);
+        assertEquals(snake.charAt(new Point(1, 1)), '<');
+        snake.setDir(Direction.NORD);
+        assertEquals(snake.charAt(new Point(1,1)), (char) 94);
+        Point[] points2 = new Point[] {new Point(1,1), new Point(2,1),
+                new Point(3, 1)};
+        Snake snake2 = new Snake(new ArrayList<>(List.of(points2)), Direction.EAST);
+        assertEquals(snake2.charAt(new Point(1,1)), '>');
+        assertEquals(snake.charAt(new Point(2,1)), ' ');
+        assertEquals(snake2.charAt(new Point(3,1)), '|');
+        assertEquals(snake2.toString(), "(1, 1) (2, 1) (3, 1) ");
     }
 
     @Test
