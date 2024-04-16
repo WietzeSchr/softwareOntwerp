@@ -17,7 +17,8 @@
 * [x] Close buffer using Shift + F4
     - [ ] Close buffer when buffer is dirty: Y -> discard changes and close | N -> don't close
 * [x] Save the focused view's buffer using Ctrl + S
-* [ ] Duplicate the focused view using Ctrl + D
+* [x] Duplicate the focused view using Ctrl + D
+    - [ ] Keep views on the same buffer locked in place 
 * [x] Open a new Snake game using Ctrl + G
     - [ ] Resize the game, fitting the snake as centered as possible (if possible at all) in new grid
 * [x] Undo the last made edit (adding/deleting characters/linebreaks) using Ctrl + Z
