@@ -238,10 +238,12 @@ public class FileBuffer {
      * @return: void
      */
     public Point getNewInsertionPoint(Point insertionPoint) {
-        if (insertionPoint.getX()<1 || insertionPoint.getY()<1 || insertionPoint.getX() > content.length){
+        if (insertionPoint.getX()<1 || insertionPoint.getY()<1){
             return null;
         }
-        //spring naar laatste character van target lijn
+        if(insertionPoint.getX() > getRowCount()){
+            insertionPoint = new Point(getRowCount(), insertionPoint.getY());
+        }
         int currRowLength = content[insertionPoint.getX()-1].length();
         if (insertionPoint.getY() > currRowLength){
             insertionPoint = new Point(insertionPoint.getX(), currRowLength+1);

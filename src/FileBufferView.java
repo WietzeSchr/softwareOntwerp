@@ -395,6 +395,7 @@ public class FileBufferView extends View
     public void move(Direction dir) {
         Point newInsertionPoint = getInsertionPoint().add(dir.point);
         setInsertionPoint(newInsertionPoint);
+        updateScrollStates();
     }
 
     /* **********************
@@ -412,6 +413,7 @@ public class FileBufferView extends View
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
+        updateScrollStates();
     }
 
     /** This method adds a new character to the file and updates the scroll states
@@ -437,6 +439,7 @@ public class FileBufferView extends View
             if (getInsertionPoint().getY() == 1) {
                 c = (char) 13;
                 setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
+                updateScrollStates();
             }
             else {
                 c = getContent()[getInsertionPoint().getX() - 1].charAt(getInsertionPoint().getY() - 2);
@@ -550,9 +553,7 @@ public class FileBufferView extends View
         return System.currentTimeMillis();
     }
 
-    public void tick() {
-        return;
-    }
+    public void tick() {return;}
 
     /* ******************
      *  SHOW FUNCTIONS  *
@@ -560,7 +561,7 @@ public class FileBufferView extends View
 
     @Override
     String[] makeShow() {
-        updateScrollStates();
+        setInsertionPoint(getInsertionPoint());
         String[] result = new String[getHeigth()];
         String[] cont = getContent();
         char[] verticalScrollBar = makeVerticalScrollBar();
@@ -644,8 +645,8 @@ public class FileBufferView extends View
         if (getBuffer().getDirty()) {
             result.append("* ");
         }
-        result.append(filename + ", r: " + String.valueOf(getRowCount()) +
-                ", char: " + String.valueOf(getCharacterCount()) +
+        result.append(filename + ", r: " + getRowCount() +
+                ", char: " + getCharacterCount() +
                 ", insert: (" + getInsertionPoint().getX() + ", " + getInsertionPoint().getY() + ") ");
         return result;
     }
