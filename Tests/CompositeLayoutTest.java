@@ -1,7 +1,4 @@
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
-
-import java.awt.*;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;

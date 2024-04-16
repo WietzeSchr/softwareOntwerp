@@ -13,8 +13,26 @@ class GameViewTest {
         Game newGame = new Game(10, 20);
         gv.setGame(newGame);
         gv.setLastMove(1500);
+        gv.saveBuffer("\n");
+        gv.addNewChar('x');
+        gv.addNewLineBreak();
+        gv.deleteChar();
+        gv.undo();
+        gv.redo();
         assertEquals(gv.getGame(), newGame);
         assertEquals(gv.getLastMove(), 1500);
+    }
+
+    @Test
+    void testDerivedAttributes() {
+        GameView gv = new GameView(10, 20, new Point(5, 15));
+        Game newGame = new Game(10, 20);
+        gv.setGame(newGame);
+        gv.setLastMove(1500);
+        assertEquals(gv.getCursor(), new Point(5, 15));
+        assertEquals(gv.getTick(), 1000);
+        assertEquals(gv.getNextDeadline(), 2500);
+
     }
 
     @Test
@@ -44,6 +62,17 @@ class GameViewTest {
 
     @Test
     void testMakeShow() {
-
+        GameView gv = new GameView(3, 6, new Point(5, 15));
+        Game newGame = new Game(3, 6);
+        Point[] points = new Point[] {new Point(1,4), new Point(1,3), new Point(1,2), new Point(1,1)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.EAST);
+        newGame.setSnake(snake);
+        gv.setGame(newGame);
+        assertArrayEquals(gv.makeShow(), new String[] {"-oo> ", "     "});
+        assertArrayEquals(gv.makeVerticalScrollBar(), new char[] {'#', '#', '#'});
+        assertEquals(gv.makeHorizontalScrollBar(), "Score: 0 ");
+        newGame.loseGame();
+        gv.setWidth(37);
+        assertArrayEquals(gv.makeShow(), new String[] {null, " GAME OVER - Press enter to restart "});
     }
 }

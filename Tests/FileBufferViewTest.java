@@ -230,7 +230,11 @@ class FileBufferViewTest {
         FileBufferView fbv2 = new FileBufferView(6,10,new Point(20, 10), buffer2);
         fbv1.setPosition(1);
         fbv2.getBuffer().setDirty(true);
-        assertArrayEquals(fbv1.makeShow(), new String[] {"tes #", "    #", "tes #", "1   #", "test1.txt, r: 5, char: 15, insert: (1, 1) "});
-        assertArrayEquals(fbv2.makeShow(), new String[] {"test12   #", "         #", "test123  #", "1        #", "2        #", "* test2.txt, r: 5, char: 15, insert: (1, 1) "});
+        assertArrayEquals(fbv1.makeShow(), new String[] {"test", null, "test", "1"});
+        assertArrayEquals(fbv2.makeShow(), new String[] {"test12", null, "test123", "1", "2"});
+        assertEquals(fbv1.makeHorizontalScrollBar(), "test1.txt, r: 5, char: 15, insert: (1, 1) ");
+        assertEquals(fbv2.makeHorizontalScrollBar(), "* test2.txt, r: 5, char: 15, insert: (1, 1) ");
+        assertArrayEquals(fbv1.makeVerticalScrollBar(), new char[] {'#', '#', '#', '#'});
+        assertArrayEquals(fbv2.makeVerticalScrollBar(), new char[] {'#', '#', '#', '#', '#'});
     }
 }

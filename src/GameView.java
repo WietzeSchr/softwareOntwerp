@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Arrays;
 
 public class GameView extends View{
     private Game game;
@@ -106,35 +107,19 @@ public class GameView extends View{
     String[] makeShow() {
         if (getGame().getSnake() != null) {
             char[][] abstractGrid = getGame().getAbstractGrid();
-            String[] result = new String[abstractGrid.length + 1];
+            String[] result = new String[abstractGrid.length];
             for (int i = 0; i < abstractGrid.length; i++) {
-                result[i] = String.copyValueOf(abstractGrid[i]) + "#";
-            }
-            result[abstractGrid.length] = "Score: " + getGame().getScore() + " ";
-            while (result[abstractGrid.length].length() != getWidth()) {
-                result[abstractGrid.length] += "#";
+                result[i] = String.copyValueOf(abstractGrid[i]);
             }
             return result;
         }
         return showLoss();
     }
 
-    public String[] showLoss() {
+    String[] showLoss() {
         String lossStr = "GAME OVER - Press enter to restart";
-        String[] result = new String[getHeigth()];
+        String[] result = new String[getHeigth() - 1];
         if (getWidth() - 1 > lossStr.length()) {
-            for (int i = 0; i < result.length - 1; i++) {
-                StringBuilder str = new StringBuilder();
-                for (int j = 0; j < getWidth() - 1; j++) {
-                    str.append(" ");
-                }
-                str.append("#");
-                result[i] = str.toString();
-            }
-            result[getHeigth() - 1] = "Score: " + getGame().getScore() + " ";
-            while (result[getHeigth() - 1].length() < getWidth()) {
-                result[getHeigth() - 1] += "#";
-            }
             StringBuilder lossString = new StringBuilder();
             for (int i = 0; i < Math.floor((float) (getWidth() - lossStr.length() - 1) / 2); i++) {
                 lossString.append(" ");
@@ -143,8 +128,23 @@ public class GameView extends View{
             while (lossString.length() < getWidth() - 1) {
                 lossString.append(" ");
             }
-            lossString.append("#");
             result[(int) Math.floor((float) (getHeigth() - 1) / 2)] = lossString.toString();
+        }
+        return result;
+    }
+
+    @Override
+    char[] makeVerticalScrollBar() {
+        char[] result = new char[getHeigth()];
+        Arrays.fill(result, '#');
+        return result;
+    }
+
+    @Override
+    String makeHorizontalScrollBar() {
+        String result = "Score: " + getGame().getScore() + " ";
+        while (result.length() < getWidth()) {
+            result += "#";
         }
         return result;
     }
@@ -185,7 +185,6 @@ public class GameView extends View{
     }
 
     /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * and updates the scroll states
      * @post getHeigth() == heigth
      * @post getWidth() == width
      * @post getLeftUpperCorner() == leftUpperCorner

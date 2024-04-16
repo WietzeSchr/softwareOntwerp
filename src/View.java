@@ -134,9 +134,9 @@ public abstract class View extends Layout {
 
     abstract String[] makeShow();
 
-    // abstract String makeHorizontalScrollBar()
+    abstract String makeHorizontalScrollBar();
 
-    // abstract char[] makeVerticalScrollBar()
+    abstract char[] makeVerticalScrollBar();
 
     /**
      * This method shows the content of the FileBufferView and the updated scrollbars
@@ -145,13 +145,22 @@ public abstract class View extends Layout {
      */
     public void show() {
         String[] toShow = makeShow();
-        //String horizontalBar = makeHor
-        //char[] verticalBar = makeVer
+        String horizontalBar = makeHorizontalScrollBar();
+        char[] verticalBar = makeVerticalScrollBar();
+        //  Print BufferContent/Game
         for (int i = 0; i < toShow.length; i++) {
-            terminalHandler.printText(getLeftUpperCorner().getX() + i,
-                    getLeftUpperCorner().getY(), toShow[i]);
+            if (toShow[i] != null) {
+                terminalHandler.printText(getLeftUpperCorner().getX() + i,
+                        getLeftUpperCorner().getY(), toShow[i]);
+            }
         }
-        //terminalHandler.printText(getLeftUpperCorner().getX() + getHeigth() - 1, horizontalBar);
+        //  Print verticalSideBar
+        for (int i = 0; i < verticalBar.length; i++) {
+            terminalHandler.printText(getLeftUpperCorner().getX() + i, getLeftUpperCorner().getY() + getWidth() - 1,
+                    String.valueOf(verticalBar[i]));
+        }
+        //  Print horizontalSideBar
+        terminalHandler.printText(getLeftUpperCorner().getX() + getHeigth() - 1, getLeftUpperCorner().getY(), horizontalBar);
     }
 
     /* ******************

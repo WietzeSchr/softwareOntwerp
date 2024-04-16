@@ -394,7 +394,8 @@ public class FileBufferView extends View
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    /** This method adds a new line break to the buffer and updates the scroll states
+    /** This method adds a new line break to the buffer
+     * It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: void
      */
     public void addNewLineBreak() {
@@ -407,7 +408,8 @@ public class FileBufferView extends View
         setLastEdit(nextEdit);
     }
 
-    /** This method adds a new character to the file and updates the scroll states
+    /** This method adds a new character to the file
+     *  It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: void
      */
     public void addNewChar(char c) {
@@ -420,7 +422,8 @@ public class FileBufferView extends View
         setLastEdit(nextEdit);
     }
 
-    /** This method deletes a character of the buffer and updates the scroll states
+    /** This method deletes the character before the insertionPoint.
+     *  It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: void
      */
     public void deleteChar() {
@@ -447,7 +450,9 @@ public class FileBufferView extends View
      *   CLOSE VIEW     *
      * ******************/
 
-    /** This method closes the buffer and updates the subLayouts
+    /** This method checks whether this View is focused. If this view is focused, the corresponding buffer
+     *  whill close
+     *  -   When the buffer is dirty, the user needs to press y or n to either discard the changes or close the buffer
      * @return: FileBufferView || null
      */
     @Override
@@ -456,26 +461,26 @@ public class FileBufferView extends View
             return this;
         }
         else {
-            return null;
-            /*
-                if (getBuffer().getDirty()) {
-                    terminalHandler.clearScreen();
-                    terminalHandler.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
-                    int c = terminalHandler.readByte();
-                    while (c != 121 && c != 89 && c != 78 && c != 110) {
-                        c = terminalHandler.readByte();
-                    }
-                    if (c == 121 || c == 89) {
-                        return null;
-                    }
-                    return this;
+            if (getBuffer().getDirty()) {
+                showCloseErr();
+                int c = terminalHandler.readByte();
+                while (c != 121 && c != 89 && c != 78 && c != 110) {
+                    c = terminalHandler.readByte();
                 }
-                else {
+                if (c == 121 || c == 89) {
                     return null;
                 }
-
-             */
+                return this;
+            }
+            else {
+                return null;
+            }
         }
+    }
+
+    private void showCloseErr() {
+        terminalHandler.clearScreen();
+        terminalHandler.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
     }
 
     /* ******************
@@ -539,9 +544,8 @@ public class FileBufferView extends View
     @Override
     String[] makeShow() {
         updateScrollStates();
-        String[] result = new String[getHeigth()];
+        String[] result = new String[getHeigth() - 1];
         String[] cont = getContent();
-        char[] verticalScrollBar = makeVerticalScrollBar();
         for (int i = 0; i < getHeigth() - 1; i++) {
             int row = i + getVerticalScrollState() - 1;
             if (row >= getRowCount()) {
@@ -557,23 +561,13 @@ public class FileBufferView extends View
                 }
             }
         }
-        for(int i=0; i<result.length-1; i++){
-            if(result[i] == null){
-                result[i] = "";
-            }
-            while(result[i].length() < getWidth()-1){
-                result[i] = result[i] + ' ';
-            }
-            result[i] = result[i] + verticalScrollBar[i];
-        }
-        result[getHeigth()-1] = makeHorizontalScrollBar();
         return result;
     }
 
     /** This method returns the created vertical scrollbar
      * @return: char[]
      */
-    private char[] makeVerticalScrollBar() {
+    char[] makeVerticalScrollBar() {
         char[] result = new char[getHeigth() - 1];
         if (getHeigth() > getRowCount()) {
             Arrays.fill(result, '#');
@@ -596,7 +590,7 @@ public class FileBufferView extends View
     /** This method returns the created horizontal scrollbar
      * @return: String
      */
-    private String makeHorizontalScrollBar() {
+    String makeHorizontalScrollBar() {
         StringBuilder result = makeFileHeader();
         if (getWidth() > getColumnCount()) {
             while (result.length() < getWidth()) {
