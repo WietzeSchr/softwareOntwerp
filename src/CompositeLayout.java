@@ -187,6 +187,17 @@ public abstract class CompositeLayout extends Layout {
      *  OPEN GAME VIEW  *
      * ******************/
 
+    /* ************************
+     *  OPEN FILEBUFFER VIEW  *
+     * ************************/
+
+    @Override
+    public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
+        for (int i = 0; i < countSubLayouts(); i++) {
+            getSubLayouts()[i].updateViews(focus, insert, c, isDeleted, buffer);
+        }
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/

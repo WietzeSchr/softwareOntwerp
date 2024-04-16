@@ -82,7 +82,7 @@ class FileBufferTest {
         FileBuffer fb1 = new FileBuffer(new String[] {"ha", "w", "lolo", ""}, "test1.txt");
         assertNull(fb1.getNewInsertionPoint(new Point(0,1)));
         assertNull(fb1.getNewInsertionPoint(new Point(1,0)));
-        assertNull(fb1.getNewInsertionPoint(new Point(5,1)));
+        assertEquals(fb1.getNewInsertionPoint(new Point(5,1)), new Point(4,1));
         assertEquals(fb1.getNewInsertionPoint(new Point(1,2)), new Point(1,2));
         assertEquals(fb1.getNewInsertionPoint(new Point(4, 3)), new Point(4,1));
     }

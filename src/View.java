@@ -50,11 +50,11 @@ public abstract class View extends Layout {
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    public abstract void addNewLineBreak();
+    public abstract boolean addNewLineBreak();
 
-    public abstract void addNewChar(char c);
+    public abstract boolean addNewChar(char c);
 
-    public abstract void deleteChar();
+    public abstract boolean deleteChar();
 
     /* ******************
      *   CLOSE VIEW     *
@@ -101,9 +101,9 @@ public abstract class View extends Layout {
      *   UNDO / REDO    *
      * ******************/
 
-    public abstract void undo();
+    public abstract boolean undo();
 
-    public abstract void redo();
+    public abstract boolean redo();
 
     /* ******************
      *  OPEN GAME VIEW  *
@@ -118,19 +118,11 @@ public abstract class View extends Layout {
         }
     }
 
-    /* ******************
+    /* ************************
      *  OPEN FILEBUFFER VIEW  *
-     * ******************/
+     * ************************/
 
-    public Layout openNewFileBuffer(int focus, Layout parent, FileBuffer buffer) {
-        if (getPosition() == focus) {
-            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(),
-                    new Layout[] {this, new FileBufferView(getHeigth(), getWidth() / 2, new Point(1, getWidth() / 2), buffer)});
-        }
-        else {
-            return this;
-        }
-    }
+    public abstract Layout[] duplicate();
 
     /* ****************
      *    RUN SNAKE   *

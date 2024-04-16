@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 
 /* **********
@@ -132,17 +133,29 @@ public abstract class Layout {
 
     public void addNewLineBreak(int focus) {
         View focussed = getFocusedView(focus);
-        focussed.addNewLineBreak();
+        if (focussed.addNewLineBreak()) {
+            FileBufferView f = (FileBufferView) focussed;
+            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
+            updateViews(focus, edit.getInsertionPoint(), (char) 13, false, f.getBuffer());
+        }
     }
 
     public void addNewChar(char c, int focus) {
         View focussed = getFocusedView(focus);
-        focussed.addNewChar(c);
+        if (focussed.addNewChar(c)) {
+            FileBufferView f = (FileBufferView) focussed;
+            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
+            updateViews(focus, edit.getInsertionPoint(), c, false, f.getBuffer());
+        }
     }
 
     public void deleteChar(int focus) {
         View focussed = getFocusedView(focus);
-        focussed.deleteChar();
+        if (focussed.deleteChar()) {
+            FileBufferView f = (FileBufferView) focussed;
+            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
+            updateViews(focus, edit.getInsertionPoint(), edit.getChange(), true, f.getBuffer());
+        }
     }
 
     /* ******************
@@ -200,11 +213,21 @@ public abstract class Layout {
      * ******************/
 
     public void undo(int focus) {
-        getFocusedView(focus).undo();
+        View focussed = getFocusedView(focus);
+        if (focussed.undo()) {
+            FileBufferView f = (FileBufferView) focussed;
+            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit().getNext();
+            updateViews(focus, edit.getInsertionPointAfter(), edit.getChange(), edit.getClass() != FileBufferView.Deletion.class, f.getBuffer());
+        }
     }
 
     public void redo(int focus) {
-        getFocusedView(focus).redo();
+        View focussed =getFocusedView(focus);
+        if (focussed.redo()) {
+            FileBufferView f = (FileBufferView) focussed;
+            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
+            updateViews(focus, edit.getInsertionPoint(), edit.getChange(), edit.getClass() == FileBufferView.Insertion.class, f.getBuffer());
+        }
     }
 
     /* ******************
@@ -227,15 +250,15 @@ public abstract class Layout {
 
     public Layout newBufferView(int focus) {
         View focussed = getFocusedView(focus);
-        if(focussed instanceof GameView) {return this;}
-        FileBuffer buffer = ((FileBufferView)focussed).getBuffer();
-        Layout result = openNewFileBuffer(focus, focussed.getParent(), buffer);
+        Layout result = openNewFileBuffer(focus, focussed.getParent());
         result.updateSize(getHeigth(), getWidth(), new Point(1,1));
         result.initViewPosition(1);
         return result;
     }
 
-    public abstract Layout openNewFileBuffer(int focus, Layout parent, FileBuffer buffer);
+    public abstract Layout openNewFileBuffer(int focus, Layout parent);
+
+    public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
 
     /* ****************
      *    RUN SNAKE   *

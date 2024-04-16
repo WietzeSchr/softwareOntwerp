@@ -7,7 +7,7 @@ public class FileBufferView extends View
     /* *******************
      *   ABSTRACT EDIT   *
      * *******************/
-    private abstract static class Edit {
+    abstract static class Edit {
 
         private Edit next;
 
@@ -34,9 +34,9 @@ public class FileBufferView extends View
             this.previous = newPrevious;
         }
 
-        public abstract void undo();
+        public abstract boolean undo();
 
-        public abstract void redo();
+        public abstract boolean redo();
 
         public abstract boolean isFirst();
     }
@@ -44,19 +44,19 @@ public class FileBufferView extends View
     /* ****************
      *   EMPTY EDIT   *
      * ****************/
-    private static class EmptyEdit extends Edit {
+     static class EmptyEdit extends Edit {
         public EmptyEdit() {
             super();
         }
 
         @Override
-        public void undo() {
-            return;
+        public boolean undo() {
+            return false;
         }
 
         @Override
-        public void redo() {
-            return;
+        public boolean redo() {
+            return false;
         }
 
         @Override
@@ -68,7 +68,7 @@ public class FileBufferView extends View
     /* *******************
      *   NON-EMPTY EDIT  *
      * *******************/
-    private abstract static class NonEmptyEdit extends Edit {
+    abstract static class NonEmptyEdit extends Edit {
 
         private final char change;
 
@@ -107,17 +107,18 @@ public class FileBufferView extends View
     /* *******************
      *   INSERTION EDIT  *
      * *******************/
-    private class Insertion extends NonEmptyEdit {
+    class Insertion extends NonEmptyEdit {
         public Insertion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
-        public void undo() {
+        public boolean undo() {
             fileBuffer.deleteChar(getInsertionPointAfter());
             insertionPoint = getInsertionPoint();
+            return true;
         }
 
-        public void redo() {
+        public boolean redo() {
             if (getChange() == 13) {
                 fileBuffer.insertLineBreak(getInsertionPoint());
             }
@@ -125,18 +126,19 @@ public class FileBufferView extends View
                 fileBuffer.addNewChar(getChange(), getInsertionPoint());
             }
             insertionPoint = getInsertionPointAfter();
+            return true;
         }
     }
 
     /* *******************
      *   DELETION EDIT   *
      * *******************/
-    private class Deletion extends NonEmptyEdit {
+    class Deletion extends NonEmptyEdit {
         public Deletion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
-        public void undo() {
+        public boolean undo() {
             if (getChange() == 13) {
                 fileBuffer.insertLineBreak(getInsertionPointAfter());
             }
@@ -144,11 +146,13 @@ public class FileBufferView extends View
                 fileBuffer.addNewChar(getChange(), getInsertionPointAfter());
             }
             insertionPoint = getInsertionPoint();
+            return true;
         }
 
-        public void redo() {
+        public boolean redo() {
             fileBuffer.deleteChar(getInsertionPoint());
             insertionPoint = getInsertionPointAfter();
+            return true;
         }
     }
 
@@ -399,7 +403,7 @@ public class FileBufferView extends View
      * It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: void
      */
-    public void addNewLineBreak() {
+    public boolean addNewLineBreak() {
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
@@ -408,13 +412,14 @@ public class FileBufferView extends View
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
         updateScrollStates();
+        return true;
     }
 
     /** This method adds a new character to the file
      *  It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: void
      */
-    public void addNewChar(char c) {
+    public boolean addNewChar(char c) {
         Point insert = getInsertionPoint();
         getBuffer().addNewChar(c, insert);
         move(Direction.EAST);
@@ -422,13 +427,14 @@ public class FileBufferView extends View
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
+        return true;
     }
 
     /** This method deletes the character before the insertionPoint.
      *  It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: void
      */
-    public void deleteChar() {
+    public boolean deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
             Point insert = getInsertionPoint();
             char c;
@@ -446,7 +452,9 @@ public class FileBufferView extends View
             nextEdit.setPrevious(getLastEdit());
             getLastEdit().setNext(nextEdit);
             setLastEdit(nextEdit);
+            return true;
         }
+        return false;
     }
 
     /* ******************
@@ -513,18 +521,20 @@ public class FileBufferView extends View
      *   UNDO / REDO    *
      * ******************/
 
-    public void undo() {
+    public boolean undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
-        getLastEdit().undo();
+        boolean result = getLastEdit().undo();
         setLastEdit(getLastEdit().getPrevious());
         if (getLastEdit().isFirst()) {
             getBuffer().setDirty(false);
         }
+        return result;
     }
 
-    public void redo() {
-        getLastEdit().getNext().redo();
+    public boolean redo() {
+        boolean result = getLastEdit().getNext().redo();
         setLastEdit(getLastEdit().getNext());
+        return result;
     }
 
     /* ****************
@@ -537,6 +547,62 @@ public class FileBufferView extends View
     }
 
     public void tick() {return;}
+
+    /* ************************
+     *  OPEN FILEBUFFER VIEW  *
+     * ************************/
+
+    @Override
+    public Layout openNewFileBuffer(int focus, Layout parent) {
+        if (getPosition() == focus) {
+            return new SideBySideLayout(1, 1, new Point(1, 1),
+                    new Layout[] {this, new FileBufferView(1, 1, new Point(1, 1), getBuffer())});
+        }
+        return this;
+    }
+
+    @Override
+    public Layout[] duplicate() {
+        return new Layout[] {this, new FileBufferView(1, 1, new Point(1, 1), getBuffer())};
+    }
+
+    @Override
+    public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
+        if (getPosition() != focus && getBuffer() == buffer) {
+            if (c == (char) 13) {
+                if (insert.getX() < getInsertionPoint().getX()) {
+                    if (isDeleted) {
+                        setVerticalScrollState(getVerticalScrollState() - 1);
+                        move(Direction.NORD);
+                    }
+                    else {
+                        setVerticalScrollState(getVerticalScrollState() + 1);
+                        move(Direction.SOUTH);
+                    }
+                }
+                else if (insert.getX() == getInsertionPoint().getX()) {
+                    if (insert.getY() < getInsertionPoint().getY()) {
+                        if (isDeleted) {
+
+                        }
+                        else {
+                            setInsertionPoint(new Point(insert.getX() + 1, getInsertionPoint().getY() - insert.getY()));
+                        }
+                    }
+                }
+            }
+            else {
+                if (insert.getX() == getInsertionPoint().getX()) {
+                    if (isDeleted) {
+                        move(Direction.WEST);
+                    }
+                    else {
+                        move(Direction.EAST);
+                    }
+                }
+            }
+        }
+    }
 
     /* ******************
      *  SHOW FUNCTIONS  *
