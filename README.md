@@ -25,7 +25,7 @@
 
 ### General
 
-* [ ] Tests
+* [ ] Tests -> ~ 90% - 95%
 * [ ] Documentation
 * [ ] Sequence Diagrams
 * [ ] Class Diagram
@@ -35,8 +35,8 @@
 * [ ] Make a Listener class that checks wether something was updated to avoid unnecessary show() calls
 * [ ] Make show functions less 'heavy'
 * [x] Make edit class abstract to deal with different types of edits
-* [ ] Check for use of ENUM classes
+* [x] Check for use of ENUM classes
 
 ### Found bugs
 
-* [ ] 
+* [ ] NullPointerException bij Snake closeGame

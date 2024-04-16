@@ -221,6 +221,22 @@ public abstract class Layout {
 
     public abstract Layout openNewGame(int focus, Layout parent);
 
+    /* ************************
+     *  OPEN FILEBUFFER VIEW  *
+     * ************************/
+
+    public Layout newBufferView(int focus) {
+        View focussed = getFocusedView(focus);
+        if(focussed instanceof GameView) {return this;}
+        FileBuffer buffer = ((FileBufferView)focussed).getBuffer();
+        Layout result = openNewFileBuffer(focus, focussed.getParent(), buffer);
+        result.updateSize(getHeigth(), getWidth(), new Point(1,1));
+        result.initViewPosition(1);
+        return result;
+    }
+
+    public abstract Layout openNewFileBuffer(int focus, Layout parent, FileBuffer buffer);
+
     /* ****************
      *    RUN SNAKE   *
      * ****************/
