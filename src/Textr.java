@@ -307,7 +307,9 @@ public class Textr
      */
     private void closeView() throws IOException {
         setLayout(getLayout().closeView(getFocus()));
-        setFocus(getLayout().getNewFocus(getFocus()));
+        if (getLayout() != null) {
+            setFocus(getLayout().getNewFocus(getFocus()));
+        }
     }
 
     /* ******************
