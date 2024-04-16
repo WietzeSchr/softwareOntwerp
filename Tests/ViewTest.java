@@ -13,6 +13,11 @@ class ViewTest {
                 new FileBuffer(new String[] {"hallo", ""}, "test"));
         gv.setPosition(4);
         assertEquals(gv.getPosition(), 4);
+        fbv.initViewPosition(3);
+        assertEquals(fbv.getPosition(), 3);
+        assertEquals(gv.countViews(), 1);
+        assertEquals(fbv.getFocusedView(3), fbv);
+        assertNull(fbv.getFocusedView(4));
     }
 
     @Test
@@ -33,6 +38,18 @@ class ViewTest {
         fbv.setPosition(1);
         assertNull(gv.closeView(1));
         assertNull(fbv.closeView(1));
+    }
+
+    @Test
+    void testRotateView() {
+        FileBufferView fbv = new FileBufferView(1, 10, new Point(15, 25),
+                new FileBuffer(new String[] {"hallo", ""}, "test"));
+        fbv.setPosition(1);
+        assertEquals(fbv.rotateView(1, 1), fbv);
+        assertEquals(fbv.rotateSiblings(1,1, 2, null), fbv);
+        assertEquals(fbv.rotateSiblingsFlip(1,1, 2, null), fbv);
+        assertEquals(fbv.rotateNonSiblings(1, 1, null, null, null), fbv);
+        assertEquals(fbv.rotateNonSiblingsPromote(1, 1, null, null, null), fbv);
     }
 
     @Test

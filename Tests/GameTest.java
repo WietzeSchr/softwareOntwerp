@@ -41,6 +41,15 @@ class GameTest {
 
     @Test
     void tick() {
+        Point[] points = new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
+        Game game = new Game(3, 7);
+        game.setSnake(snake);
+        game.tick();
+        assertArrayEquals(snake.abstractList(), new Point[] {new Point(2,1), new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4)});
+        assertEquals(game.getSnake().getDir(), Direction.SOUTH.point);
     }
 
     @Test
@@ -77,7 +86,16 @@ class GameTest {
 
     @Test
     void spawnApple() {
-
+        Point[] points = new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
+        Game game = new Game(3, 7);
+        game.setSnake(snake);
+        assertArrayEquals(game.getFreeSpace(), new Point[] {new Point(1, 6), new Point(2,1), new Point(2,2),
+                new Point(2,3), new Point(2,4), new Point(2,5), new Point(2,6)});
+        assertEquals(game.countApples(), 0);
+        game.spawnApple();
+        assertEquals(game.countApples(), 1);
     }
 
     @Test
@@ -92,7 +110,16 @@ class GameTest {
 
     @Test
     void eatApple() {
-
+        Point[] points = new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
+        Game game = new Game(3, 7);
+        game.setSnake(snake);
+        game.setGridAt(1, new Point(1, 1));
+        assertTrue(game.eatApple());
+        assertEquals(game.countApples(), 1);
+        assertEquals(game.getTick(), 990);
+        assertEquals(game.getScore(), 10);
     }
 
     @Test
@@ -105,6 +132,12 @@ class GameTest {
 
     @Test
     void getAbstractGrid() {
-
+        Point[] points = new Point[] {new Point(1,1), new Point(1,2),
+                new Point(1,3), new Point(1,4), new Point(1,5)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
+        Game game = new Game(3, 7);
+        game.setSnake(snake);
+        game.setGridAt(1, new Point(2,1));
+        assertArrayEquals(game.getAbstractGrid(), new char[][] {{'v', 'o', 'o', 'o', '-', ' '}, {'*', ' ', ' ', ' ', ' ', ' '}});
     }
 }

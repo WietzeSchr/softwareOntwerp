@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public abstract class CompositeLayout extends Layout {
@@ -25,14 +26,15 @@ public abstract class CompositeLayout extends Layout {
      *
      * @post getSubLayouts().length == filepaths.length
      */
-    public CompositeLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
+    public CompositeLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) throws FileNotFoundException {
         super(height, width, leftUpperCorner);
         int length = filepaths.length;
         this.subLayouts = new Layout[length];
         Point subSize = calcSubSize();
         for (int i = 0; i < length; i++) {
             Point leftUpCorner = calcLeftUpCorner(i);
-            setSubLayout(new FileBufferView(subSize.getX(), subSize.getY(), this, leftUpCorner, filepaths[i], newLine), i);
+            setSubLayout(new FileBufferView(subSize.getX(), subSize.getY(), leftUpCorner, filepaths[i], newLine), i);
+            getSubLayouts()[i].setParent(this);
         }
     }
 
@@ -48,6 +50,9 @@ public abstract class CompositeLayout extends Layout {
      */
     public void setSubLayouts(Layout[] newSubLayouts) {
         this.subLayouts = newSubLayouts;
+        for (int i = 0; i < countSubLayouts(); i++) {
+            getSubLayouts()[i].setParent(this);
+        }
     }
 
     /**
@@ -68,6 +73,7 @@ public abstract class CompositeLayout extends Layout {
     public void setSubLayout(Layout newSubLayout, int i) {
         Layout[] oldSubLayouts = getSubLayouts();
         oldSubLayouts[i] = newSubLayout;
+        newSubLayout.setParent(this);
     }
 
     /* **********************

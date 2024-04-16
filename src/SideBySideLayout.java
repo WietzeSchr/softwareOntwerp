@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+
 import static java.lang.Math.floor;
 
 public class SideBySideLayout extends CompositeLayout{
@@ -8,7 +10,7 @@ public class SideBySideLayout extends CompositeLayout{
 
     /** This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner, filepaths and newLine
      */
-    public SideBySideLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) {
+    public SideBySideLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) throws FileNotFoundException {
         super(height, width, leftUpperCorner, filepaths, newLine);
     }
         //  Deze kunnen we bij houden voor initialisatie met SideBySide
