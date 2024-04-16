@@ -118,6 +118,20 @@ public abstract class View extends Layout {
         }
     }
 
+    /* ******************
+     *  OPEN FILEBUFFER VIEW  *
+     * ******************/
+
+    public Layout openNewFileBuffer(int focus, Layout parent, FileBuffer buffer) {
+        if (getPosition() == focus) {
+            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(),
+                    new Layout[] {this, new FileBufferView(getHeigth(), getWidth() / 2, new Point(1, getWidth() / 2), buffer)});
+        }
+        else {
+            return this;
+        }
+    }
+
     /* ****************
      *    RUN SNAKE   *
      * ****************/

@@ -78,7 +78,7 @@ public class Textr
         }
         if (filepaths.length == 0) {
             this.layout = new GameView(size.getX(), size.getY(), new Point(1,1));
-            throw new RuntimeException("Textr can't be started without any files");
+            throw new RuntimeException("please give one or more filepaths to open");
         }
         else if (filepaths.length > 1) {
             this.layout = new StackedLayout(1,1, new Point(1,1), filepaths, newLine);
@@ -341,7 +341,7 @@ public class Textr
      * ******************/
 
     void duplicateView() {
-        return;
+        setLayout(getLayout().newBufferView(getFocus()));
     }
 
     /* ******************
