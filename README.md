@@ -15,10 +15,10 @@
 * [x] Move the insertion point of the focused view using the arrow keys
 * [x] Rotate the focused view with the next view clockwise or counter-clockwise using Ctrl + R / Ctrl + T
 * [x] Close buffer using Shift + F4
-    - [ ] Close buffer when buffer is dirty: Y -> discard changes and close | N -> don't close
+    - [x] Close buffer when buffer is dirty: Y -> discard changes and close | N -> don't close
 * [x] Save the focused view's buffer using Ctrl + S
 * [x] Duplicate the focused view using Ctrl + D
-    - [ ] Keep views on the same buffer locked in place 
+    - [x] Keep views on the same buffer locked in place 
 * [x] Open a new Snake game using Ctrl + G
     - [ ] Resize the game, fitting the snake as centered as possible (if possible at all) in new grid
 * [x] Undo the last made edit (adding/deleting characters/linebreaks) using Ctrl + Z
@@ -40,4 +40,4 @@
 
 ### Found bugs
 
-* [ ] NullPointerException bij Snake closeGame
+* [x] NullPointerException bij Snake closeGame
