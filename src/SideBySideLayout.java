@@ -174,8 +174,10 @@ public class SideBySideLayout extends CompositeLayout{
      *  OPEN GAME VIEW  *
      * ******************/
 
-    public Layout openNewGame(int focus, Layout parent) {
+    @Override
+    public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
         View focussed = getFocusedView(focus);
+        if (focussed == null) return this;
         Layout[] newSubLayouts;
         if (this == parent) {
             newSubLayouts = new Layout[countSubLayouts() + 1];
@@ -183,53 +185,20 @@ public class SideBySideLayout extends CompositeLayout{
             for (int i = 0; i < countSubLayouts(); i++) {
                 if (getSubLayouts()[i] == focussed) {
                     newSubLayouts[j] = focussed;
-                    newSubLayouts[j + 1] = new GameView(getHeigth(), getWidth(), getLeftUpperCorner());
-                                    //   = new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), getBuffer())
-                    j += 2;
-                }
-                else {
-                    newSubLayouts[j] = getSubLayouts()[i];
                     j += 1;
-                }
-            }
-        }
-        else {
-            newSubLayouts = new Layout[countSubLayouts()];
-            for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].openNewGame(focus, parent);
-            }
-        }
-        return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
-    }
-
-    /* ******************
-     *  OPEN FILEBUFFER VIEW  *
-     * ******************/
-
-    public Layout openNewFileBuffer(int focus, Layout parent) {
-        View focussed = getFocusedView(focus);
-        Layout[] newSubLayouts;
-        if (this == parent) {
-            Layout[] subs = focussed.duplicate();
-            newSubLayouts = new Layout[countSubLayouts() + subs.length - 1];
-            int j = 0;
-            for (int i = 0; i < countSubLayouts(); i++) {
-                if (getSubLayouts()[i] == focussed) {
-                    for (int k = 0; k < subs.length; k++) {
-                        newSubLayouts[j] = subs[k];
+                    for (int k = 0; k < views.length; k++) {
+                        newSubLayouts[j] = views[k];
                         j += 1;
                     }
-                }
-                else {
+                } else {
                     newSubLayouts[j] = getSubLayouts()[i];
                     j += 1;
                 }
             }
-        }
-        else {
+        } else {
             newSubLayouts = new Layout[countSubLayouts()];
             for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].openNewFileBuffer(focus, parent);
+                newSubLayouts[i] = getSubLayouts()[i].insertViews(focus, parent, views);
             }
         }
         return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);

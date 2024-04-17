@@ -109,20 +109,24 @@ public abstract class View extends Layout {
      *  OPEN GAME VIEW  *
      * ******************/
 
-    public Layout openNewGame(int focus, Layout parent) {
+    @Override
+    public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
         if (getPosition() == focus) {
-            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(),
-                    new Layout[]{this, new GameView(getHeigth(), getWidth() / 2, new Point(1, getWidth() / 2))});
-        } else {
-            return this;
+            View[] newViews = new View[views.length + 1];
+            newViews[0] = this;
+            for (int k = 0; k < views.length; k++) {
+                newViews[k + 1] = views[k];
+            }
+            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newViews);
         }
+        return this;
     }
 
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
 
-    public abstract Layout[] duplicate();
+    public abstract View[] duplicate();
 
     /* ****************
      *    RUN SNAKE   *

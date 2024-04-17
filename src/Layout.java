@@ -230,33 +230,35 @@ public abstract class Layout {
         }
     }
 
-    /* ******************
-     *  OPEN GAME VIEW  *
-     * ******************/
+    /* *************
+     *  OPEN VIEW  *
+     * *************/
+
+    public Layout openViews(int focus, CompositeLayout parent, View[] views) {
+        if (views.length == 0) return this;
+        Layout result = insertViews(focus, parent, views);
+        result.updateSize(getHeigth(), getWidth(), new Point(1, 1));
+        result.initViewPosition(1);
+        return result;
+    }
+
+    public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
 
     public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
-        Layout result = openNewGame(focus, focussed.getParent());
-        result.updateSize(getHeigth(), getWidth(), new Point(1,1));
-        result.initViewPosition(1);
-        return result;
+        return openViews(focus, focussed.getParent(),
+                new View[] {new GameView(getHeigth(), getWidth() / 2, getLeftUpperCorner().add(new Point(0, getWidth() / 2)))});
     }
 
-    public abstract Layout openNewGame(int focus, Layout parent);
-
-    /* ************************
-     *  OPEN FILEBUFFER VIEW  *
-     * ************************/
+    /* *******************
+     *  DUPLICATED VIEW  *
+     * *******************/
 
     public Layout newBufferView(int focus) {
         View focussed = getFocusedView(focus);
-        Layout result = openNewFileBuffer(focus, focussed.getParent());
-        result.updateSize(getHeigth(), getWidth(), new Point(1,1));
-        result.initViewPosition(1);
-        return result;
+        View[] duplicates = focussed.duplicate();
+        return openViews(focus, focussed.getParent(), duplicates);
     }
-
-    public abstract Layout openNewFileBuffer(int focus, Layout parent);
 
     public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
 
