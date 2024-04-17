@@ -223,14 +223,10 @@ public class Game {
     }
 
     public void updateSize(int heigth, int width) {
-        Point snakeBox = getSnake().getOuterBox();
-        if (snakeBox.getX() < heigth && snakeBox.getY() < width) {
+        Box snakeBox = getSnake().getOuterBox();
+        if (snakeBox.getHeight() < heigth && snakeBox.getWidth() < width) {
             findBestFit(heigth, width, snakeBox);
-            int appleCount = countApples();
             updateGrid(heigth, width);
-            for (int i = 0; i < appleCount; i++) {
-                spawnApple();
-            }
         }
         else {
             loseGame();
@@ -250,11 +246,43 @@ public class Game {
     }
 
     private void updateGrid(int heigth, int width) {
-        return;
+        int[][] newGrid = new int[heigth][width];
+        int[][] oldGrid = getGrid();
+        for(int i=0; i<heigth- 1; i++){
+            if (width - 1 >= 0) System.arraycopy(oldGrid[i], 0, newGrid[i], 0, width - 1);
+        }
+        setGrid(newGrid);
     }
 
-    public void findBestFit(int heigth, int width, Point snakeBox) {
-        return;
+    private void findBestFit(int heigth, int width, Box snakeBox) {
+        if(!rightPointValid(heigth, width, snakeBox) || !leftPointValid(snakeBox)){
+            Point snakeHeadToMid = (new Point(width/2, heigth/2)).minus(getSnake().getHead());
+            translateSnake(snakeHeadToMid);
+            snakeBox = getSnake().getOuterBox();
+            if(!leftPointValid(snakeBox)) translateSnake(snakeBox.getLeftUpperPoint().times(-1));
+            if(!rightPointValid(heigth,width, snakeBox)) translateSnake((new Point(heigth, width)).minus(snakeBox.getRightLowerPoint()));
+        }
+    }
+
+    //translates the snake over the given vector
+    private void translateSnake(Point vector){
+        Snake oldSnake = getSnake();
+        Snake newSnake = getSnake();
+        newSnake.setHead(oldSnake.getHead().add(vector));
+        ArrayList<Point> newBody = new ArrayList<Point>();
+        for(Point bodyPart: oldSnake.getBody()){
+            newBody.add(bodyPart.add(vector));
+        }
+        newSnake.setBody(newBody);
+        setSnake(newSnake);
+    }
+
+    //checks if given box is fully in the grid
+    private boolean leftPointValid(Box box){
+        return box.getLeftUpperPoint().getX()>0 && box.getLeftUpperPoint().getY()>0;
+    }
+    private boolean rightPointValid(int heigth, int width, Box box){
+        return box.getRightLowerPoint().getX()<heigth && box.getRightLowerPoint().getY()<heigth;
     }
 
     public boolean isValid(Point point) {
