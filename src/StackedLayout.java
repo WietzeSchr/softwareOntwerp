@@ -215,48 +215,13 @@ public class StackedLayout extends CompositeLayout {
             for (int i = 0; i < countSubLayouts(); i++) {
                 if (getSubLayouts()[i] == focussed) {
                     newSubLayouts[i] = new SideBySideLayout(1, 1, new Point(1, 1), subSubLayouts);
-                }
-                else {
+                } else {
                     newSubLayouts[i] = getSubLayouts()[i];
                 }
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < countSubLayouts(); i++) {
                 newSubLayouts[i] = getSubLayouts()[i].insertViews(focus, parent, views);
-            }
-        }
-        return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
-    }
-
-    /* ******************
-     *  OPEN GAME VIEW  *
-     * ******************/
-
-    public Layout openNewFileBuffer(int focus, Layout parent) {
-        View focussed = getFocusedView(focus);
-        Layout[] newSubLayouts;
-        if (this == parent) {
-            Layout[] subs = focussed.duplicate();
-            newSubLayouts = new Layout[countSubLayouts() + subs.length - 1];
-            int j = 0;
-            for (int i = 0; i < countSubLayouts(); i++) {
-                if (getSubLayouts()[i] == focussed) {
-                    for (int k = 0; k < subs.length; k++) {
-                        newSubLayouts[j] = subs[k];
-                        j += 1;
-                    }
-                }
-                else {
-                    newSubLayouts[j] = getSubLayouts()[i];
-                    j += 1;
-                }
-            }
-        }
-        else {
-            newSubLayouts = new Layout[countSubLayouts()];
-            for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].openNewFileBuffer(focus, parent);
             }
         }
         return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);

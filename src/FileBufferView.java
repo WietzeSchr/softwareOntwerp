@@ -540,15 +540,6 @@ public class FileBufferView extends View
      * ************************/
 
     @Override
-    public Layout openNewFileBuffer(int focus, Layout parent) {
-        if (getPosition() == focus) {
-            return new SideBySideLayout(1, 1, new Point(1, 1),
-                    new Layout[] {this, new FileBufferView(1, 1, new Point(1, 1), getBuffer())});
-        }
-        return this;
-    }
-
-    @Override
     public View[] duplicate() {
         return new View[] {new FileBufferView(1, 1, new Point(1, 1), getBuffer())};
     }

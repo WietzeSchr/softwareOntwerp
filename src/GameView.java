@@ -105,11 +105,6 @@ public class GameView extends View{
      * ************************/
 
     @Override
-    public Layout openNewFileBuffer(int focus, Layout parent) {
-        return this;
-    }
-
-    @Override
     public View[] duplicate() {
         return new View[] {};
     }

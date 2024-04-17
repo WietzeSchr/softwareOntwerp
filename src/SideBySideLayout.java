@@ -217,50 +217,15 @@ public class SideBySideLayout extends CompositeLayout{
                         newSubLayouts[j] = views[k];
                         j += 1;
                     }
-                }
-                else {
+                } else {
                     newSubLayouts[j] = getSubLayouts()[i];
                     j += 1;
                 }
             }
-        }
-        else {
+        } else {
             newSubLayouts = new Layout[countSubLayouts()];
             for (int i = 0; i < countSubLayouts(); i++) {
                 newSubLayouts[i] = getSubLayouts()[i].insertViews(focus, parent, views);
-            }
-        }
-        return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
-    }
-
-    /* ******************
-     *  OPEN FILEBUFFER VIEW  *
-     * ******************/
-
-    public Layout openNewFileBuffer(int focus, Layout parent) {
-        View focussed = getFocusedView(focus);
-        Layout[] newSubLayouts;
-        if (this == parent) {
-            Layout[] subs = focussed.duplicate();
-            newSubLayouts = new Layout[countSubLayouts() + subs.length - 1];
-            int j = 0;
-            for (int i = 0; i < countSubLayouts(); i++) {
-                if (getSubLayouts()[i] == focussed) {
-                    for (int k = 0; k < subs.length; k++) {
-                        newSubLayouts[j] = subs[k];
-                        j += 1;
-                    }
-                }
-                else {
-                    newSubLayouts[j] = getSubLayouts()[i];
-                    j += 1;
-                }
-            }
-        }
-        else {
-            newSubLayouts = new Layout[countSubLayouts()];
-            for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].openNewFileBuffer(focus, parent);
             }
         }
         return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);

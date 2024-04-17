@@ -230,9 +230,9 @@ public abstract class Layout {
         }
     }
 
-    /* ******************
-     *  OPEN GAME VIEW  *
-     * ******************/
+    /* *************
+     *  OPEN VIEW  *
+     * *************/
 
     public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
@@ -254,17 +254,15 @@ public abstract class Layout {
 
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
 
-    /* ************************
-     *  OPEN FILEBUFFER VIEW  *
-     * ************************/
+    /* *******************
+     *  DUPLICATED VIEW  *
+     * *******************/
 
     public Layout newBufferView(int focus) {
         View focussed = getFocusedView(focus);
         View[] duplicates = focussed.duplicate();
         return openViews(focus, focussed.getParent(), duplicates);
     }
-
-    public abstract Layout openNewFileBuffer(int focus, Layout parent);
 
     public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
 
