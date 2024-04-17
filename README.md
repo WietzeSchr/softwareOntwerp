@@ -34,9 +34,10 @@
 ### Extra ideas
 
 * [ ] Make a Listener class that checks wether something was updated to avoid unnecessary show() calls
-* [ ] Make show functions less 'heavy'
+* [x] Make show functions less 'heavy'
 * [x] Make edit class abstract to deal with different types of edits
 * [x] Check for use of ENUM classes
+* [x] Make a general function for inserting a list of views
 
 ### Found bugs
 
