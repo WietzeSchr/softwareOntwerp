@@ -109,15 +109,6 @@ public abstract class View extends Layout {
      *  OPEN GAME VIEW  *
      * ******************/
 
-    public Layout openNewGame(int focus, Layout parent) {
-        if (getPosition() == focus) {
-            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(),
-                    new Layout[]{this, new GameView(getHeigth(), getWidth() / 2, new Point(1, getWidth() / 2))});
-        } else {
-            return this;
-        }
-    }
-
     @Override
     public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
         if (getPosition() == focus) {

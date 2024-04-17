@@ -234,16 +234,6 @@ public abstract class Layout {
      *  OPEN VIEW  *
      * *************/
 
-    public Layout newGame(int focus) {
-        View focussed = getFocusedView(focus);
-        Layout result = openNewGame(focus, focussed.getParent());
-        result.updateSize(getHeigth(), getWidth(), new Point(1,1));
-        result.initViewPosition(1);
-        return result;
-    }
-
-    public abstract Layout openNewGame(int focus, Layout parent);
-
     public Layout openViews(int focus, CompositeLayout parent, View[] views) {
         if (views.length == 0) return this;
         Layout result = insertViews(focus, parent, views);
@@ -253,6 +243,12 @@ public abstract class Layout {
     }
 
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
+
+    public Layout newGame(int focus) {
+        View focussed = getFocusedView(focus);
+        return openViews(focus, focussed.getParent(),
+                new View[] {new GameView(getHeigth(), getWidth() / 2, getLeftUpperCorner().add(new Point(0, getWidth() / 2)))});
+    }
 
     /* *******************
      *  DUPLICATED VIEW  *

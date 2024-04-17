@@ -175,36 +175,10 @@ public class StackedLayout extends CompositeLayout {
      *  OPEN GAME VIEW  *
      * ******************/
 
-    public Layout openNewGame(int focus, Layout parent) {
-        View focussed = getFocusedView(focus);
-        Layout[] newSubLayouts;
-        if (this == parent) {
-            newSubLayouts = new Layout[countSubLayouts() + 1];
-            int j = 0;
-            for (int i = 0; i < countSubLayouts(); i++) {
-                if (getSubLayouts()[i] == focussed) {
-                    newSubLayouts[j] = focussed;
-                    newSubLayouts[j + 1] = new GameView(getHeigth(), getWidth(), getLeftUpperCorner());
-                    j += 2;
-                }
-                else {
-                    newSubLayouts[j] = getSubLayouts()[i];
-                    j += 1;
-                }
-            }
-        }
-        else {
-            newSubLayouts = new Layout[countSubLayouts()];
-            for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].openNewGame(focus, parent);
-            }
-        }
-        return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
-    }
-
     @Override
     public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
         View focussed = getFocusedView(focus);
+        if (focussed == null) return this;
         View[] subSubLayouts = new View[views.length + 1];
         subSubLayouts[0] = focussed;
         for (int k = 0; k < views.length; k++) {
