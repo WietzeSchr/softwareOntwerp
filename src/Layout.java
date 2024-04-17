@@ -108,11 +108,20 @@ public abstract class Layout {
      *  INSPECT CONTENT *
      * ******************/
 
+    /** 
+     * This method moves the insertion point of the focused view in the given direction if the focussed view is a fileBufferView
+     * or moves the snake in the given direction if the focussed view is a gameView
+     * @return: void
+     */	
     public void arrowPressed(Direction dir, int focus) {
         View focussed = getFocusedView(focus);
         focussed.move(dir);
     }
 
+    /**
+     * This method returns the next focussed view
+     * @return: int
+     */
     public int getNextFocus(int focus) {
         if (focus == countViews()) {
             return 1;
@@ -120,6 +129,10 @@ public abstract class Layout {
         return focus + 1;
     }
 
+    /**
+     * This method returns the previous focussed view
+     * @return: int
+     */
     public int getPreviousFocus(int focus) {
         if (focus == 1) {
             return countViews();
@@ -131,6 +144,11 @@ public abstract class Layout {
      *  EDIT BUFFER CONTENT *
      ************************/
 
+    /**
+     * This method adds a new line break at the insertion point of the focused view
+     * @param focus
+     * @return: void
+     */
     public void addNewLineBreak(int focus) {
         View focussed = getFocusedView(focus);
         if (focussed.addNewLineBreak()) {
@@ -140,6 +158,12 @@ public abstract class Layout {
         }
     }
 
+    /** 
+     * This method deletes the line break at the insertion point of the focused view
+     * @param c
+     * @param focus
+     * @return: void
+     */
     public void addNewChar(char c, int focus) {
         View focussed = getFocusedView(focus);
         if (focussed.addNewChar(c)) {
@@ -149,6 +173,11 @@ public abstract class Layout {
         }
     }
 
+    /** 
+     * This method deletes the character at the insertion point of the focused view
+     * @param focus
+     * @return: void
+     */
     public void deleteChar(int focus) {
         View focussed = getFocusedView(focus);
         if (focussed.deleteChar()) {
@@ -161,6 +190,12 @@ public abstract class Layout {
     /* ******************
      *   CLOSE VIEW     *
      * ******************/
+
+     /** 
+     * This method closes the focused view and updates the subLayouts
+     * @param focus
+     * @return: Layout
+     */
     public Layout closeView(int focus) throws IOException {
         int heigth = getHeigth();
         int width = getWidth();
@@ -173,6 +208,11 @@ public abstract class Layout {
         return result;
     }
 
+    /** 
+     * This method returns the new focus after closing the focused view
+     * @param focus
+     * @return: int
+     */
     public int getNewFocus(int focus) {
         if (focus > countViews()) {
             return focus - 1;
@@ -189,6 +229,11 @@ public abstract class Layout {
      *    SAVE BUFFER   *
      * ******************/
 
+    /** This method saves the buffer of the focused view
+     * @param focus
+     * @param newLine
+     * @return: void
+     */
     public void saveBuffer(int focus, String newLine) throws IOException {
         View focussed = getFocusedView(focus);
         focussed.saveBuffer(newLine);
@@ -198,20 +243,64 @@ public abstract class Layout {
      *    ROTATE VIEW  *
      * *****************/
 
+    /**
+     * This method directs how it should be rotated based on the focus and the direction
+     * @param dir
+     * @param focus
+     * @return: Layout
+     */
     protected abstract Layout rotateView(int dir, int focus);
 
+    /**
+     * 
+     * @param dir
+     * @param focus
+     * @param nextFocus
+     * @param parent
+     * @return: Layout
+     */
     protected abstract Layout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent);
 
+    /**
+     * 
+     * @param dir
+     * @param focus
+     * @param nextFocus
+     * @param parent
+     */
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
+    /**
+     * 
+     * @param dir
+     * @param focus
+     * @param nextView
+     * @param parent1
+     * @param parent2
+     * @return Layout
+     */
     protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
+    /**
+     * 
+     * @param dir
+     * @param focus
+     * @param nextView
+     * @param parent1
+     * @param parent2
+     * @return Layout
+     */
     protected abstract Layout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     /* ******************
      *   UNDO / REDO    *
      * ******************/
 
+    /**
+     * This method undoes the last edit of the focused view
+     * @param focus
+     * @return: void
+     */
     public void undo(int focus) {
         View focussed = getFocusedView(focus);
         if (focussed.undo()) {
@@ -221,6 +310,11 @@ public abstract class Layout {
         }
     }
 
+    /**
+     * This method redoes the last edit of the focused view
+     * @param focus
+     * @return: void
+     */
     public void redo(int focus) {
         View focussed =getFocusedView(focus);
         if (focussed.redo()) {
@@ -234,6 +328,13 @@ public abstract class Layout {
      *  OPEN VIEW  *
      * *************/
 
+    /** 
+     * This method opens the given views in the layout, updates the size of the layout and initializes the view positions
+     * @param focus
+     * @param parent
+     * @param views
+     * @return: Layout
+     */
     public Layout openViews(int focus, CompositeLayout parent, View[] views) {
         if (views.length == 0) return this;
         Layout result = insertViews(focus, parent, views);
@@ -242,8 +343,19 @@ public abstract class Layout {
         return result;
     }
 
+    /** 
+     * This method inserts the given views in the layout
+     * @param focus
+     * @return: Layout
+     */
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
 
+
+ /** 
+     * This method opens a new game view in the layout
+     * @param focus
+     * @return: Layout
+     */
     public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
         return openViews(focus, focussed.getParent(),
@@ -253,19 +365,37 @@ public abstract class Layout {
     /* *******************
      *  DUPLICATED VIEW  *
      * *******************/
-
+    /**
+     * This method duplicates the focused view
+     * @param focus
+     * @return Layout
+     */
     public Layout newBufferView(int focus) {
         View focussed = getFocusedView(focus);
         View[] duplicates = focussed.duplicate();
         return openViews(focus, focussed.getParent(), duplicates);
     }
 
+    /**
+     * This method updates the views of the buffer
+     * @param focus
+     * @param insert 
+     * @param c
+     * @param isDeleted
+     * @param buffer
+     * @return void
+     */
     public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
 
     /* ****************
      *    RUN SNAKE   *
      * ****************/
 
+    /**
+     * This method runs the snake in the focused view
+     * @param focus
+     * @return void
+     */
     public void tick(int focus) throws IOException {
         getFocusedView(focus).tick();
     }
@@ -274,7 +404,8 @@ public abstract class Layout {
      *  SHOW FUNCTIONS  *
      * ******************/
 
-    /** This method shows the layout of the subLayouts
+    /** 
+     * This method shows the layout of the subLayouts
      * @return: void
      */
     public abstract void show();
@@ -283,26 +414,37 @@ public abstract class Layout {
      *  HELP FUNCTIONS  *
      * ******************/
     
-     /** This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
+     /** 
+     * This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
      * @return: int
      */
     public abstract void initViewPosition(int i);
 
-    /** This method returns the focused view at the given index i
+    /** 
+     * This method returns the focused view at the given index i
+     * @param i
      * @return: FileBufferView
      */	
     public abstract View getFocusedView(int i);
 
-    /** This method returns the number of views
+    /** 
+     * This method returns the number of views
      * @return: int
      */
     public abstract int countViews();
 
+    /**
+     *  This method returns the number of subLayouts
+     * @param focus
+     * @return: long
+     */
     public long getNextDeadline(int focus) {
          return getFocusedView(focus).getNextDeadline();
     }
 
-    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+    /** 
+     * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+     * @param heigth
      * @return: void
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);

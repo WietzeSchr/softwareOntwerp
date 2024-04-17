@@ -94,7 +94,8 @@ public class Textr
         run();
     }
 
-    /** This constructor creates a new Textr object that can be used for testing.
+    /** 
+     * This constructor creates a new Textr object that can be used for testing.
      * @pre | newLine == "\n" || newLine == "\r\n"
      * @post | getLayout() = layout
      * @post | getNewLine() = newLine
@@ -110,7 +111,8 @@ public class Textr
      *  GETTERS AND SETTERS *
      * **********************/
 
-    /** This method sets the layout to newLayout
+    /** 
+     * This method sets the layout to newLayout
      * @return: void
      * @post : getLayout() == newLayout
      */
@@ -118,21 +120,24 @@ public class Textr
         this.layout = newLayout;
     }
 
-    /** This method returns the layout
+    /** 
+     * This method returns the layout
      * @return: Layout
      */
     private Layout getLayout() {
         return layout;
     }
 
-    /** This method returns the newLine
+    /** 
+     * This method returns the newLine
      * @return: String
      */
     private String getNewLine() {
         return newLine;
     }
 
-    /** This method sets the focus to newFocus
+    /** 
+     * This method sets the focus to newFocus
      * @return: void
      * @post : getFocus() == newFocus
      */
@@ -140,7 +145,8 @@ public class Textr
         this.focus = newFocus;
     }
 
-    /** This method returns the focussed view
+    /** 
+     * This method returns the focussed view
      * @return: int
      */
     int getFocus() {
@@ -151,7 +157,8 @@ public class Textr
      *      RUN     *
      * **************/
 
-    /** This method runs the main loop of the program and checks for the input and handles it
+    /** 
+     * This method runs the main loop of the program and checks for the input and handles it
      * @return: void
      */
     private void run() throws IOException {
@@ -235,7 +242,8 @@ public class Textr
      *  DERIVED ATTRIBUTES  *
      * **********************/
 
-    /** This method returns the focussed view
+    /** 
+     * This method returns the focussed view
      * @return: FileBufferView
      */
     View getFocusedView() {
@@ -246,15 +254,17 @@ public class Textr
      *  INSPECT CONTENT *
      * ******************/
 
-    /** This method changes the focus to the next view
-     *  It also updates the cursor's position and optionally the scroll states if needed
+    /** 
+     * This method changes the focus to the next view
+     * It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
     void changeFocusNext() {
         setFocus(nextFocus());
     }
 
-    /** This method changes the focus to the previous view
+    /** 
+     * This method changes the focus to the previous view
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
@@ -262,7 +272,8 @@ public class Textr
         setFocus(previousFocus());
     }
 
-    /** This method updates the cursor's position and optionally the scroll states if needed
+    /** 
+     * This method updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
     private void arrowPressed(Direction dir) {
@@ -273,15 +284,17 @@ public class Textr
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    /** This method adds a new line break to the focused file buffer at the insertion point. It also updates the
-     *  cursor's position and optionally the scroll states if needed.
+    /** 
+     * This method adds a new line break to the focused file buffer at the insertion point. It also updates the
+     * cursor's position and optionally the scroll states if needed.
      * @return: void
      */
     void addNewLineBreak() {
         getLayout().addNewLineBreak(getFocus());
     }
 
-    /** This method adds char c to the focused file buffer at the insertion point
+    /** 
+     * This method adds char c to the focused file buffer at the insertion point
      * It also changes the cursor's position and optionally changes the scroll states and bars if needed
      * @return: void
      */
@@ -289,7 +302,8 @@ public class Textr
         getLayout().addNewChar(c, getFocus());
     }
 
-    /** This method deletes the character at the insertion point in the focused file buffer
+    /** 
+     * This method deletes the character at the insertion point in the focused file buffer
      *  It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
@@ -301,8 +315,9 @@ public class Textr
      *   CLOSE BUFFER   *
      * ******************/
 
-    /** This method closes the focused file buffer and removes it from the layout
-     *  It also updates the layout and the cursor's position and optionally the scroll states if needed
+    /** 
+     * This method closes the focused file buffer and removes it from the layout
+     * It also updates the layout and the cursor's position and optionally the scroll states if needed
      * @return: void
      */
     private void closeView() throws IOException {
@@ -316,7 +331,8 @@ public class Textr
      *    SAVE BUFFER   *
      * ******************/
 
-    /** This method saves the focused file buffer
+    /**
+     *  This method saves the focused file buffer
      *  It shows the updated view without dirty sign
      * @return: void
      */
@@ -328,7 +344,8 @@ public class Textr
      *    ROTATE VIEW  *
      * *****************/
 
-    /** This method rotates the layout in the direction of parameter dir
+    /** 
+     * This method rotates the layout in the direction of parameter dir
      *  It also updates the layout, the size and the cursor's position and optionally the scroll states if needed
      * @return: void
      */
@@ -339,6 +356,10 @@ public class Textr
     /* ******************
      *  DUPLICATE VIEW  *
      * ******************/
+    /**
+     * This method duplicates the focused view and adds it to the layout
+     * @return: void
+     */
 
     void duplicateView() {
         setLayout(getLayout().newBufferView(getFocus()));
@@ -348,6 +369,11 @@ public class Textr
      *  OPEN GAME VIEW  *
      * ******************/
 
+    /**
+     * This method opens a new game view and adds it to the layout
+     * @return: void
+     */
+
     void openGameView() {
         setLayout(getLayout().newGame(getFocus()));
     }
@@ -356,10 +382,19 @@ public class Textr
      *   UNDO / REDO    *
      * ******************/
 
+    /** 
+     * This method undoes the last action in the focused filebufferview
+     * @return: void
+     */
+
     void undo() {
         getLayout().undo(getFocus());
     }
 
+    /** 
+     * This method redoes the last action in the focused filebufferview
+     * @return: void
+     */
     void redo() {
         getLayout().redo(getFocus());
     }
@@ -367,7 +402,11 @@ public class Textr
     /* ****************
      *    RUN SNAKE   *
      * ****************/
-
+    
+    /** 
+     * This method ticks the game view
+     * @return: void
+     */
     void tick() throws IOException {
         getLayout().tick(getFocus());
     }
@@ -376,7 +415,8 @@ public class Textr
      *  SHOW FUNCTIONS  *
      * ******************/
 
-    /** This method shows the layout and the cursor
+    /** 
+     * This method shows the layout and the cursor
      * @return: void
      */
     private void show() {
@@ -389,7 +429,8 @@ public class Textr
         showCursor();
     }
 
-    /** This method shows the cursor and moves the cursor's position
+    /** 
+     * This method shows the cursor and moves the cursor's position
      * @return: void
      */
     private void showCursor() {
@@ -402,39 +443,48 @@ public class Textr
      *  HELP FUNCTIONS  *
      * ******************/
 
-    /** This method returns the next focus
+    /** 
+     * This method returns the next focus
      * @return: int
      */
     private int nextFocus() {
         return getLayout().getNextFocus(getFocus());
     }
 
-    /** This method returns the previous focus
+    /** 
+     * This method returns the previous focus
      * @return: int
      */
     private int previousFocus() {
         return getLayout().getPreviousFocus(getFocus());
     }
 
-    /** This method initializes the view positions
+    /** 
+     * This method initializes the view positions
      * @return: void 
      */
     void initViewPositions() {
         getLayout().initViewPosition(1);
     }
 
-    /** This method updates the size of the layout
+    /** 
+     * This method updates the size of the layout
      * @return: void
      */
     void updateSize(int heigth, int width) {
         getLayout().updateSize(heigth, width, new Point(1,1));
     }
 
+    /** 
+     * This method returns the next deadline
+     * @return: long
+     */
     long getNextDeadline() {
         return getLayout().getNextDeadline(getFocus());
     }
 
-    /** This method returns the size of the terminalHandler
+    /** 
+     * This method returns the size of the terminalHandler
      * @return: Point
      */
     private Point getSize() throws IOException {
