@@ -188,19 +188,6 @@ public class FileBufferView extends View
         this.insertionPoint = new Point(1,1);
     }
 
-    /** This constructor creates a new FileBufferView with the given heigth, width, parent, leftUpperCorner, filepath and newLine
-     * @post getVerticalScrollState() == 1
-     * @post getHorizontalScrollState() == 1
-     */ /*
-    public FileBufferView(int heigth, int witdh, CompositeLayout parent, Point leftUpperCorner, String filepath, String newLine) throws FileNotFoundException {
-        super(heigth, witdh, parent, leftUpperCorner);
-        this.fileBuffer = new FileBuffer(filepath, newLine);
-        this.lastEdit = new EmptyEdit();
-        this.verticalScrollState = 1;
-        this.horizontalScrollState = 1;
-        this.insertionPoint = new Point(1,1);
-    } */
-
     /** This method sets the verticalScrollState of the FileBufferView
      * @post getVerticalScrollState() == newVerticalScrollState
      * @return: void
@@ -562,8 +549,8 @@ public class FileBufferView extends View
     }
 
     @Override
-    public Layout[] duplicate() {
-        return new Layout[] {this, new FileBufferView(1, 1, new Point(1, 1), getBuffer())};
+    public View[] duplicate() {
+        return new View[] {new FileBufferView(1, 1, new Point(1, 1), getBuffer())};
     }
 
     @Override

@@ -202,6 +202,37 @@ public class SideBySideLayout extends CompositeLayout{
         return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
     }
 
+    @Override
+    public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
+        View focussed = getFocusedView(focus);
+        Layout[] newSubLayouts;
+        if (this == parent) {
+            newSubLayouts = new Layout[countSubLayouts() + 1];
+            int j = 0;
+            for (int i = 0; i < countSubLayouts(); i++) {
+                if (getSubLayouts()[i] == focussed) {
+                    newSubLayouts[j] = focussed;
+                    j += 1;
+                    for (int k = 0; k < views.length; k++) {
+                        newSubLayouts[j] = views[k];
+                        j += 1;
+                    }
+                }
+                else {
+                    newSubLayouts[j] = getSubLayouts()[i];
+                    j += 1;
+                }
+            }
+        }
+        else {
+            newSubLayouts = new Layout[countSubLayouts()];
+            for (int i = 0; i < countSubLayouts(); i++) {
+                newSubLayouts[i] = getSubLayouts()[i].insertViews(focus, parent, views);
+            }
+        }
+        return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
+    }
+
     /* ******************
      *  OPEN FILEBUFFER VIEW  *
      * ******************/

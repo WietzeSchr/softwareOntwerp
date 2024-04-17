@@ -118,11 +118,24 @@ public abstract class View extends Layout {
         }
     }
 
+    @Override
+    public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
+        if (getPosition() == focus) {
+            View[] newViews = new View[views.length + 1];
+            newViews[0] = this;
+            for (int k = 0; k < views.length; k++) {
+                newViews[k + 1] = views[k];
+            }
+            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newViews);
+        }
+        return this;
+    }
+
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
 
-    public abstract Layout[] duplicate();
+    public abstract View[] duplicate();
 
     /* ****************
      *    RUN SNAKE   *
