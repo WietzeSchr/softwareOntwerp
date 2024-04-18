@@ -125,7 +125,7 @@ public class Textr
      * This method returns the layout
      * @return: Layout, the layout of Textr
      */
-    private Layout getLayout() {
+    protected Layout getLayout() {
         return layout;
     }
 
@@ -282,7 +282,7 @@ public class Textr
      * @param dir this is the direction of the arrowkey that is pressed indicated by an enum
      * @return: void
      */
-    private void arrowPressed(Direction dir) {
+    void arrowPressed(Direction dir) {
         getLayout().arrowPressed(dir, getFocus());
     }
 
@@ -330,7 +330,7 @@ public class Textr
      * It also updates the layout and the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void closeView() throws IOException {
+    void closeView() {
         setLayout(getLayout().closeView(getFocus()));
         if (getLayout() != null) {
             setFocus(getLayout().getNewFocus(getFocus()));
@@ -346,7 +346,7 @@ public class Textr
      *  It shows the updated view without dirty sign
      * @return: void
      */
-    private void saveBuffer() throws IOException {
+    void saveBuffer() throws IOException {
         getLayout().saveBuffer(getFocus(), getNewLine());
     }
 
@@ -359,7 +359,7 @@ public class Textr
      * @param dir this is an integer that gives the direction in which the view will be rotated
      * @return: void
      */
-    private void rotateView(int dir) {
+    void rotateView(int dir) {
         setLayout(getLayout().rotateView(dir, getFocus()));
     }
 
@@ -434,7 +434,7 @@ public class Textr
      * This method ensures that the layout and the cursor is well shown on the terminal
      * @return: void
      */
-    private void show() {
+    void show() {
         terminalHandler.clearScreen();
         setFocus(getLayout().getNewFocus(getFocus()));
         View focused = getFocusedView();

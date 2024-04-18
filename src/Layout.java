@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /* **********
  *  LAYOUT  *
@@ -119,6 +120,14 @@ public abstract class Layout {
         return leftUpperCorner;
     }
 
+    public Layout[] getSubLayouts() {
+        return new Layout[] {this};
+    }
+
+    public int countSubLayouts() {
+        return 1;
+    }
+
     /* ******************
      *  INSPECT CONTENT *
      * ******************/
@@ -215,7 +224,7 @@ public abstract class Layout {
      * @param focus this is the index of the focussed view
      * @return: Layout, the new layout after closing the focused view
      */
-    public Layout closeView(int focus) throws IOException {
+    public Layout closeView(int focus) {
         int heigth = getHeigth();
         int width = getWidth();
         CompositeLayout parent = getFocusedView(focus).getParent();
@@ -243,7 +252,7 @@ public abstract class Layout {
      * This method closes the buffer and updates the subLayouts
      * @return: Layout, the new layout after closing the buffer
      */
-    public abstract Layout closeView(int focus, CompositeLayout parent) throws IOException;
+    public abstract Layout closeView(int focus, CompositeLayout parent);
 
     /* ******************
      *    SAVE BUFFER   *
@@ -314,6 +323,8 @@ public abstract class Layout {
      */
     protected abstract Layout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
+    protected abstract Layout flip();
+
     /* ******************
      *   UNDO / REDO    *
      * ******************/
@@ -365,16 +376,18 @@ public abstract class Layout {
         return result;
     }
 
+
     /** 
      * This method opens a new gameview in the layout
      * @param focus this is the index of the focussed view
      * @return: Layout, the new layout after opening the gameView
      */
-    public Layout newGame(int focus) {
+      public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
         return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(getHeigth(), getWidth() / 2, getLeftUpperCorner().add(new Point(0, getWidth() / 2)))});
+                new View[] {new GameView(focussed.getHeigth(), focussed.getWidth() / 2, focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
     }
+
 
     /* *******************
      *  DUPLICATED VIEW  *
@@ -486,5 +499,20 @@ public abstract class Layout {
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
+    /**
+     * Checks if the structure of the Layouts match
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        if (o instanceof CompositeLayout) {
+            Layout[] subLayouts = ((CompositeLayout) this).getSubLayouts();
+            Layout[] otherSubLayouts = ((CompositeLayout) o).getSubLayouts();
+            return Arrays.equals(subLayouts, otherSubLayouts);
+        }
+        return true;
+    }
 }
 

@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestClassOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -119,7 +120,34 @@ class StackedLayoutTest {
 
     @Test
     void testRotateNonSiblingsPromote() {
-
+        FileBuffer f1 = new FileBuffer(new String[]{"rij1", "rij2", "rij3"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1, 1, new Point(1, 1), f1);
+        FileBuffer f2 = new FileBuffer(new String[]{"t", "te", "tes", "test"}, "test2");
+        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1, 1), f2);
+        FileBuffer f3 = new FileBuffer(new String[]{"dit", "is", "een", "test"}, "test3");
+        FileBufferView fbv3 = new FileBufferView(1, 1, new Point(1, 1), f3);
+        FileBuffer f4 = new FileBuffer(new String[]{""}, "4");
+        FileBufferView fbv4 = new FileBufferView(1, 1, new Point(1, 1), f4);
+        StackedLayout sl1 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {fbv1,fbv2});
+        SideBySideLayout sbsl2 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {sl1, fbv3});
+        StackedLayout sl3 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {sbsl2, fbv4});
+        sl3.initViewPosition(1);
+        CompositeLayout result1 = (CompositeLayout) sl3.rotateNonSiblingsPromote(1, 2, fbv3, sl1, sbsl2);
+        assertEquals(result1.getClass(), StackedLayout.class);
+        assertEquals(result1.getSubLayouts()[0].getClass(), SideBySideLayout.class);
+        sbsl2 = (SideBySideLayout) result1.getSubLayouts()[0];
+        assertArrayEquals(sbsl2.getSubLayouts(), new Layout[] {fbv1, fbv3, fbv2});
+        assertEquals(result1.getSubLayouts()[1], fbv4);
+        sl1 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {fbv3,fbv4});
+        sbsl2 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {fbv2, sl1});
+        sl3 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {fbv1, sbsl2});
+        sl3.initViewPosition(1);
+        CompositeLayout result2 = (CompositeLayout) sl3.rotateNonSiblingsPromote(1, 2, fbv3, sbsl2, sl1);
+        assertEquals(result2.getClass(), StackedLayout.class);
+        assertEquals(result2.getSubLayouts()[1].getClass(), SideBySideLayout.class);
+        sbsl2 = (SideBySideLayout) result2.getSubLayouts()[1];
+        assertArrayEquals(sbsl2.getSubLayouts(), new Layout[] {fbv2, fbv3, fbv4});
+        assertEquals(result2.getSubLayouts()[0], fbv1);
     }
 
     @Test
@@ -157,6 +185,22 @@ class StackedLayoutTest {
         assertEquals(sbsl2.getSubLayouts()[0], fbv2);
         assertEquals(sbsl2.getSubLayouts()[1], fbv4);
         assertEquals(result2.getSubLayouts()[2], fbv3);
+    }
+
+    @Test
+    void testFlip() {
+        FileBuffer f1 = new FileBuffer(new String[]{"rij1", "rij2", "rij3"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1, 1, new Point(1, 1), f1);
+        FileBuffer f2 = new FileBuffer(new String[]{"t", "te", "tes", "test"}, "test2");
+        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1, 1), f2);
+        FileBuffer f3 = new FileBuffer(new String[]{"dit", "is", "een", "test"}, "test3");
+        FileBufferView fbv3 = new FileBufferView(1, 1, new Point(1, 1), f3);
+        StackedLayout sl1 = new StackedLayout(10, 15, new Point(1, 1), new Layout[]{fbv1, fbv2, fbv3});
+        SideBySideLayout result = sl1.flip();
+        assertArrayEquals(result.getSubLayouts(), new Layout[] {fbv1, fbv2, fbv3});
+        assertEquals(result.getHeigth(), 10);
+        assertEquals(result.getWidth(), 15);
+        assertEquals(result.getLeftUpperCorner(), new Point(1, 1));
     }
 
     @Test

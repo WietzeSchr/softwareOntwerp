@@ -106,7 +106,35 @@ class CompositeLayoutTest {
 
     @Test
     void testRotateView() {
-
+        FileBuffer f1 = new FileBuffer(new String[]{"rij1", "rij2", "rij3"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1, 1, new Point(1, 1), f1);
+        FileBuffer f2 = new FileBuffer(new String[]{"t", "te", "tes", "test"}, "test2");
+        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1, 1), f2);
+        FileBuffer f3 = new FileBuffer(new String[]{"dit", "is", "een", "test"}, "test3");
+        FileBufferView fbv3 = new FileBufferView(1, 1, new Point(1, 1), f3);
+        FileBuffer f4 = new FileBuffer(new String[]{""}, "4");
+        FileBufferView fbv4 = new FileBufferView(1, 1, new Point(1, 1), f4);
+        FileBuffer f5 = new FileBuffer(new String[] {}, "5");
+        FileBufferView fbv5 = new FileBufferView(1, 1, new Point(1,1), f5);
+        SideBySideLayout sbsl1 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {fbv3,fbv4, fbv5});
+        StackedLayout sl2 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {fbv2, sbsl1});
+        SideBySideLayout sbsl3 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {fbv1, sl2});
+        sbsl3.initViewPosition(1);
+        sbsl3.updateSize(20, 20, new Point(1, 1));
+        sbsl3.rotateView(1, 2);
+        CompositeLayout result = sbsl3.rotateNonSiblings(1, 2, fbv3, sl2, sbsl1);
+        assertEquals(result.getClass(), SideBySideLayout.class);
+        assertEquals(result.getSubLayouts()[0], fbv1);
+        assertEquals(result.getSubLayouts()[1].getClass(), StackedLayout.class);
+        sl2 = (StackedLayout) result.getSubLayouts()[1];
+        assertEquals(sl2.getSubLayouts()[0], fbv2);
+        assertEquals(sl2.getSubLayouts()[1], fbv3);
+        assertEquals(sl2.getSubLayouts()[2].getClass(), SideBySideLayout.class);
+        assertEquals(sl2.countSubLayouts(), 3);
+        sbsl1 = (SideBySideLayout) sl2.getSubLayouts()[2];
+        assertEquals(sbsl1.countSubLayouts(), 2);
+        assertEquals(sbsl1.getSubLayouts()[0], fbv4);
+        assertEquals(sbsl1.getSubLayouts()[1], fbv5);
     }
 
     @Test

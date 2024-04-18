@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import static java.lang.Math.floor;
 
@@ -157,38 +158,66 @@ public class SideBySideLayout extends CompositeLayout{
     protected Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
         {
+            Layout[] newSubLayouts;
             View focussed = getFocusedView(focus);
-            Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];
-            int j = 0;
-            for (int i = 0; i < countSubLayouts(); i++) {
-                if (getSubLayouts()[i] == focussed) {
-                    if (dir == 1) {
-                        newSubLayouts[j] = nextView;
-                        newSubLayouts[j + 1] = focussed;
+            if (getFocusedView(nextView.getPosition()) == null) {
+                newSubLayouts = new Layout[countSubLayouts() + 1];
+                int j = 0;
+                for (int i = 0; i < countSubLayouts(); i++) {
+                    if (getSubLayouts()[i] == focussed) {
+                        if (dir == -1) {
+                            newSubLayouts[j] = nextView;
+                            newSubLayouts[j + 1] = focussed;
+                        } else {
+                            newSubLayouts[j] = focussed;
+                            newSubLayouts[j + 1] = nextView;
+                        }
+                        j += 2;
+                    } else {
+                        newSubLayouts[j] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+                        j += 1;
+                    }
+                }
+            }
+            else {
+                newSubLayouts = new Layout[countSubLayouts() + parent2.countSubLayouts() - 1];
+                int j = 0;
+                for (int i = 0; i < countSubLayouts(); i++) {
+                    if (getSubLayouts()[i] == focussed) {
+                        if (dir == -1) {
+                            newSubLayouts[j] = nextView;
+                            newSubLayouts[j + 1] = focussed;
+                        }
+                        else {
+                            newSubLayouts[j] = focussed;
+                            newSubLayouts[j + 1] = nextView;
+                        }
+                        j += 2;
+                        for (int k = 1; k < parent2.countSubLayouts(); k++) {
+                            newSubLayouts[j] = parent2.getSubLayouts()[k].flip();
+                            j += 1;
+                        }
                     }
                     else {
-                        newSubLayouts[j] = focussed;
-                        newSubLayouts[j + 1] = nextView;
+                        if (getSubLayouts()[i] != parent2) {
+                            newSubLayouts[j] = getSubLayouts()[i];
+                        }
                     }
-                    j += 2;
-                }
-                else {
-                    newSubLayouts[j] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
-                    j += 1;
                 }
             }
             return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
         }
         else if (this == parent2) {
-            Layout result;
-            if (getSubLayouts()[0] == nextView) {
-                result = getSubLayouts()[1].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            Layout[] newSubLayouts;
+            getSubLayouts()[0] = getSubLayouts()[0].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            newSubLayouts = new Layout[getSubLayouts()[0].countSubLayouts()];
+            for (int i  = 0; i < newSubLayouts.length; i++) {
+                newSubLayouts[i] = getSubLayouts()[0].getSubLayouts()[i];
             }
-            else {
-                result = getSubLayouts()[0].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+            for (int i = 0; i < newSubLayouts.length; i++) {
+                newSubLayouts[i] = newSubLayouts[i].flip();
             }
-            result.setParent(getParent());
-            return result;
+            return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
         }
         else {
             Layout[] newSubLayouts = new Layout[countSubLayouts()];
@@ -197,6 +226,15 @@ public class SideBySideLayout extends CompositeLayout{
             }
             return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
         }
+    }
+
+    @Override
+    protected StackedLayout flip() {
+        Layout[] newSubLayouts = new Layout[countSubLayouts()];
+        for (int i = 0; i < countSubLayouts(); i++) {
+            newSubLayouts[i] = getSubLayouts()[i].flip();
+        }
+        return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
     }
 
     /* ******************
