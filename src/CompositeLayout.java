@@ -297,4 +297,5 @@ public abstract class CompositeLayout extends Layout {
             getSubLayouts()[i].updateSize(subSize.getX(), subSize.getY(), subLeftUp);
         }
     }
+
 }

@@ -373,8 +373,10 @@ public abstract class Layout {
     public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
         return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(focussed.getHeigth(), focussed.getWidth() / 2, focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
+                new View[] {new GameView(focussed.getHeigth(), calcGameWidth(focus), focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
     }
+
+    abstract int calcGameWidth(int focus);
 
     /* *******************
      *  DUPLICATED VIEW  *
