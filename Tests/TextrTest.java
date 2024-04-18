@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class TextrTest {
@@ -187,7 +188,7 @@ public class TextrTest {
 
     @Test
     void testDuplicateView() {
-        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3"}, "test1");
+        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
         FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
         FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
@@ -197,22 +198,78 @@ public class TextrTest {
         StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, fbv3});
         Textr test1 = new Textr("\n", sl1);
         test1.initViewPositions();
-        test1.updateSize(20, 40);
+        test1.updateSize(10, 20);
 
+        //test duplicate
         FileBufferView focus = (FileBufferView) test1.getFocusedView();
-        FileBufferView fbv1Dup = new FileBufferView(1, 1, new Point(1, 1), focus.getBuffer());
-        SideBySideLayout sbsl2 = new SideBySideLayout(1, 1, new Point(1,1), new Layout[] {fbv1, fbv1Dup, fbv2});
-
         test1.duplicateView();
-        //print statements zijn tijdelijk om de structuur van de tree te bekijken
-        CompositeLayout layer1 = (CompositeLayout) test1.getLayout();
-        //assertEquals(test1.getLayout(), new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl2, fbv3}));
+        Layout[] focusSiblings = focus.getParent().getSubLayouts();
+        assertEquals(focusSiblings.length, 3);
+        assertEquals(focusSiblings[0], fbv1);
+        assertEquals(focusSiblings[2], fbv2);
+        //test synchronisation of two Buffers
+        FileBufferView focusDupe = (FileBufferView) focusSiblings[1];
+        assertEquals(focus.getBuffer(), focusDupe.getBuffer());
+        test1.addNewChar('a');
+        assertEquals(focus.getBuffer().getContent(), focusDupe.getBuffer().getContent());
+        //testScrolling
+        focus.setInsertionPoint(new Point(4,1));
+        test1.arrowPressed(Direction.SOUTH);
+        assertEquals(focus.getVerticalScrollState(), 5);
+        test1.changeFocusNext();
+        assertEquals(test1.getFocusedView(), focusDupe);
+        focusDupe.setInsertionPoint(new Point(2,1));
+        assertEquals(focus.getBuffer().getRowCount(), 5);
+        assertEquals(Arrays.toString(focus.makeShow()), Arrays.toString(new String[]{"rij5", null, null, null}));
+        assertEquals(Arrays.toString(focusDupe.makeShow()), Arrays.toString(new String[] {"arij1", "rij2", "rij3", "rij4"}));
+        test1.addNewLineBreak();
+        assertEquals(Arrays.toString(focus.makeShow()), Arrays.toString(new String[] {"rij5", null, null, null}));
+        assertEquals(Arrays.toString(focusDupe.makeShow()), Arrays.toString(new String[] {"arij1", null, "rij2", "rij3"}));
+        assertEquals(focus.getBuffer().getContent(), focusDupe.getBuffer().getContent());
 
     }
 
     @Test
     void testNewGame() {
+        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
+        FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
+        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
+        SideBySideLayout sbsl1 = new SideBySideLayout(1, 1, new Point(1,1), new Layout[] {fbv1, fbv2});
+        FileBuffer f3 = new FileBuffer(new String[] {"h", "ha","hal", "hall", "hallo"}, "test3");
+        FileBufferView fbv3 = new FileBufferView(1,1,new Point(1,1),f3 );
+        StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, fbv3});
+        Textr test1 = new Textr("\n", sl1);
+        test1.initViewPositions();
+        test1.updateSize(80, 60);
 
+        FileBufferView focus = (FileBufferView) test1.getFocusedView();
+        test1.openGameView();
+        test1.changeFocusNext();
+        Layout[] focusSiblings = focus.getParent().getSubLayouts();
+        assertEquals(focusSiblings.length, 3);
+        assertEquals(focusSiblings[0], fbv1);
+        assertEquals(focusSiblings[2], fbv2);
+        GameView gameView = (GameView) test1.getFocusedView();
+        assertEquals(gameView.getHeigth(), 40);
+        assertEquals(gameView.getWidth(), 20);
+        Snake snake = gameView.getGame().getSnake();
+        assertEquals(snake.getHead(), new Point(19,9));
+        assertEquals(gameView.getGame().getScore(), 0);
+        test1.closeView();
+
+        focus = (FileBufferView) test1.getFocusedView();
+        assertEquals(focus, fbv2);
+        assertEquals(focus.getParent().countViews(), 2);
+        test1.changeFocusNext();
+
+        test1.openGameView();
+        test1.changeFocusNext();
+        gameView = (GameView) test1.getFocusedView();
+        assertEquals(gameView.getHeigth(), 40);
+        assertEquals(gameView.getWidth(), 30);
+        snake = gameView.getGame().getSnake();
+        assertEquals(snake.getHead(), new Point(19,14));
     }
 
     @Test
