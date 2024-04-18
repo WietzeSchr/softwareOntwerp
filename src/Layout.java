@@ -104,6 +104,14 @@ public abstract class Layout {
         return leftUpperCorner;
     }
 
+    public Layout[] getSubLayouts() {
+        return new Layout[] {this};
+    }
+
+    public int countSubLayouts() {
+        return 1;
+    }
+
     /* ******************
      *  INSPECT CONTENT *
      * ******************/
@@ -292,6 +300,8 @@ public abstract class Layout {
      */
     protected abstract Layout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
+    protected abstract Layout flip();
+
     /* ******************
      *   UNDO / REDO    *
      * ******************/
@@ -341,12 +351,6 @@ public abstract class Layout {
         result.updateSize(getHeigth(), getWidth(), new Point(1, 1));
         result.initViewPosition(1);
         return result;
-    }
-
-    public Layout newGame(int focus) {
-        View focussed = getFocusedView(focus);
-        return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(getHeigth(), getWidth() / 2, getLeftUpperCorner().add(new Point(0, getWidth() / 2)))});
     }
 
     /* *******************

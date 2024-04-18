@@ -97,6 +97,11 @@ public abstract class View extends Layout {
         return this;
     }
 
+    @Override
+    protected View flip() {
+        return this;
+    }
+
     /* ******************
      *   UNDO / REDO    *
      * ******************/
