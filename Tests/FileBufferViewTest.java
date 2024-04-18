@@ -200,6 +200,48 @@ class FileBufferViewTest {
     }
 
     @Test
+    void testDuplicate() {
+        FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
+        FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
+        fbv1.setPosition(1);
+        View v2 = fbv1.duplicate()[0];
+        assertEquals(v2.getClass(), FileBufferView.class);
+        assertEquals(v2.getHeigth(), 5);
+        assertEquals(v2.getWidth(), 10);
+        assertEquals(v2.getLeftUpperCorner(), new Point(20, 10));
+        FileBufferView v = (FileBufferView) v2;
+        assertEquals(v.getBuffer(), buffer);
+    }
+
+    @Test
+    void testUpdateViews() {
+        FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
+        FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
+        fbv1.setPosition(1);
+        fbv1.setVerticalScrollState(2);
+        fbv1.setInsertionPoint(new Point(3,2));
+        buffer.deleteChar(new Point(2, 1));
+        fbv1.updateViews(2, new Point(2, 1), (char) 13, true, buffer);
+        assertEquals(fbv1.getInsertionPoint(), new Point(2,2));
+        assertEquals(fbv1.getVerticalScrollState(), 1);
+        buffer.insertLineBreak(new Point(1,1));
+        fbv1.updateViews(2, new Point(1,1), (char) 13, false, buffer);
+        assertEquals(fbv1.getInsertionPoint(), new Point(3,2));
+        assertEquals(fbv1.getVerticalScrollState(), 2);
+        buffer.addNewChar('c', new Point(3,1));
+        fbv1.updateViews(2, new Point(3,1), 'c', false, buffer);
+        assertEquals(fbv1.getInsertionPoint(), new Point(3,3));
+        buffer.deleteChar(new Point(3,2));
+        fbv1.updateViews(2, new Point(3,2), 'c', true, buffer);
+        assertEquals(fbv1.getInsertionPoint(), new Point(3,2));
+        fbv1.updateViews(2, new Point(4,1), (char) 13, false, buffer);
+        assertEquals(fbv1.getInsertionPoint(), new Point(3,2));
+        buffer.insertLineBreak(new Point(3,1));
+        fbv1.updateViews(2, new Point(3,1), (char) 13, false, buffer);
+        assertEquals(fbv1.getInsertionPoint(), new Point(4,2));
+    }
+
+    @Test
     void testUpdateScrollState() {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123", "1", "2"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,5,new Point(20, 10), buffer);
