@@ -1,4 +1,6 @@
 import org.junit.jupiter.api.Test;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -6,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompositeLayoutTest {
 
     @Test
-    void testConstructor() {
+    void testConstructor() throws FileNotFoundException {
         FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
         FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
@@ -24,6 +26,12 @@ class CompositeLayoutTest {
         assertEquals(fbv1.getParent(), sbsl1);
         assertEquals(sbsl1.getParent(), sl1);
         assertEquals(fbv2.getParent(), sbsl1);
+        CompositeLayout c2 = new StackedLayout(10, 10, new Point(1, 1), new String[] {"test1.txt", "test1.txt"}, "\n");
+        assertEquals(c2.countSubLayouts(), 2);
+        for (int i = 0; i < c2.countSubLayouts(); i++) {
+            assertEquals(c2.getSubLayouts()[i].getClass(), FileBufferView.class);
+            assertEquals(c2.getSubLayouts()[i].getParent(), c2);
+        }
     }
 
     @Test

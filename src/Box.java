@@ -2,17 +2,15 @@ public class Box {
     int height;
     int width;
     Point leftUpperPoint;
-    Point rightLowerPoint;
 
     /**
      * @pre leftUpperPoint.getX() < rightLowerPoint.getX()
      * @pre leftUpperPoint.getY() < rightLowerPoint.getY()
      */
-    Box(int height, int width, Point leftUpperPoint, Point rightLowerPoint){
+    Box(int height, int width, Point leftUpperPoint){
         this.height = height;
         this.width = width;
         this.leftUpperPoint = leftUpperPoint;
-        this.rightLowerPoint = rightLowerPoint;
     }
 
     public int getHeight(){return height;}
@@ -27,8 +25,5 @@ public class Box {
     public void setLeftUpperPoint(Point leftUpperPoint){
         this.leftUpperPoint = leftUpperPoint;
     }
-    public Point getRightLowerPoint(){return rightLowerPoint.clone();}
-    public void setRightLowerPoint(Point rightLowerPoint){
-        this.rightLowerPoint = rightLowerPoint;
-    }
+    public Point getRightLowerPoint(){return leftUpperPoint.add(new Point(height - 1, width - 1));}
 }
