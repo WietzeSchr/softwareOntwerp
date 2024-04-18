@@ -320,7 +320,7 @@ public class Textr
      * It also updates the layout and the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    void closeView() {
+    void closeView() throws IOException {
         setLayout(getLayout().closeView(getFocus()));
         if (getLayout() != null) {
             setFocus(getLayout().getNewFocus(getFocus()));

@@ -131,7 +131,7 @@ public class TextrTest {
     }
 
     @Test
-    void testCloseBuffer() {
+    void testCloseBuffer() throws IOException {
         FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
         FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");

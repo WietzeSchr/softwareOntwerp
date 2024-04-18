@@ -501,18 +501,6 @@ public class FileBufferView extends View
         getBuffer().saveBuffer(newLine);
     }
 
-    /* *****************
-     *    ROTATE VIEW  *
-     * *****************/
-
-    /** This method returns the focused Layout
-     * @return: FileBufferView
-     */
-    @Override
-    protected FileBufferView rotateView(int dir, int focus) {
-         return this;
-    }
-
     /* ******************
      *   UNDO / REDO    *
      * ******************/

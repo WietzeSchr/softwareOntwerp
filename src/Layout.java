@@ -190,7 +190,7 @@ public abstract class Layout {
      * @param focus
      * @return: Layout
      */
-    public Layout closeView(int focus) {
+    public Layout closeView(int focus) throws IOException {
         int heigth = getHeigth();
         int width = getWidth();
         CompositeLayout parent = getFocusedView(focus).getParent();
@@ -217,7 +217,7 @@ public abstract class Layout {
     /** This method closes the buffer and updates the subLayouts
      * @return: Layout
      */
-    public abstract Layout closeView(int focus, CompositeLayout parent);
+    public abstract Layout closeView(int focus, CompositeLayout parent) throws IOException;
 
     /* ******************
      *    SAVE BUFFER   *
