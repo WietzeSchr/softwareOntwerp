@@ -454,16 +454,25 @@ public class FileBufferView extends View
      * @return: FileBufferView || null
      */
     @Override
-    public FileBufferView closeView(int focus, CompositeLayout parent) throws IOException {
+    public FileBufferView closeView(int focus, CompositeLayout parent) {
         if (getPosition() != focus) {
             return this;
         }
         else {
             if (getBuffer().getDirty()) {
                 showCloseErr();
-                int c = terminalHandler.readByte();
-                while (c != 121 && c != 89 && c != 78 && c != 110) {
+                int c = 0;
+                try {
                     c = terminalHandler.readByte();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                while (c != 121 && c != 89 && c != 78 && c != 110) {
+                    try {
+                        c = terminalHandler.readByte();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 if (c == 121 || c == 89) {
                     return null;
@@ -683,13 +692,13 @@ public class FileBufferView extends View
             setHorizontalScrollState(getInsertionPoint().getY());
         }
         else if (getInsertionPoint().getY() < getHorizontalScrollState()) {
-            setHorizontalScrollState(getHorizontalScrollState() -  getWidth() + 1);
+            setHorizontalScrollState(getHorizontalScrollState() -  getWidth()+1);
         }
         if (getInsertionPoint().getX() > getVerticalScrollState() + getHeigth() - 2) {
             setVerticalScrollState(getInsertionPoint().getX());
         }
         else if (getInsertionPoint().getX() < getVerticalScrollState()) {
-            setVerticalScrollState(getVerticalScrollState() - getHeigth() + 1);
+            setVerticalScrollState(getVerticalScrollState() - getHeigth()+1);
         }
     }
 
@@ -711,4 +720,5 @@ public class FileBufferView extends View
     public long getTick() {
         return 0;
     }
+
 }
