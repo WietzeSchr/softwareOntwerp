@@ -113,11 +113,26 @@ public class StackedLayout extends CompositeLayout {
     protected CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
         {
+            View focussed = getFocusedView(focus);
             Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];
+            int j = 0;
             for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+                if (getSubLayouts()[i] == focussed) {
+                    if (dir == 1) {
+                        newSubLayouts[j] = focussed;
+                        newSubLayouts[j + 1] = nextView;
+                    }
+                    else {
+                        newSubLayouts[j] = nextView;
+                        newSubLayouts[j + 1] = focussed;
+                    }
+                    j += 2;
+                }
+                else {
+                    newSubLayouts[j] = getSubLayouts()[i].rotateNonSiblings(dir, focus, nextView, parent1, parent2);
+                    j += 1;
+                }
             }
-            newSubLayouts[countSubLayouts()] = nextView;
             return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
         }
         else if (this == parent2) {
@@ -144,9 +159,25 @@ public class StackedLayout extends CompositeLayout {
     protected Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
         {
+            View focussed = getFocusedView(focus);
             Layout[] newSubLayouts = new Layout[countSubLayouts() + 1];
+            int j = 0;
             for (int i = 0; i < countSubLayouts(); i++) {
-                newSubLayouts[i] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+                if (getSubLayouts()[i] == focussed) {
+                    if (dir == 1) {
+                        newSubLayouts[j] = focussed;
+                        newSubLayouts[j + 1] = nextView;
+                    }
+                    else {
+                        newSubLayouts[j] = nextView;
+                        newSubLayouts[j + 1] = focussed;
+                    }
+                    j += 2;
+                }
+                else {
+                    newSubLayouts[j] = getSubLayouts()[i].rotateNonSiblingsPromote(dir, focus, nextView, parent1, parent2);
+                    j += 1;
+                }
             }
             newSubLayouts[countSubLayouts()] = nextView;
             return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);

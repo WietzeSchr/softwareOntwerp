@@ -19,8 +19,10 @@ class GameViewTest {
         gv.deleteChar();
         gv.undo();
         gv.redo();
+        gv.updateViews(1, new Point(1, 1), 'x', true, new FileBuffer(new String[] {}, "test"));
         assertEquals(gv.getGame(), newGame);
         assertEquals(gv.getLastMove(), 1500);
+        assertArrayEquals(gv.duplicate(), new View[] {});
     }
 
     @Test
@@ -32,7 +34,6 @@ class GameViewTest {
         assertEquals(gv.getCursor(), new Point(5, 15));
         assertEquals(gv.getTick(), 1000);
         assertEquals(gv.getNextDeadline(), 2500);
-
     }
 
     @Test
