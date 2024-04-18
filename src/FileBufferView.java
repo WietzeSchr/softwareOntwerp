@@ -7,7 +7,7 @@ public class FileBufferView extends View
     /* *******************
      *   ABSTRACT EDIT   *
      * *******************/
-    abstract static class Edit {
+    abstract class Edit {
 
         private Edit next;
 
@@ -44,7 +44,7 @@ public class FileBufferView extends View
     /* ****************
      *   EMPTY EDIT   *
      * ****************/
-     static class EmptyEdit extends Edit {
+     class EmptyEdit extends Edit {
         public EmptyEdit() {
             super();
         }
@@ -68,7 +68,7 @@ public class FileBufferView extends View
     /* *******************
      *   NON-EMPTY EDIT  *
      * *******************/
-    abstract static class NonEmptyEdit extends Edit {
+    abstract class NonEmptyEdit extends Edit {
 
         private final char change;
 

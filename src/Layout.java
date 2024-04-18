@@ -351,7 +351,7 @@ public abstract class Layout {
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
 
 
- /** 
+    /** 
      * This method opens a new game view in the layout
      * @param focus
      * @return: Layout
@@ -378,7 +378,7 @@ public abstract class Layout {
 
     /**
      * This method updates the views of the buffer
-     * @param focus
+     * @param focus 
      * @param insert 
      * @param c
      * @param isDeleted
