@@ -25,7 +25,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getNextDeadline(), System.currentTimeMillis());
         assertTrue(fbv1.lastEditIsEmptyEdit());
         assertThrows(FileNotFoundException.class,
-                () -> new FileBufferView(10, 20, new Point(10, 20), "test2.txt", "\n"));
+                () -> new FileBufferView(10, 20, new Point(10, 20), "t", "\n"));
     }
 
     @Test

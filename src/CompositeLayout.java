@@ -73,6 +73,7 @@ public abstract class CompositeLayout extends Layout {
      *
      * @return: int
      */
+    @Override
     public int countSubLayouts() {
         return getSubLayouts().length;
     }
