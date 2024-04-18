@@ -25,6 +25,8 @@ public class Point {
         return new Point(getX() - other.getX(), getY() - other.getY());
     }
 
+    public Point times(int factor) {return new Point(getX()*factor, getY()*factor);}
+
     @Override
     public boolean equals(Object o) {
         if (o.getClass() != getClass()) {
