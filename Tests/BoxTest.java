@@ -3,7 +3,7 @@ import org.junit.jupiter.api.TestClassOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class BoxTest {
-    Box b1 = new Box(3, 4, new Point(1, 3), new Point(2, 4));
+    Box b1 = new Box(3, 4, new Point(1, 3));
     @Test
     void getHeight(){
         assertEquals(b1.getHeight(), 3);
@@ -18,6 +18,6 @@ public class BoxTest {
     }
     @Test
     void getRightLowerCorner(){
-        assertEquals(b1.getRightLowerPoint(), new Point(2,4));
+        assertEquals(b1.getRightLowerPoint(), new Point(3,6));
     }
 }

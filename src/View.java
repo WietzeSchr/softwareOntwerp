@@ -8,10 +8,6 @@ public abstract class View extends Layout {
     public View(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
     }
-    /*
-    public View(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
-        super(height, width, parent, leftUpperCorner);
-    } */
 
     /* **********************
      *  GETTERS AND SETTERS *

@@ -693,13 +693,21 @@ public class FileBufferView extends View
             setHorizontalScrollState(getInsertionPoint().getY());
         }
         else if (getInsertionPoint().getY() < getHorizontalScrollState()) {
-            setHorizontalScrollState(getHorizontalScrollState() -  getWidth()+1);
+            while (getInsertionPoint().getY() < getHorizontalScrollState()){
+                setHorizontalScrollState(getHorizontalScrollState() -  getWidth()+1);
+            }
         }
         if (getInsertionPoint().getX() > getVerticalScrollState() + getHeigth() - 2) {
             setVerticalScrollState(getInsertionPoint().getX());
         }
         else if (getInsertionPoint().getX() < getVerticalScrollState()) {
             setVerticalScrollState(getVerticalScrollState() - getHeigth()+1);
+        }
+        if (getHorizontalScrollState() < 1) {
+            setHorizontalScrollState(1);
+        }
+        if (getVerticalScrollState() < 1) {
+            setVerticalScrollState(1);
         }
     }
 
