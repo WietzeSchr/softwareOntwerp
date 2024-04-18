@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 public abstract class CompositeLayout extends Layout {
     private Layout[] subLayouts;
@@ -89,7 +90,7 @@ public abstract class CompositeLayout extends Layout {
      * @return: Layout
      */
     @Override
-    public Layout closeView(int focus, CompositeLayout parent) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent){
         if (this == parent) {
             if (getSubLayouts().length == 2) {
                 if (getSubLayouts()[0].closeView(focus, parent) != null) {
