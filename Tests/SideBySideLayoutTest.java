@@ -179,6 +179,7 @@ class SideBySideLayoutTest {
         FileBufferView fbv4 = new FileBufferView(1, 1, new Point(1, 1), f4);
         FileBuffer f5 = new FileBuffer(new String[] {}, "5");
         FileBufferView fbv5 = new FileBufferView(1, 1, new Point(1, 1), f5);
+
         CompositeLayout result1 = (CompositeLayout) sl1.insertViews(2, sl1, new View[] {fbv4, fbv5});
         CompositeLayout result2 = (CompositeLayout) sl1.insertViews(2, null, new View[] {fbv4});
         assertEquals(result1.getClass(), SideBySideLayout.class);

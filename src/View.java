@@ -207,4 +207,10 @@ public abstract class View extends Layout {
     public int countViews() {
         return 1;
     }
+
+    @Override
+    public int calcGameWidth(int focus) {
+        if (getPosition() == focus) return getWidth() / 2;
+        return -1;
+    }
 }

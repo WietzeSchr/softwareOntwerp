@@ -93,9 +93,7 @@ public class Game {
         int[][] result = new int[grid.length][grid[0].length];
         for (int i = 0; i < result.length; i++) {
             int[] row = new int[result[0].length];
-            for (int j = 0; j < result[0].length; j++) {
-                row[j] = grid[i][j];
-            }
+            System.arraycopy(grid[i], 0, row, 0, result[0].length);
             result[i] = row;
         }
         return result;
@@ -241,11 +239,10 @@ public class Game {
     }
 
     private void updateGrid(int heigth, int width) {
-        if(width>1) {return;}
         int[][] newGrid = new int[heigth - 1][width - 1];
         int[][] oldGrid = getGrid();
-        for (int i = 0; i < Math.min(heigth - 1, oldGrid[0].length); i++) {
-            System.arraycopy(oldGrid[i], 0, newGrid[i], 0, Math.min(width - 1, oldGrid.length));
+        for (int i = 0; i < Math.min(heigth - 1, oldGrid.length); i++) {
+            System.arraycopy(oldGrid[i], 0, newGrid[i], 0, Math.min(width - 1, oldGrid[0].length));
         }
         setGrid(newGrid);
     }
