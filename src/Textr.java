@@ -404,7 +404,7 @@ public class Textr
      * ****************/
     
     /** 
-     * This method ticks the game view
+     * This method ticks the gameview
      * @return: void
      */
     void tick() throws IOException {
