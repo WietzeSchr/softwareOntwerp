@@ -30,11 +30,6 @@ public class Game {
 
     public Game(int heigth, int width) {
         this.grid = new int[heigth - 1][width - 1];
-        for (int i = 0; i < heigth - 1; i++) {
-            for (int j = 0; j < width - 1; j++) {
-                this.grid[i][j] = 0;
-            }
-        }
         this.tick = 1000;
         ArrayList<Point> snake = new ArrayList<>();
         int i = (int) Math.floor((float) (heigth - 1) / 2);
@@ -225,8 +220,8 @@ public class Game {
     public void updateSize(int heigth, int width) {
         Box snakeBox = getSnake().getOuterBox();
         if (snakeBox.getHeight() < heigth && snakeBox.getWidth() < width) {
-            findBestFit(heigth, width, snakeBox);
             updateGrid(heigth, width);
+            findBestFit(heigth, width, snakeBox);
         }
         else {
             loseGame();
@@ -246,10 +241,11 @@ public class Game {
     }
 
     private void updateGrid(int heigth, int width) {
+        if(width>1) {return;}
         int[][] newGrid = new int[heigth][width];
         int[][] oldGrid = getGrid();
-        for(int i=0; i<heigth- 1; i++){
-            if (width - 1 >= 0) System.arraycopy(oldGrid[i], 0, newGrid[i], 0, width - 1);
+        for (int i = 0; i < Math.min(heigth - 1, oldGrid[0].length); i++) {
+            System.arraycopy(oldGrid[i], 0, newGrid[i], 0, Math.min(width - 1, oldGrid.length));
         }
         setGrid(newGrid);
     }
