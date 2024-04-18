@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /* **********
  *  LAYOUT  *
@@ -204,7 +205,7 @@ public abstract class Layout {
      * @param focus
      * @return: Layout
      */
-    public Layout closeView(int focus) throws IOException {
+    public Layout closeView(int focus) {
         int heigth = getHeigth();
         int width = getWidth();
         CompositeLayout parent = getFocusedView(focus).getParent();
@@ -231,7 +232,7 @@ public abstract class Layout {
     /** This method closes the buffer and updates the subLayouts
      * @return: Layout
      */
-    public abstract Layout closeView(int focus, CompositeLayout parent) throws IOException;
+    public abstract Layout closeView(int focus, CompositeLayout parent);
 
     /* ******************
      *    SAVE BUFFER   *
@@ -463,5 +464,20 @@ public abstract class Layout {
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
+    /**
+     * Checks if the structure of the Layouts match
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        if (o instanceof CompositeLayout) {
+            Layout[] subLayouts = ((CompositeLayout) this).getSubLayouts();
+            Layout[] otherSubLayouts = ((CompositeLayout) o).getSubLayouts();
+            return Arrays.equals(subLayouts, otherSubLayouts);
+        }
+        return true;
+    }
 }
 

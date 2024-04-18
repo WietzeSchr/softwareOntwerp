@@ -75,7 +75,7 @@ public class GameView extends View{
      * ******************/
 
     @Override
-    public Layout closeView(int focus, CompositeLayout parent) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent) {
         return null;
     }
 

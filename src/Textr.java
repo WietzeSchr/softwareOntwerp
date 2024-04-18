@@ -124,7 +124,7 @@ public class Textr
      * This method returns the layout
      * @return: Layout
      */
-    private Layout getLayout() {
+    protected Layout getLayout() {
         return layout;
     }
 
@@ -276,7 +276,7 @@ public class Textr
      * This method updates the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void arrowPressed(Direction dir) {
+    void arrowPressed(Direction dir) {
         getLayout().arrowPressed(dir, getFocus());
     }
 
@@ -320,7 +320,7 @@ public class Textr
      * It also updates the layout and the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void closeView() throws IOException {
+    void closeView() {
         setLayout(getLayout().closeView(getFocus()));
         if (getLayout() != null) {
             setFocus(getLayout().getNewFocus(getFocus()));
@@ -336,7 +336,7 @@ public class Textr
      *  It shows the updated view without dirty sign
      * @return: void
      */
-    private void saveBuffer() throws IOException {
+    void saveBuffer() throws IOException {
         getLayout().saveBuffer(getFocus(), getNewLine());
     }
 
@@ -349,7 +349,7 @@ public class Textr
      *  It also updates the layout, the size and the cursor's position and optionally the scroll states if needed
      * @return: void
      */
-    private void rotateView(int dir) {
+    void rotateView(int dir) {
         setLayout(getLayout().rotateView(dir, getFocus()));
     }
 
@@ -419,7 +419,7 @@ public class Textr
      * This method shows the layout and the cursor
      * @return: void
      */
-    private void show() {
+    void show() {
         terminalHandler.clearScreen();
         setFocus(getLayout().getNewFocus(getFocus()));
         View focused = getFocusedView();
