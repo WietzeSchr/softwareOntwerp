@@ -7,7 +7,7 @@ public class FileBufferView extends View
     /* *******************
      *   ABSTRACT EDIT   *
      * *******************/
-    abstract static class Edit {
+     abstract class Edit {
 
         private Edit next;
 
@@ -44,7 +44,7 @@ public class FileBufferView extends View
     /* ****************
      *   EMPTY EDIT   *
      * ****************/
-     static class EmptyEdit extends Edit {
+      class EmptyEdit extends Edit {
         public EmptyEdit() {
             super();
         }
@@ -68,7 +68,7 @@ public class FileBufferView extends View
     /* *******************
      *   NON-EMPTY EDIT  *
      * *******************/
-    abstract static class NonEmptyEdit extends Edit {
+    abstract class NonEmptyEdit extends Edit {
 
         private final char change;
 
@@ -541,7 +541,8 @@ public class FileBufferView extends View
 
     @Override
     public View[] duplicate() {
-        return new View[] {new FileBufferView(1, 1, new Point(1, 1), getBuffer())};
+        return new View[]
+                {new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), getBuffer())};
     }
 
     @Override
@@ -564,7 +565,7 @@ public class FileBufferView extends View
 
                         }
                         else {
-                            setInsertionPoint(new Point(insert.getX() + 1, getInsertionPoint().getY() - insert.getY()));
+                            setInsertionPoint(new Point(insert.getX() + 1, getInsertionPoint().getY() - insert.getY() + 1));
                         }
                     }
                 }

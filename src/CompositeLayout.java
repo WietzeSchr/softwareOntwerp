@@ -33,7 +33,7 @@ public abstract class CompositeLayout extends Layout {
         Point subSize = calcSubSize();
         for (int i = 0; i < length; i++) {
             Point leftUpCorner = calcLeftUpCorner(i);
-            setSubLayout(new FileBufferView(subSize.getX(), subSize.getY(), leftUpCorner, filepaths[i], newLine), i);
+            getSubLayouts()[i] = new FileBufferView(subSize.getX(), subSize.getY(), leftUpCorner, filepaths[i], newLine);
             getSubLayouts()[i].setParent(this);
         }
     }
@@ -62,18 +62,6 @@ public abstract class CompositeLayout extends Layout {
      */
     public Layout[] getSubLayouts() {
         return subLayouts;
-    }
-
-    /**
-     * This method sets the subLayout at the given index to the given parameter newSubLayout
-     *
-     * @post getSubLayouts()[i] == newSubLayout
-     * @return: void
-     */
-    public void setSubLayout(Layout newSubLayout, int i) {
-        Layout[] oldSubLayouts = getSubLayouts();
-        oldSubLayouts[i] = newSubLayout;
-        newSubLayout.setParent(this);
     }
 
     /* **********************
@@ -164,7 +152,7 @@ public abstract class CompositeLayout extends Layout {
 
     protected abstract CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
-    public Layout prune() {
+    /*  public Layout prune() {
         if (getSubLayouts().length == 1) {
             if (this.getParent() == null) {
                 getSubLayouts()[0].setParent(null);
@@ -181,7 +169,7 @@ public abstract class CompositeLayout extends Layout {
             }
         }
         return this;
-    }
+    } */
 
     /* ******************
      *  OPEN GAME VIEW  *
