@@ -1,6 +1,4 @@
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
 
 public abstract class CompositeLayout extends Layout {
     private Layout[] subLayouts;

@@ -150,7 +150,7 @@ public class Snake extends Object{
             if (snake[i].getY() < left) left = snake[i].getY();
             else if (snake[i].getY() > rigth) rigth = snake[i].getY();
         }
-        return new Box(down - up + 1, rigth - left + 1, new Point(up, left), new Point(down, rigth));
+        return new Box(down - up + 1, rigth - left + 1, new Point(up, left));
     }
 
     public boolean contains(Point p) {

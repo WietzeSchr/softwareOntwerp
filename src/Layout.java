@@ -6,11 +6,8 @@ import java.util.Arrays;
  *  LAYOUT  *
  * **********/
 public abstract class Layout {
-    private int height;
 
-    private int width;
-
-    private Point leftUpperCorner;
+    private final Box box;
 
     private CompositeLayout parent;
 
@@ -20,44 +17,32 @@ public abstract class Layout {
 
     /** This constructor creates a new Layout with the given height, width and leftUpperCorner
      * @post getHeigth() == height
-     * @post getWidth() == widthµ
+     * @post getWidth() == width
      * @post getParent() == null
      * @post getLeftUpperCorner() == leftUpperCorner
      */
     public Layout(int height, int width, Point leftUpperCorner) {
-        this.height = height;
-        this.width = width;
+        this.box = new Box(height, width, leftUpperCorner);
         this.parent = null;
-        this.leftUpperCorner = leftUpperCorner;
     }
-
-    /** This constructor creates a new Layout with the given height, width, parent and leftUpperCorner
-     * @post getHeigth() == height
-     * @post getWidth() == width
-     * @post getParent() == parent
-     * @post getLeftUpperCorner() == leftUpperCorner
-     */ /*
-    public Layout(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
-        this.height = height;
-        this.width = width;
-        this.parent = parent;
-        this.leftUpperCorner = leftUpperCorner;
-    }
-    */
     
     /* **********************
      *  GETTERS AND SETTERS *
      * **********************/
 
+    private Box getBox() {
+        return box;
+    }
+
     public void setHeigth(int newHeight) {
-        this.height = newHeight;
+        getBox().setHeight(newHeight);
     }
 
     /** This method returns the height of the layout
      * @return: int
      */
     public int getHeigth() {
-        return height;
+        return getBox().getHeight();
     }
 
     /** This method sets the width of the layout to the given parameter newWidth
@@ -65,14 +50,14 @@ public abstract class Layout {
      * @return: void
      */
     public void setWidth(int newWidth) {
-        this.width = newWidth;
+        getBox().setWidth(newWidth);
     }
 
     /** This method returns the width of the layout
      * @return: int
      */
     public int getWidth() {
-        return width;
+        return getBox().getWidth();
     }
 
     /** This method sets the parent of the layout to the given parameter newParent
@@ -95,14 +80,14 @@ public abstract class Layout {
      * @return: void
      */
     public void setLeftUpperCorner(Point newLeftUpperCorner) {
-        this.leftUpperCorner = newLeftUpperCorner;
+        getBox().setLeftUpperPoint(newLeftUpperCorner);
     }
 
     /** This method returns the leftUpperCorner of the layout
      * @return: Point
      */
     public Point getLeftUpperCorner() {
-        return leftUpperCorner;
+        return getBox().getLeftUpperPoint();
     }
 
     public Layout[] getSubLayouts() {

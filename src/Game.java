@@ -239,7 +239,7 @@ public class Game {
     }
 
     private void updateGrid(int heigth, int width) {
-        int[][] newGrid = new int[heigth][width];
+        int[][] newGrid = new int[heigth - 1][width - 1];
         int[][] oldGrid = getGrid();
         for (int i = 0; i < Math.min(heigth - 1, oldGrid.length); i++) {
             System.arraycopy(oldGrid[i], 0, newGrid[i], 0, Math.min(width - 1, oldGrid[0].length));
@@ -252,8 +252,8 @@ public class Game {
             Point snakeHeadToMid = (new Point(width/2, heigth/2)).minus(getSnake().getHead());
             translateSnake(snakeHeadToMid);
             snakeBox = getSnake().getOuterBox();
-            if(!leftPointValid(snakeBox)) translateSnake(snakeBox.getLeftUpperPoint().times(-1));
-            if(!rightPointValid(heigth,width, snakeBox)) translateSnake((new Point(heigth, width)).minus(snakeBox.getRightLowerPoint()));
+            if(!leftPointValid(snakeBox)) translateSnake(snakeBox.getLeftUpperPoint().times(-1).add(new Point(1, 1)));
+            if(!rightPointValid(heigth,width, snakeBox)) translateSnake((new Point(heigth, width)).minus(snakeBox.getRightLowerPoint()).add(new Point(1, 1)));
         }
     }
 
@@ -275,7 +275,7 @@ public class Game {
         return box.getLeftUpperPoint().getX()>0 && box.getLeftUpperPoint().getY()>0;
     }
     private boolean rightPointValid(int heigth, int width, Box box){
-        return box.getRightLowerPoint().getX()<width && box.getRightLowerPoint().getY()<heigth;
+        return box.getRightLowerPoint().getX()<heigth && box.getRightLowerPoint().getY()<width;
     }
 
     public boolean isValid(Point point) {
