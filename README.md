@@ -42,3 +42,6 @@
 ### Found bugs
 
 * [x] NullPointerException bij Snake closeGame
+* [ ] OpenNewGame geeft direct GameOver
+* [ ] Grid word niet altijd goed aangepast
+* [ ] NullpointerException bij sluiten FileBufferView naast GameView

@@ -3,6 +3,11 @@ public class Box {
     int width;
     Point leftUpperPoint;
     Point rightLowerPoint;
+
+    /**
+     * @pre leftUpperPoint.getX() < rightLowerPoint.getX()
+     * @pre leftUpperPoint.getY() < rightLowerPoint.getY()
+     */
     Box(int height, int width, Point leftUpperPoint, Point rightLowerPoint){
         this.height = height;
         this.width = width;
