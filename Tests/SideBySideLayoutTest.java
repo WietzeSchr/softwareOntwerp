@@ -165,6 +165,32 @@ class SideBySideLayoutTest {
         sl2 = (StackedLayout) result1.getSubLayouts()[0];
         assertArrayEquals(sl2.getSubLayouts(), new Layout[] {fbv1, fbv2, fbv3});
         assertEquals(result1.getSubLayouts()[1], fbv4);
+        sbsl1 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {fbv3,fbv4});
+        sl2 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {fbv2, sbsl1});
+        sbsl3 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {fbv1, sl2});
+        sbsl3.initViewPosition(1);
+        CompositeLayout result2 = (CompositeLayout) sbsl3.rotateNonSiblingsPromote(1, 2, fbv3, sl2, sbsl1);
+        assertEquals(result2.getClass(), SideBySideLayout.class);
+        assertEquals(result2.getSubLayouts()[1].getClass(), StackedLayout.class);
+        sl2 = (StackedLayout) result2.getSubLayouts()[1];
+        assertArrayEquals(sl2.getSubLayouts(), new Layout[] {fbv2, fbv3, fbv4});
+        assertEquals(result2.getSubLayouts()[0], fbv1);
+    }
+
+    @Test
+    void testFlip() {
+        FileBuffer f1 = new FileBuffer(new String[]{"rij1", "rij2", "rij3"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1, 1, new Point(1, 1), f1);
+        FileBuffer f2 = new FileBuffer(new String[]{"t", "te", "tes", "test"}, "test2");
+        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1, 1), f2);
+        FileBuffer f3 = new FileBuffer(new String[]{"dit", "is", "een", "test"}, "test3");
+        FileBufferView fbv3 = new FileBufferView(1, 1, new Point(1, 1), f3);
+        SideBySideLayout sbsl1 = new SideBySideLayout(10, 15, new Point(1, 1), new Layout[]{fbv1, fbv2, fbv3});
+        StackedLayout result = sbsl1.flip();
+        assertArrayEquals(result.getSubLayouts(), new Layout[] {fbv1, fbv2, fbv3});
+        assertEquals(result.getHeigth(), 10);
+        assertEquals(result.getWidth(), 15);
+        assertEquals(result.getLeftUpperCorner(), new Point(1, 1));
     }
 
     @Test
