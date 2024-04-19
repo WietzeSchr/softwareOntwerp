@@ -80,15 +80,6 @@ public class GameView extends View{
     }
 
     /* ******************
-     *    SAVE BUFFER   *
-     * ******************/
-
-    @Override
-    public void saveBuffer(String newLine) {
-        return;
-    }
-
-    /* ******************
      *   UNDO / REDO    *
      * ******************/
 
@@ -111,6 +102,11 @@ public class GameView extends View{
 
     @Override
     public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
+        return;
+    }
+
+    @Override
+    public void updateViewsSaved(int focus, FileBuffer buffer) {
         return;
     }
 

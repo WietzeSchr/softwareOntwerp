@@ -575,8 +575,14 @@ public class FileBufferView extends View
      * @param newLine the new line to add to the buffer
      * @return: void
      */
+    @Override
     public void saveBuffer(String newLine) throws IOException {
         getBuffer().saveBuffer(newLine);
+        clearEdits();
+    }
+
+    private void clearEdits() {
+        setLastEdit(new EmptyEdit());
     }
 
     /* ******************
@@ -682,6 +688,13 @@ public class FileBufferView extends View
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void updateViewsSaved(int focus, FileBuffer buffer) {
+        if (getPosition() != focus && buffer == getBuffer()) {
+            clearEdits();
         }
     }
 
