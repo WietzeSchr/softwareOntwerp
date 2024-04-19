@@ -19,8 +19,8 @@ public class File
     /** 
      * This constructor creates a new file with the given path and newLine
      * and sets the buffer to a new FileBuffer with the given path and newLine.
-     * @param path the path of the file
-     * @post getpath() == path
+     * @post | getpath() == path
+     * @param path | The path of the file
     */
     public File(String path) {
         this.path = path;
@@ -31,7 +31,7 @@ public class File
      ************************/
 
     /** This method returns the path of the file.
-     * @return: String
+     * @return | String
      */
     public String getPath(){
         return this.path;
@@ -43,8 +43,8 @@ public class File
 
     /**
      *  This method loads the file and returns the content of the file as a String array
-     * @param newLine the new line separator
-     * @return: String[] the content of the file with the given new line separator
+     * @param newLine | The new line separator
+     * @return        | String[], The content of the file with the given new line separator
      */
     public String[] load(String newLine) throws FileNotFoundException {
         ArrayList<String> content = new ArrayList<>();
@@ -79,9 +79,9 @@ public class File
 
     /** 
      * This method saves the buffer of the file to the file and sets the buffer to not dirty
-     * @param newLine the new line separator
-     * @param content the content to save
-     * @return: void
+     * @param newLine | The new line separator
+     * @param content | The content to save
+     * @return        | void
      */
     public void save(String newLine, String[] content) throws IOException {
         FileOutputStream file = new FileOutputStream(getPath());
@@ -100,7 +100,7 @@ public class File
 
     /** 
      * This method returns true if the given parameter c is a line separator
-     * @return: boolean
+     * @return  | boolean
      */
     private boolean isLineSeparator(int c, byte[] lineSep, FileInputStream file) throws IOException {
         if(c != lineSep[0]){return false;}

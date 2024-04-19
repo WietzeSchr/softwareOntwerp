@@ -255,7 +255,7 @@ public class Textr
 
     /** 
      * This method returns the focussed view
-     * @return: View
+     * @return  | View
      * Visible for testing
      */
     View getFocusedView() {

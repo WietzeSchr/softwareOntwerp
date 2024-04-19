@@ -18,11 +18,11 @@ public class FileBuffer {
 
     /**
      * This constructor creates a new FileBuffer object with the given path and newLine
-     * @param path the path of the file
-     * @param newLine the new line separator
-     * @post getPath() == path
-     * @post getContent() == getFile().load(newLine)
-     * @post getDirty() == false
+     * @param path    | The path of the file
+     * @param newLine | The new line separator
+     * @post  | getPath() == path
+     * @post  | getContent() == getFile().load(newLine)
+     * @post  | getDirty() == false
      */
     public FileBuffer(String path, String newLine) throws FileNotFoundException {
         this.file = new File(path);
@@ -32,11 +32,11 @@ public class FileBuffer {
 
     /**
      * This constructor creates a new FileBuffer object with the given content and path
-     * @param content the content of the file
-     * @param path the path of the file
-     * @post getPath() == path
-     * @post getContent() == content
-     * @post getDirty() == false
+     * @param content  | The content of the file
+     * @param path     | The path of the file
+     * @post | getPath() == path
+     * @post | getContent() == content
+     * @post | getDirty() == false
      */
     public FileBuffer(String[] content, String path) {
         this.file = new File(path);
@@ -49,9 +49,9 @@ public class FileBuffer {
      ************************/
     /**
      * This method sets the file of the buffer to the given parameter newFile
-     * @param newFile the new file
-     * @post getFile() == newFile
-     * @return: void
+     * @post  | getFile() == newFile
+     * @param newFile | the new file
+     * @return        | void
      */
     public void setFile(File newFile) {
         this.file = newFile;
@@ -60,7 +60,7 @@ public class FileBuffer {
 
     /** 
      * This method returns the file of the buffer
-     * @return: File, file of the buffer
+     * @return  | File, file of the buffer
      */
     public File getFile() {
         return file;
@@ -68,7 +68,7 @@ public class FileBuffer {
 
     /** 
      * This method returns the path of the file of the buffer
-     * @return: String, path of the file
+     * @return  | String, path of the file
      */
     public String getPath() {
         return getFile().getPath();
@@ -76,7 +76,7 @@ public class FileBuffer {
 
     /** 
      * This method returns true if the buffer is dirty and returns false if the buffer is not dirty
-     * @return: boolean, true if the buffer is dirty, false if the buffer is not dirty
+     * @return  | boolean, true if the buffer is dirty, false if the buffer is not dirty
      */
     public boolean getDirty() {
         return dirty;
@@ -84,9 +84,9 @@ public class FileBuffer {
 
     /** 
      * This method sets the buffer boolean value from parameter dirty
-     * @param dirty the new value of dirty, true if the buffer is dirty, false if the buffer is not dirty
-     * @post getDirty() == dirty
-     * @return: void
+     * @post  | getDirty() == dirty
+     * @param dirty | The new value of dirty, true if the buffer is dirty, false if the buffer is not dirty
+     * @return  | void
      */
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
@@ -94,7 +94,7 @@ public class FileBuffer {
 
     /** 
      * This method returns the content of the buffer
-     * @return: String[], content of the buffer
+     * @return  | String[], content of the buffer
      */
     public String[] getContent() {
         return content;
@@ -102,8 +102,8 @@ public class FileBuffer {
 
     /** 
      * This method sets the content of the buffer to the given parameter newContent
-     * @post getContent() == newContent
-     * @return: void
+     * @post    | getContent() == newContent
+     * @return  | void
      */
     public void setContent(String[] newContent) {
         this.content = newContent;
@@ -115,15 +115,15 @@ public class FileBuffer {
 
     /** 
      * This method returns the number of rows 
-     * @return: int, number of rows
+     * @return  | int, number of rows
      */
     public int getRowCount() {
         return getContent().length;
     }
 
      /** 
-      * This method returns the number of columns 
-      * @return: int, number of columns
+      * This method returns the number of columns, this is the length of the longest row
+      * @return  | int, number of columns
       */
     public int getColumnCount() {
         String[] cont = getContent();
@@ -140,7 +140,7 @@ public class FileBuffer {
  
     /** 
      * This method returns the number of characters in the buffer
-     * @return: int, number of characters in the buffer
+     * @return  | int, number of characters in the buffer
      */
     public int countCharacters() {
         int result = 0;
@@ -156,10 +156,10 @@ public class FileBuffer {
 
     /** 
      * This method inserts a line break at the insertion point and sets the buffer to dirty
-     * @post getDirty() == true
-     * @return: void
+     * @post    | getDirty() == true
+     * @return  | void
      */
-    public void insertLineBreak(Point insert){  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
+    public void insertLineBreak(Point insert){
         int row = insert.getX()-1;
         int col = insert.getY()-1;
         ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
@@ -175,10 +175,10 @@ public class FileBuffer {
 
     /** 
      * This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
-     * @param c the character to add
-     * @param insert the insertion point
-     * @post getDirty() == true
-     * @return: void
+     * @post | getDirty() == true
+     * @param c      | The character to add
+     * @param insert | The insertion point
+     * @return       | void
      */
     public void addNewChar(char c, Point insert) {  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
         String[] content = getContent();
@@ -220,9 +220,9 @@ public class FileBuffer {
 
     /** 
      * This method deletes a character from the buffer and sets the buffer to dirty and moves the insertion point
-     * @param insert the insertion point
-     * @post getDirty() == true
-     * @return: void
+     * @post  | getDirty() == true
+     * @param insert | the insertion point
+     * @return       | void
      */
     public void deleteChar(Point insert) {
         String[] content = getContent();
@@ -270,9 +270,9 @@ public class FileBuffer {
 
     /**
      * This method saves the buffer to the file with the given newLine and sets the buffer to not dirty
-     * @param newLine the new line separator to save the file with
-     * @post getDirty() == false
-     * @return: void
+     * @post | getDirty() == false
+     * @param newLine | The new line separator to save the file with
+     * @return        | void
      */
     public void saveBuffer(String newLine) throws IOException {
         getFile().save(newLine, getContent());
@@ -285,8 +285,8 @@ public class FileBuffer {
 
     /** 
      * This method sets the insertion point of the buffer to the given parameter insertionPoint
-     * @post getInsertionPoint() == insertionPoint
-     * @return: void
+     * @post    | getInsertionPoint() == insertionPoint
+     * @return  | void
      */
     public Point getNewInsertionPoint(Point insertionPoint) {
         if (insertionPoint.getX()<1 || insertionPoint.getY()<1){

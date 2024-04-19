@@ -480,10 +480,10 @@ public class FileBufferView extends View
     }
 
     /**
-     *  This method adds a new character to the file
+     *  This method adds a new character to the fileBuffer at insertion point
      *  It also makes a new Edit object and set this new Edit as the lastEdit
-     * @param c the character to add
-     * @return: boolean
+     * @param c | The character to add
+     * @return  | boolean
      */
     public boolean addNewChar(char c) {
         Point insert = getInsertionPoint();
@@ -498,8 +498,8 @@ public class FileBufferView extends View
 
     /** 
      * This method deletes the character before the insertionPoint.
-     *  It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: boolean
+     * It also makes a new Edit object and set this new Edit as the lastEdit
+     * @return  | boolean
      */
     public boolean deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
@@ -531,7 +531,7 @@ public class FileBufferView extends View
     /** This method checks whether this View is focused. If this view is focused, the corresponding buffer
      *  whill close
      *  -   When the buffer is dirty, the user needs to press y or n to either discard the changes or close the buffer
-     * @return: FileBufferView || null
+     * @return  | FileBufferView || null
      */
     @Override
     public FileBufferView closeView(int focus, CompositeLayout parent) throws IOException {
@@ -542,7 +542,7 @@ public class FileBufferView extends View
             if (getBuffer().getDirty()) {
                 showCloseErr();
                 int c = 0;
-                long deadline = System.currentTimeMillis() + 3000;
+                long deadline = System.currentTimeMillis() + 3000;     // Testing purposes
                 while (c != 121 && c != 89 && c != 78 && c != 110) {
                     try {
                         c = terminalHandler.readByte(deadline);
@@ -571,9 +571,10 @@ public class FileBufferView extends View
      * ******************/
 
     /** 
-     * This method saves the buffer of the file and updates the scroll states
-     * @param newLine the new line to add to the buffer
-     * @return: void
+     * This method saves the buffer of this view to the file with the given line seperator
+     * @pre | newLine == "\n" || newLine == "\r\n"
+     * @param newLine  | The line seperator to add to the buffer
+     * @return  | void
      */
     @Override
     public void saveBuffer(String newLine) throws IOException {
@@ -592,7 +593,7 @@ public class FileBufferView extends View
     /**
      * This method undoes the last edit and uses therefor the undo method of the lastEdit
      * It also sets the lastEdit to the previous edit 
-     * @return: boolean, true if the undo was successful, false otherwise
+     * @return  | boolean, true if the undo was successful, false otherwise
      */
     public boolean undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
@@ -607,7 +608,7 @@ public class FileBufferView extends View
     /**
      * This method redoes the last edit and uses therefor the redo method of the lastEdit
      * It also sets the lastEdit to the next edit 
-     * @return: boolean, true if the redo was successful, false otherwise
+     * @return  | boolean, true if the redo was successful, false otherwise
      */
     public boolean redo() {
         boolean result = getLastEdit().getNext().redo();
@@ -621,7 +622,7 @@ public class FileBufferView extends View
 
    /**
      * This method returns the next deadline of the system
-     * @return: long, the next deadline
+     * @return  | long, the next deadline
      */
     @Override
     public long getNextDeadline() {
@@ -636,7 +637,7 @@ public class FileBufferView extends View
 
     /**
      * This method duplicates the FileBufferView
-     * @return: View[], an array with the FileBufferView duplicated
+     * @return  | View[], an array with the FileBufferView duplicated
      */
     @Override
     public View[] duplicate() {
@@ -645,12 +646,14 @@ public class FileBufferView extends View
     }
 
     /**
-     * This method updates the views of the given buffer
-     * @param focus this is the index of the focussed view
-     * @param insert this is the insertion point of the focused view
-     * @param c this is the character that should be added
-     * @param isDeleted this is a boolean that indicates if the character should be deleted
-     * @param buffer this is the buffer of the focused view
+     * This method updates the view if needed so that edits made in other views don't change the shown content
+     * by this view (if possible)
+     * @param focus     | The index of the focussed view
+     * @param insert    | The insertion point of the lastEdit
+     * @param c         | The character that was added or deleted
+     * @param isDeleted | A boolean that indicates if the character was deleted
+     *                  | true if deleted, false otherwise
+     * @param buffer    | The buffer on which the edit was made
      * @return void
      */
     @Override
@@ -704,7 +707,7 @@ public class FileBufferView extends View
 
     /** 
      * This method shows the content of the FileBufferView and the updated scrollbars
-     * @return: String, the content of the FileBufferView
+     * @return  | String, the content of the FileBufferView
      * Visibile for testing
      */
     @Override
@@ -732,7 +735,7 @@ public class FileBufferView extends View
 
     /** 
      * This method returns the created vertical scrollbar
-     * @return: char[], the vertical scrollbar
+     * @return  | char[], the vertical scrollbar
      * Visibile for testing
      */
     char[] makeVerticalScrollBar() {
@@ -757,7 +760,7 @@ public class FileBufferView extends View
 
     /** 
      * This method returns the created horizontal scrollbar
-     * @return: String, the horizontal scrollbar
+     * @return  | String, the horizontal scrollbar
      * Visibile for testing
      */
     String makeHorizontalScrollBar() {
@@ -786,7 +789,7 @@ public class FileBufferView extends View
 
     /**
      * This method makes the header of the file for the horizontal scrollbar
-     * @return: StringBuilder, the header of the file
+     * @return  | StringBuilder, the header of the file
      */
     public StringBuilder makeFileHeader() {
         StringBuilder result = new StringBuilder();
@@ -805,8 +808,8 @@ public class FileBufferView extends View
      * ******************/
 
     /** 
-     *  This method updates the scroll states
-     * @return: void
+     * This method updates the scroll states so that the insertion point is visible in the view
+     * @return  | void
      */
     public void updateScrollStates() {
         if (getInsertionPoint().getY() > getHorizontalScrollState() + getWidth() - 2) {
@@ -834,10 +837,10 @@ public class FileBufferView extends View
     /** 
      * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
      * and updates the scroll states
-     * @post getHeigth() == heigth
-     * @post getWidth() == width
-     * @post getLeftUpperCorner() == leftUpperCorner
-     * @return: void
+     * @post    | getHeigth() == heigth
+     * @post    | getWidth() == width
+     * @post    | getLeftUpperCorner() == leftUpperCorner
+     * @return  | void
      */
     @Override
     public void updateSize(int heigth, int width, Point leftUpperCorner) {
