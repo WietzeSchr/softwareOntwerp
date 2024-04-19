@@ -17,10 +17,6 @@ public abstract class View extends Layout {
     public View(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
     }
-    /*
-    public View(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
-        super(height, width, parent, leftUpperCorner);
-    } */
 
     /* **********************
      *  GETTERS AND SETTERS *
@@ -297,5 +293,11 @@ public abstract class View extends Layout {
     @Override
     public int countViews() {
         return 1;
+    }
+
+    @Override
+    public int calcGameWidth(int focus) {
+        if (getPosition() == focus) return getWidth() / 2;
+        return -1;
     }
 }

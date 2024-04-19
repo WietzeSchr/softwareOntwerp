@@ -50,6 +50,19 @@ class ViewTest {
         assertEquals(fbv.rotateSiblingsFlip(1,1, 2, null), fbv);
         assertEquals(fbv.rotateNonSiblings(1, 1, null, null, null), fbv);
         assertEquals(fbv.rotateNonSiblingsPromote(1, 1, null, null, null), fbv);
+        assertEquals(fbv.flip(), fbv);
+    }
+
+    @Test
+    void testInsertViews() {
+        FileBufferView fbv = new FileBufferView(1, 10, new Point(15, 25),
+                new FileBuffer(new String[] {"hallo", ""}, "test"));
+        fbv.setPosition(1);
+        GameView gv = new GameView(1, 1, new Point(1, 1));
+        CompositeLayout result = (CompositeLayout) fbv.insertViews(1, null, new View[] {gv});
+        assertEquals(result.getClass(), SideBySideLayout.class);
+        assertArrayEquals(result.getSubLayouts(), new Layout[] {fbv, gv});
+        assertEquals(fbv.insertViews(2,null, new View[] {gv}), fbv);
     }
 
     @Test
@@ -60,10 +73,5 @@ class ViewTest {
         assertEquals(gv.getHeigth(), 20);
         assertEquals(gv.getWidth(), 10);
         assertEquals(gv.getLeftUpperCorner(), new Point(10, 10));
-    }
-
-    @Test
-    void openNewGame() {
-
     }
 }

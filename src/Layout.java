@@ -6,11 +6,8 @@ import java.util.Arrays;
  *  LAYOUT  *
  * **********/
 public abstract class Layout {
-    private int height;
 
-    private int width;
-
-    private Point leftUpperCorner;
+    private final Box box;
 
     private CompositeLayout parent;
 
@@ -21,44 +18,30 @@ public abstract class Layout {
     /** 
      * This constructor creates a new Layout with the given height, width and leftUpperCorner
      * @post getHeigth() == height
-     * @post getWidth() == widthµ
+     * @post getWidth() == width
      * @post getParent() == null
      * @post getLeftUpperCorner() == leftUpperCorner
      */
     public Layout(int height, int width, Point leftUpperCorner) {
-        this.height = height;
-        this.width = width;
+        this.box = new Box(height, width, leftUpperCorner);
         this.parent = null;
-        this.leftUpperCorner = leftUpperCorner;
     }
-
-    /** 
-     * This constructor creates a new Layout with the given height, width, parent and leftUpperCorner
-     * @post getHeigth() == height
-     * @post getWidth() == width
-     * @post getParent() == parent
-     * @post getLeftUpperCorner() == leftUpperCorner
-     */ /*
-    public Layout(int height, int width, CompositeLayout parent, Point leftUpperCorner) {
-        this.height = height;
-        this.width = width;
-        this.parent = parent;
-        this.leftUpperCorner = leftUpperCorner;
-    }
-    */
     
     /* **********************
      *  GETTERS AND SETTERS *
      * **********************/
+    private Box getBox() {
+        return box;
+    }
 
-    /** 
+     /** 
      * This method sets the height of the layout to the given parameter newHeight
      * @param newHeight this is the new height of the layout
      * @post getHeigth() == newHeight
      * @return: void
      */
     public void setHeigth(int newHeight) {
-        this.height = newHeight;
+        getBox().setHeight(newHeight);
     }
 
     /** 
@@ -66,7 +49,7 @@ public abstract class Layout {
      * @return: int, the height of the layout
      */
     public int getHeigth() {
-        return height;
+        return getBox().getHeight();
     }
 
     /** 
@@ -75,7 +58,7 @@ public abstract class Layout {
      * @return: void
      */
     public void setWidth(int newWidth) {
-        this.width = newWidth;
+        getBox().setWidth(newWidth);
     }
 
     /** 
@@ -83,7 +66,7 @@ public abstract class Layout {
      * @return: int, the width of the layout
      */
     public int getWidth() {
-        return width;
+        return getBox().getWidth();
     }
 
     /** 
@@ -109,7 +92,7 @@ public abstract class Layout {
      * @return: void
      */
     public void setLeftUpperCorner(Point newLeftUpperCorner) {
-        this.leftUpperCorner = newLeftUpperCorner;
+        getBox().setLeftUpperPoint(newLeftUpperCorner);
     }
 
     /** 
@@ -117,7 +100,7 @@ public abstract class Layout {
      * @return: Point, the leftUpperCorner of the layout
      */
     public Point getLeftUpperCorner() {
-        return leftUpperCorner;
+        return getBox().getLeftUpperPoint();
     }
 
     public Layout[] getSubLayouts() {
@@ -224,7 +207,7 @@ public abstract class Layout {
      * @param focus this is the index of the focussed view
      * @return: Layout, the new layout after closing the focused view
      */
-    public Layout closeView(int focus) {
+    public Layout closeView(int focus) throws IOException {
         int heigth = getHeigth();
         int width = getWidth();
         CompositeLayout parent = getFocusedView(focus).getParent();
@@ -252,7 +235,7 @@ public abstract class Layout {
      * This method closes the buffer and updates the subLayouts
      * @return: Layout, the new layout after closing the buffer
      */
-    public abstract Layout closeView(int focus, CompositeLayout parent);
+    public abstract Layout closeView(int focus, CompositeLayout parent) throws IOException;
 
     /* ******************
      *    SAVE BUFFER   *
@@ -410,8 +393,10 @@ public abstract class Layout {
     public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
         return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(focussed.getHeigth(), focussed.getWidth() / 2, focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
+                new View[] {new GameView(focussed.getHeigth(), calcGameWidth(focus), focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
     }
+
+    abstract int calcGameWidth(int focus);
 
     /* *******************
      *  DUPLICATED VIEW  *

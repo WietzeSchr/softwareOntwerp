@@ -11,7 +11,7 @@ class GameTest {
     void testConstructor() {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
-        Game game = new Game(10, 20);
+        Game game = new Game(9, 19);
         assertEquals(game.getTick(), 1000);
         assertEquals(game.getSnake(), new Snake(new ArrayList<>(List.of(new Point[] {new Point(4,9), new Point(4,10), new Point(4,11),
                 new Point(4,12),new Point(4,13),new Point(4,14)})), Direction.WEST));
@@ -23,7 +23,7 @@ class GameTest {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
         Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
-        Game game = new Game(10, 20);
+        Game game = new Game(9, 19);
         game.setSnake(snake);
         assertEquals(game.getSnake(), snake);
         game.setScore(50);
@@ -54,7 +54,7 @@ class GameTest {
 
     @Test
     void changeDir() {
-        Game game = new Game(10, 20);
+        Game game = new Game(9, 19);
         game.changeDir(Direction.WEST);
         assertEquals(game.getSnake().getDir(), new Point(0, -1));
         game.changeDir(Direction.NORD);
@@ -65,7 +65,7 @@ class GameTest {
 
     @Test
     void moveSnake() {
-        Game game = new Game(10, 20);
+        Game game = new Game(9, 19);
         game.changeDir(Direction.WEST);
         game.moveSnake();
         Snake snake1 = new Snake(new ArrayList<>(List.of(new Point[] {new Point(4,8), new Point(4,9), new Point(4,10),
@@ -89,7 +89,7 @@ class GameTest {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
         Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
-        Game game = new Game(3, 7);
+        Game game = new Game(2, 6);
         game.setSnake(snake);
         assertArrayEquals(game.getFreeSpace(), new Point[] {new Point(1, 6), new Point(2,1), new Point(2,2),
                 new Point(2,3), new Point(2,4), new Point(2,5), new Point(2,6)});
@@ -100,7 +100,7 @@ class GameTest {
 
     @Test
     void isValid() {
-        Game game = new Game(10,20);
+        Game game = new Game(9,19);
         assertFalse(game.isValid(new Point(0,5)));
         assertFalse(game.isValid(new Point(11,5)));
         assertFalse(game.isValid(new Point(3,0)));
@@ -135,7 +135,7 @@ class GameTest {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
         Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.SOUTH);
-        Game game = new Game(3, 7);
+        Game game = new Game(2, 6);
         game.setSnake(snake);
         game.setGridAt(1, new Point(2,1));
         assertArrayEquals(game.getAbstractGrid(), new char[][] {{'v', 'o', 'o', 'o', '-', ' '}, {'*', ' ', ' ', ' ', ' ', ' '}});

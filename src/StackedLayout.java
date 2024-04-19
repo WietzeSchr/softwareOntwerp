@@ -269,6 +269,20 @@ public class StackedLayout extends CompositeLayout {
         return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
     }
 
+    @Override
+    public int calcGameWidth(int focus){
+        View focused = getFocusedView(focus);
+        int result = -1;
+        if(focused.getParent() == this) result = getWidth()/2;
+        else {
+            int i=0;
+            while(result<0) {
+                result = getSubLayouts()[i++].calcGameWidth(focus);
+            }
+        }
+        return result;
+    }
+
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
