@@ -6,6 +6,10 @@ public enum Direction {
 
     final Point point;
 
+    /**
+     * This constructor creates a new Direction with a given Point
+     * @param point the Point to be used for the Directions
+     */
     Direction(Point point) {
         this.point = point;
     }
