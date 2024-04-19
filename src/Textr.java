@@ -67,6 +67,8 @@ public class Textr
 
     /**
      * This constructor creates a new Textr with the given newLine and filepaths
+     * @param newLine this is the newLine that will be used in the Textr
+     * @param filepaths this is the array of filepaths that will be opened in the Textr
      * @pre  | filePaths.length > 0
      * @pre  | newLine == "\n" || newLine == "\r\n"
      * @post | getNewLine() == newLine
@@ -99,7 +101,9 @@ public class Textr
 
     /** 
      * This constructor creates a new Textr object used for testing.
-     * @pre  | newLine == "\n" || newLine == "\r\n"
+     * @param newLine this is the newLine that will be used in the Textr
+     * @param layout this is the layout that will be used in the Textr
+     * @pre | newLine == "\n" || newLine == "\r\n"
      * @post | getLayout() = layout
      * @post | getNewLine() = newLine
      */
@@ -141,7 +145,10 @@ public class Textr
 
     /** 
      * This method sets the focus to newFocus
-     * @post     | getFocus() == newFocus
+
+     * @param newFocus this is the new focus that will be set
+     * @return: void
+     * @post : getFocus() == newFocus
      */
     private void setFocus(int newFocus) {
         this.focus = newFocus;
@@ -248,7 +255,7 @@ public class Textr
 
     /** 
      * This method returns the focussed view
-     * @return   | FileBufferView
+     * @return: View
      * Visible for testing
      */
     View getFocusedView() {
@@ -271,6 +278,7 @@ public class Textr
     /** 
      * This method changes the focus to the previous view and
      * moves the cursor's position to the new focus' insertion point
+     * @return: void
      * Visible for testing
      */
     void changeFocusPrevious() {
@@ -283,6 +291,7 @@ public class Textr
      * direction changing to the next game state
      * @param dir | the direction of the arrowkey that is pressed indicated by an enum
      * @return    | void
+     * Visible for testing
      */
     void arrowPressed(Direction dir) {
         getLayout().arrowPressed(dir, getFocus());
@@ -335,6 +344,7 @@ public class Textr
      * Closing a view results in a resize of the layout and views, possibly changing scrollstates and shown content
      * for FileBufferViews. Resizing a game could result kill the snake if no possible fit is found
      * @return:  | void
+     * Visible for testing
      */
     void closeView() throws IOException {
         setLayout(getLayout().closeView(getFocus()));
@@ -351,6 +361,7 @@ public class Textr
      * This method saves the focused file buffer and clears the edits in all FileBufferViews that have the same buffer
      * This shows the views now not dirty
      * @return   | void
+     * Visible for testing
      */
     void saveBuffer() throws IOException {
         getLayout().saveBuffer(getFocus(), getNewLine());
@@ -367,6 +378,7 @@ public class Textr
      * @pre       | dir == 1 || dir == -1
      * @param dir | 1: counterclockwise, -1: clockwise
      * @return    | void
+     * Visible for testing
      */
     void rotateView(int dir) {
         setLayout(getLayout().rotateView(dir, getFocus()));
