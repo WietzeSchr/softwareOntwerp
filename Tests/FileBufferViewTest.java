@@ -262,6 +262,12 @@ class FileBufferViewTest {
         assertEquals(fbv1.getInsertionPoint(), new Point(1,1));
         fbv1.updateScrollStates();
         assertEquals(fbv1.getVerticalScrollState(), 1);
+        fbv1.setVerticalScrollState(2);
+        fbv1.updateScrollStates();
+        assertEquals(fbv1.getVerticalScrollState(), 1);
+        fbv1.setHorizontalScrollState(59);
+        fbv1.updateScrollStates();
+        assertEquals(fbv1.getHorizontalScrollState(), 1);
     }
 
     @Test
@@ -269,13 +275,13 @@ class FileBufferViewTest {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123", "1", "2"}, "test1.txt");
         FileBuffer buffer2 = new FileBuffer(new String[] {"test12", "", "test123", "1", "2"}, "test2.txt");
         FileBufferView fbv1 = new FileBufferView(5,5,new Point(20, 10), buffer);
-        FileBufferView fbv2 = new FileBufferView(6,10,new Point(20, 10), buffer2);
+        FileBufferView fbv2 = new FileBufferView(6,50,new Point(20, 10), buffer2);
         fbv1.setPosition(1);
         fbv2.getBuffer().setDirty(true);
         assertArrayEquals(fbv1.makeShow(), new String[] {"test", null, "test", "1"});
         assertArrayEquals(fbv2.makeShow(), new String[] {"test12", null, "test123", "1", "2"});
         assertEquals(fbv1.makeHorizontalScrollBar(), "test1.txt, r: 5, char: 15, insert: (1, 1) ");
-        assertEquals(fbv2.makeHorizontalScrollBar(), "* test2.txt, r: 5, char: 15, insert: (1, 1) ");
+        assertEquals(fbv2.makeHorizontalScrollBar(), "* test2.txt, r: 5, char: 15, insert: (1, 1) ######");
         assertArrayEquals(fbv1.makeVerticalScrollBar(), new char[] {'#', '#', '#', '#'});
         assertArrayEquals(fbv2.makeVerticalScrollBar(), new char[] {'#', '#', '#', '#', '#'});
     }

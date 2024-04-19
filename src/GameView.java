@@ -11,7 +11,7 @@ public class GameView extends View{
      * ******************/
     public GameView(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
-        this.game = new Game(height, width);
+        this.game = new Game(height - 1, width - 1);
         this.lastMove = System.currentTimeMillis();
     }
 
@@ -174,11 +174,19 @@ public class GameView extends View{
         return getLastMove() + getTick();
     }
 
+    /**
+     * This method returns the current tick of the system
+     * @return: long, the current tick
+     */
     @Override
     public long getTick() {
         return getGame().getTick();
     }
 
+    /**
+     * This method ticks the game
+     * @return: void
+     */
     public void tick() {
         getGame().tick();
         setLastMove(System.currentTimeMillis());
@@ -211,6 +219,6 @@ public class GameView extends View{
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
-        getGame().updateSize(heigth, width);
+        getGame().updateSize(heigth - 1, width - 1);
     }
 }

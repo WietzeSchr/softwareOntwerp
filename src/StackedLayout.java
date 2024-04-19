@@ -287,16 +287,19 @@ public class StackedLayout extends CompositeLayout {
      *  HELP FUNCTIONS  *
      * ******************/
 
-    /** This method returns the size of the subLayouts
-     * @return: Point
+    /** 
+     * This method returns the size of the subLayouts
+     * @return: Point, gives the size of the subLayouts
      */
     @Override
     public Point calcSubSize() {
         return new Point((int) Math.floor((float) getHeigth() / (float) countSubLayouts()), getWidth());
     }
 
-    /** This method returns the leftUpperCorner of the subLayouts
-     * @return: Point
+    /** 
+     * This method returns the leftUpperCorner of the subLayouts
+     * @param i int, the index of the subLayout
+     * @return: Point, gives the leftUpperCorner of the sublayout i
      */
     @Override
     public Point calcLeftUpCorner(int i) {

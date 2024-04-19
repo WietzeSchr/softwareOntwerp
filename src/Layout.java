@@ -15,7 +15,8 @@ public abstract class Layout {
      *  CONSTRUCTORS    *
      * ******************/
 
-    /** This constructor creates a new Layout with the given height, width and leftUpperCorner
+    /** 
+     * This constructor creates a new Layout with the given height, width and leftUpperCorner
      * @post getHeigth() == height
      * @post getWidth() == width
      * @post getParent() == null
@@ -29,23 +30,30 @@ public abstract class Layout {
     /* **********************
      *  GETTERS AND SETTERS *
      * **********************/
-
     private Box getBox() {
         return box;
     }
 
+     /** 
+     * This method sets the height of the layout to the given parameter newHeight
+     * @param newHeight this is the new height of the layout
+     * @post getHeigth() == newHeight
+     * @return: void
+     */
     public void setHeigth(int newHeight) {
         getBox().setHeight(newHeight);
     }
 
-    /** This method returns the height of the layout
-     * @return: int
+    /** 
+     * This method returns the height of the layout
+     * @return: int, the height of the layout
      */
     public int getHeigth() {
         return getBox().getHeight();
     }
 
-    /** This method sets the width of the layout to the given parameter newWidth
+    /** 
+     * This method sets the width of the layout to the given parameter newWidth
      * @post getWidth() == newWidth
      * @return: void
      */
@@ -53,14 +61,16 @@ public abstract class Layout {
         getBox().setWidth(newWidth);
     }
 
-    /** This method returns the width of the layout
-     * @return: int
+    /** 
+     * This method returns the width of the layout
+     * @return: int, the width of the layout
      */
     public int getWidth() {
         return getBox().getWidth();
     }
 
-    /** This method sets the parent of the layout to the given parameter newParent
+    /** 
+     * This method sets the parent of the layout to the given parameter newParent
      * @post getParent() == newParent
      * @return: void
      */
@@ -68,14 +78,16 @@ public abstract class Layout {
         this.parent = newParent;
     }
 
-    /** This method returns the parent of the layout
-     * @return: CompositeLayout
+    /** 
+     * This method returns the parent of the layout
+     * @return: CompositeLayout, the parent of the layout
      */
     public CompositeLayout getParent() {
         return parent;
     }
 
-    /** This method sets the leftUpperCorner of the layout to the given parameter newLeftUpperCorner
+    /** 
+     * This method sets the leftUpperCorner of the layout to the given parameter newLeftUpperCorner
      * @post getLeftUpperCorner() == newLeftUpperCorner
      * @return: void
      */
@@ -83,8 +95,9 @@ public abstract class Layout {
         getBox().setLeftUpperPoint(newLeftUpperCorner);
     }
 
-    /** This method returns the leftUpperCorner of the layout
-     * @return: Point
+    /** 
+     * This method returns the leftUpperCorner of the layout
+     * @return: Point, the leftUpperCorner of the layout
      */
     public Point getLeftUpperCorner() {
         return getBox().getLeftUpperPoint();
@@ -105,6 +118,8 @@ public abstract class Layout {
     /** 
      * This method moves the insertion point of the focused view in the given direction if the focussed view is a fileBufferView
      * or moves the snake in the given direction if the focussed view is a gameView
+     * @param dir this is the direction in which the insertion point or the snake should move
+     * @param focus this is the index of the focussed view
      * @return: void
      */	
     public void arrowPressed(Direction dir, int focus) {
@@ -114,7 +129,8 @@ public abstract class Layout {
 
     /**
      * This method returns the next focussed view
-     * @return: int
+     * @param focus this is the index of the focussed view
+     * @return: int, the index of the next focussed view
      */
     public int getNextFocus(int focus) {
         if (focus == countViews()) {
@@ -125,7 +141,8 @@ public abstract class Layout {
 
     /**
      * This method returns the previous focussed view
-     * @return: int
+     * @param focus this is the index of the focussed view
+     * @return: int, the index of the previous focussed view
      */
     public int getPreviousFocus(int focus) {
         if (focus == 1) {
@@ -140,7 +157,7 @@ public abstract class Layout {
 
     /**
      * This method adds a new line break at the insertion point of the focused view
-     * @param focus
+     * @param focus this is the index of the focussed view
      * @return: void
      */
     public void addNewLineBreak(int focus) {
@@ -153,9 +170,9 @@ public abstract class Layout {
     }
 
     /** 
-     * This method deletes the line break at the insertion point of the focused view
-     * @param c
-     * @param focus
+     * This method adds a new character at the insertion point of the focused view
+     * @param c this is the character that should be added
+     * @param focus this is the index of the focussed view
      * @return: void
      */
     public void addNewChar(char c, int focus) {
@@ -169,7 +186,7 @@ public abstract class Layout {
 
     /** 
      * This method deletes the character at the insertion point of the focused view
-     * @param focus
+     * @param focus this is the index of the focussed view
      * @return: void
      */
     public void deleteChar(int focus) {
@@ -187,10 +204,10 @@ public abstract class Layout {
 
      /** 
      * This method closes the focused view and updates the subLayouts
-     * @param focus
-     * @return: Layout
+     * @param focus this is the index of the focussed view
+     * @return: Layout, the new layout after closing the focused view
      */
-    public Layout closeView(int focus) {
+    public Layout closeView(int focus) throws IOException {
         int heigth = getHeigth();
         int width = getWidth();
         CompositeLayout parent = getFocusedView(focus).getParent();
@@ -203,9 +220,9 @@ public abstract class Layout {
     }
 
     /** 
-     * This method returns the new focus after closing the focused view
-     * @param focus
-     * @return: int
+     * This method returns the new focus after closing the focussed view
+     * @param focus this is the index of the focussed view
+     * @return: int, the new index of the focussed view
      */
     public int getNewFocus(int focus) {
         if (focus > countViews()) {
@@ -214,18 +231,20 @@ public abstract class Layout {
         return focus;
     }
 
-    /** This method closes the buffer and updates the subLayouts
-     * @return: Layout
+    /** 
+     * This method closes the buffer and updates the subLayouts
+     * @return: Layout, the new layout after closing the buffer
      */
-    public abstract Layout closeView(int focus, CompositeLayout parent);
+    public abstract Layout closeView(int focus, CompositeLayout parent) throws IOException;
 
     /* ******************
      *    SAVE BUFFER   *
      * ******************/
 
-    /** This method saves the buffer of the focused view
-     * @param focus
-     * @param newLine
+    /** 
+     * This method saves the buffer of the focused view
+     * @param focus this is the index of the focussed view
+     * @param newLine this is the new line that should be added to the buffer
      * @return: void
      */
     public void saveBuffer(int focus, String newLine) throws IOException {
@@ -239,50 +258,51 @@ public abstract class Layout {
 
     /**
      * This method directs how it should be rotated based on the focus and the direction
-     * @param dir
-     * @param focus
-     * @return: Layout
+     * @param dir the direction in which the view should be rotated
+     * @param focus the index of the focused view
+     * @return: Layout, the new layout after rotating the view
      */
     protected abstract Layout rotateView(int dir, int focus);
 
     /**
      * 
-     * @param dir
-     * @param focus
-     * @param nextFocus
-     * @param parent
-     * @return: Layout
+     * @param dir the direction in which the view should be rotated
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the focused view
+     * @return: Layout, the new layout after rotating the siblings
      */
     protected abstract Layout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent);
 
     /**
      * 
-     * @param dir
-     * @param focus
-     * @param nextFocus
-     * @param parent
+     * @param dir the direction in which the view should be rotated
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the focused view
+     * @return Layout, the new layout after rotating the siblings
      */
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
     /**
      * 
-     * @param dir
-     * @param focus
-     * @param nextView
-     * @param parent1
-     * @param parent2
-     * @return Layout
+     * @param dir the direction in which the view should be rotated
+     * @param focus the index of the focused view
+     * @param nextView the next focused view
+     * @param parent1 the parent of the focused view
+     * @param parent2 the parent of the next focused view
+     * @return Layout, the new layout after rotating the non siblings
      */
     protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     /**
      * 
-     * @param dir
-     * @param focus
-     * @param nextView
-     * @param parent1
-     * @param parent2
-     * @return Layout
+     * @param dir the direction in which the view should be rotated
+     * @param focus the index of the focused view 
+     * @param nextView the next focused view
+     * @param parent1 the parent of the focused view
+     * @param parent2 the parent of the next focused view
+     * @return Layout, the new layout after rotating the non siblings
      */
     protected abstract Layout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
@@ -293,8 +313,8 @@ public abstract class Layout {
      * ******************/
 
     /**
-     * This method undoes the last edit of the focused view
-     * @param focus
+     * This method checks if the last edit of the focused view can be undone and if so, undoes it and updates the views
+     * @param focus this is the index of the focussed view
      * @return: void
      */
     public void undo(int focus) {
@@ -306,9 +326,9 @@ public abstract class Layout {
         }
     }
 
-    /**
-     * This method redoes the last edit of the focused view
-     * @param focus
+  /**
+     * This method checks if the last edit of the focused view can be redone and if so, redoes it and updates the views
+     * @param focus this is the index of the focussed view
      * @return: void
      */
     public void redo(int focus) {
@@ -326,10 +346,10 @@ public abstract class Layout {
 
     /** 
      * This method opens the given views in the layout, updates the size of the layout and initializes the view positions
-     * @param focus
-     * @param parent
-     * @param views
-     * @return: Layout
+     * @param focus this is the index of the focussed view
+     * @param parent this is the parent of the focussed view
+     * @param views this is the array of views that should be opened
+     * @return: Layout, the new layout after opening the views
      */
     public Layout openViews(int focus, CompositeLayout parent, View[] views) {
         if (views.length == 0) return this;
@@ -339,21 +359,36 @@ public abstract class Layout {
         return result;
     }
 
+
+    /** 
+     * This method opens a new gameview in the layout
+     * @param focus this is the index of the focussed view
+     * @return: Layout, the new layout after opening the gameView
+     */
+      public Layout newGame(int focus) {
+        View focussed = getFocusedView(focus);
+        return openViews(focus, focussed.getParent(),
+                new View[] {new GameView(focussed.getHeigth(), focussed.getWidth() / 2, focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
+    }
+
+
     /* *******************
      *  DUPLICATED VIEW  *
      * *******************/
   
     /** 
      * This method inserts the given views in the layout
-     * @param focus
-     * @return: Layout
+     * @param focus this is the index of the focussed view
+     * @param parent this is the parent of the focussed view
+     * @param views this is the array of views that should be inserted
+     * @return: Layout, the new layout after inserting the views
      */
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
 
     /** 
      * This method opens a new game view in the layout
-     * @param focus
-     * @return: Layout
+     * @param focus this is the index of the focussed view
+     * @return: Layout, the new layout after opening the gameView
      */
     public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
@@ -369,8 +404,8 @@ public abstract class Layout {
   
     /**
      * This method duplicates the focused view
-     * @param focus
-     * @return Layout
+     * @param focus this is the index of the focussed view
+     * @return Layout, the new layout after duplicating the view
      */
     public Layout newBufferView(int focus) {
         View focussed = getFocusedView(focus);
@@ -379,12 +414,12 @@ public abstract class Layout {
     }
 
     /**
-     * This method updates the views of the buffer
-     * @param focus 
-     * @param insert 
-     * @param c
-     * @param isDeleted
-     * @param buffer
+     * This method updates the views of the given buffer
+     * @param focus this is the index of the focussed view
+     * @param insert this is the insertion point of the focused view
+     * @param c this is the character that should be added
+     * @param isDeleted this is a boolean that indicates if the character should be deleted
+     * @param buffer this is the buffer of the focused view
      * @return void
      */
     public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
@@ -395,7 +430,7 @@ public abstract class Layout {
 
     /**
      * This method runs the snake in the focused view
-     * @param focus
+     * @param focus this is the index of the focussed view
      * @return void
      */
     public void tick(int focus) throws IOException {
@@ -418,27 +453,27 @@ public abstract class Layout {
     
      /** 
      * This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
-     * @return: int
+     * @return: int, the viewposition at the given index i
      */
     public abstract void initViewPosition(int i);
 
     /** 
      * This method returns the focused view at the given index i
-     * @param i
+     * @param i this is the index of the view that should be returned
      * @return: FileBufferView
      */	
     public abstract View getFocusedView(int i);
 
     /** 
      * This method returns the number of views
-     * @return: int
+     * @return: int, the number of views
      */
     public abstract int countViews();
 
     /**
      *  This method returns the number of subLayouts
-     * @param focus
-     * @return: long
+     * @param focus this is the index of the focussed view
+     * @return: long, the NextDeadline of the focused view
      */
     public long getNextDeadline(int focus) {
          return getFocusedView(focus).getNextDeadline();
@@ -446,7 +481,7 @@ public abstract class Layout {
 
     /** 
      * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * @param heigth
+     * @param heigth this is the new height of the layout
      * @return: void
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
