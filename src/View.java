@@ -92,13 +92,15 @@ public abstract class View extends Layout {
     /* ******************
      *    SAVE BUFFER   *
      * ******************/
-
+    
     /** 
      * This method saves the buffer of the file and updates the scroll states
      * @param newLine the new line to add to the buffer
      * @return: void
      */
-    public abstract void saveBuffer(String newLine) throws IOException;
+    public void saveBuffer(String newLine) throws IOException {
+        return;
+    }
 
     /* *****************
      *    ROTATE VIEW  *

@@ -192,41 +192,6 @@ public abstract class CompositeLayout extends Layout {
      */
     protected abstract CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
-     /** 
-     * This method rotates the view and updates the subLayouts
-     * @param dir direction of the rotation
-     * @param focus the index of the focused view
-     * @param nextView the next view
-     * @param parent1 the parent of the view
-     * @param parent2 the parent of the view
-     * @return: Layout
-     */
-    protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
-
-    
-    /*  public Layout prune() {
-        if (getSubLayouts().length == 1) {
-            if (this.getParent() == null) {
-                getSubLayouts()[0].setParent(null);
-                return getSubLayouts()[0];
-            } else {
-                setSubLayouts(getSubLayouts()[0].getParent().getSubLayouts());
-            }
-        } else {
-            for (int i = 0; i < getSubLayouts().length; i++) {
-                if (getSubLayouts()[i] instanceof CompositeLayout) {
-                    CompositeLayout subLay = (CompositeLayout) getSubLayouts()[i];
-                    setSubLayout(subLay.prune(), i);
-                }
-            }
-        }
-        return this;
-    } */
-
-    /* ******************
-     *  OPEN GAME VIEW  *
-     * ******************/
-
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
@@ -244,6 +209,13 @@ public abstract class CompositeLayout extends Layout {
     public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
         for (int i = 0; i < countSubLayouts(); i++) {
             getSubLayouts()[i].updateViews(focus, insert, c, isDeleted, buffer);
+        }
+    }
+
+    @Override
+    public void updateViewsSaved(int focus, FileBuffer buffer) {
+        for (int i = 0; i < countSubLayouts(); i++) {
+            getSubLayouts()[i].updateViewsSaved(focus, buffer);
         }
     }
 

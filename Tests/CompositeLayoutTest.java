@@ -70,6 +70,15 @@ class CompositeLayoutTest {
         result = (CompositeLayout) sl1.closeView(2, sl1);
         assertEquals(result.getClass(), StackedLayout.class);
         assertArrayEquals(result.getSubLayouts(), new Layout[] {fbv1, fbv3});
+        sbsl1 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {fbv1, fbv2});
+        sl1 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {sbsl1, fbv3});
+        sl1.initViewPosition(1);
+        f2.setDirty(true);
+        long start = System.currentTimeMillis();
+        sl1 = (StackedLayout) sl1.closeView(2);
+        long end = System.currentTimeMillis();
+        assertEquals(sl1.countViews(), 3);
+        assertTrue(end-start >= 3000);
      }
 
     @Test
@@ -162,6 +171,28 @@ class CompositeLayoutTest {
         StackedLayout sl1 = new StackedLayout(1, 1, new Point(1, 1), new Layout[]{sbsl1, fbv3});
         assertTrue(sl1.contains(fbv3));
         assertFalse(sbsl1.contains(fbv3));
+    }
+
+    @Test
+    void testUpdateViews() {
+        FileBuffer f1 = new FileBuffer(new String[]{"rij1", "rij2", "rij3"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1, 1, new Point(1, 1), f1);
+        FileBuffer f2 = new FileBuffer(new String[]{"t", "te", "tes", "test"}, "test2");
+        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1, 1), f2);
+        StackedLayout sl1 = new StackedLayout(8, 8, new Point(1, 1), new Layout[] {fbv1, fbv2});
+        sl1.initViewPosition(1);
+        sl1 = (StackedLayout) sl1.newBufferView(2);
+        assertEquals(sl1.countViews(), 3);
+        sl1.arrowPressed(Direction.SOUTH, 2);
+        sl1.arrowPressed(Direction.SOUTH, 2);
+        sl1.arrowPressed(Direction.SOUTH, 2);
+        assertEquals(fbv2.getInsertionPoint(), new Point(4, 1));
+        assertEquals(fbv2.getVerticalScrollState(), 4);
+        sl1.arrowPressed(Direction.SOUTH, 3);
+        sl1.deleteChar(3);
+        assertEquals(f2.getRowCount(), 3);
+        assertEquals(fbv2.getVerticalScrollState(), 3);
+        assertEquals(fbv2.getInsertionPoint(), new Point(3,1));
     }
 
     @Test
