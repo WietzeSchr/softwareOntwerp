@@ -8,6 +8,7 @@ public abstract class View extends Layout {
     /* ******************
      *  CONSTRUCTOR     *
      * ******************/
+
     /**
      * This constructor creates a new View
      * @param height the height of the view
@@ -24,9 +25,9 @@ public abstract class View extends Layout {
 
     /**
      * This method sets the position of the view
-     * @param newPosition the new position of the view
-     * @return void
-     * @post getPosition() == newPosition
+     * @param newPosition  | The new position of the view
+     * @post    | getPosition() == newPosition
+     * @return  | void
      */
     public void setPosition(int newPosition) {
         this.position = newPosition;
@@ -46,8 +47,8 @@ public abstract class View extends Layout {
 
     /**
      * This method moves the cursor or snake in the given direction
-     * @param dir the direction to move
-     * @return void
+     * @param dir | The direction to move
+     * @return    | void
      */
     public abstract void move(Direction dir);
 
@@ -65,38 +66,35 @@ public abstract class View extends Layout {
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    /** 
-     * This method adds a new line break to the buffer 
-     * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: boolean
+    /**
+     * If the view is a FileBufferView, this method inserts a new line break at the FileBufferViews insertion
+     * point. If the focused view is a gameView this method starts a new game, if the game was game over.
+     * @return      | void
      */
     public abstract boolean addNewLineBreak();
 
-    /** This method adds a new character to the file
-     *  It also makes a new Edit object and set this new Edit as the lastEdit
-     * @param c the character to add
-     * @return: boolean
+    /**
+     * This method adds a new character to the file
+     * It also makes a new Edit object and set this new Edit as the lastEdit
+     * @param c  | The character to add
+     * @return:  | boolean, return true if the character was added
      */
     public abstract boolean addNewChar(char c);
 
     /** This method deletes the character before the insertionPoint.
      *  It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: boolean
+     * @return  | boolean
      */
     public abstract boolean deleteChar();
-
-    /* ******************
-     *   CLOSE VIEW     *
-     * ******************/
 
     /* ******************
      *    SAVE BUFFER   *
      * ******************/
     
     /** 
-     * This method saves the buffer of the file and updates the scroll states
-     * @param newLine the new line to add to the buffer
-     * @return: void
+     * This method saves the buffer of the file if the View is a FileBufferView, otherwise does nothing
+     * @param newLine | the new line to add to the buffer
+     * @return  | void
      */
     public void saveBuffer(String newLine) throws IOException {
         return;
@@ -140,14 +138,14 @@ public abstract class View extends Layout {
     /**
      * This method undoes the last edit and uses therefor the undo method of the lastEdit
      * It also sets the lastEdit to the previous edit 
-     * @return: boolean, true if the undo was successful, false otherwise
+     * @return  | boolean, true if the undo was successful, false otherwise
      */
     public abstract boolean undo();
 
     /**
      * This method redoes the last edit and uses therefor the redo method of the lastEdit
      * It also sets the lastEdit to the next edit 
-     * @return: boolean, true if the redo was successful, false otherwise
+     * @return  | boolean, true if the redo was successful, false otherwise
      */
     public abstract boolean redo();
 
@@ -157,10 +155,10 @@ public abstract class View extends Layout {
 
      /** 
      * This method inserts the given views in the layout
-     * @param focus this is the index of the focussed view
-     * @param parent this is the parent of the focussed view
-     * @param views this is the array of views that should be inserted
-     * @return: Layout, the new layout after inserting the views
+     * @param focus  | The index of the focussed view
+     * @param parent | The parent of the focussed view
+     * @param views  | The array of views that should be inserted
+     * @return  | Layout, the new layout after inserting the views
      */
     @Override
     public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
@@ -180,8 +178,9 @@ public abstract class View extends Layout {
      * ************************/
 
     /**
-     * This method duplicates the FileBufferView
-     * @return: View[], an array with the FileBufferView duplicated
+     * This method duplicates the FileBufferView,
+     * @return  | View[], an array with the FileBufferView duplicated
+     *          | View[], an empty array if gameView
      */
     public abstract View[] duplicate();
 
@@ -191,19 +190,19 @@ public abstract class View extends Layout {
 
     /**
      * This method returns the next deadline of the system
-     * @return: long, the next deadline
+     * @return  | long, the next deadline
      */
     public abstract long getNextDeadline();
 
     /**
      * This method returns the current tick of the system
-     * @return: long, the current tick
+     * @return  | long, the current tick
      */
     public abstract long getTick();
 
     /**
      * This method ticks the game
-     * @return: void
+     * @return  | void
      */
     public abstract void tick() throws IOException;
 
@@ -213,28 +212,28 @@ public abstract class View extends Layout {
 
     /** 
      * This method shows the content of the FileBufferView and the updated scrollbars
-     * @return: String, the content of the FileBufferView
+     * @return  | String, the content of the FileBufferView
      * Visibile for testing
      */
     abstract String[] makeShow();
 
     /** 
      * This method returns the created horizontal scrollbar
-     * @return: String, the horizontal scrollbar
+     * @return  | String, the horizontal scrollbar
      * Visibile for testing
      */
     abstract String makeHorizontalScrollBar();
 
     /** 
      * This method returns the created vertical scrollbar
-     * @return: char[], the vertical scrollbar
+     * @return  | char[], the vertical scrollbar
      * Visibile for testing
      */
     abstract char[] makeVerticalScrollBar();
 
     /**
      * This method shows the content of the FileBufferView and the updated scrollbars
-     * @return: void
+     * @return  | void
      */
     public void show() {
         String[] toShow = makeShow();
@@ -262,14 +261,14 @@ public abstract class View extends Layout {
 
     /**
      * This method returns the cursor of the view
-     * @return: Point, the point where the cursor is in the view
+     * @return  | Point, the point where the cursor is in the view
      */
     public abstract Point getCursor();
 
     /**
      * This method initializes the position of the view at index i
-     * @param i the index of the view
-     * @return void
+     * @param i | The index of the view
+     * @return  | void
      */
     @Override
     public void initViewPosition(int i) {
@@ -278,7 +277,7 @@ public abstract class View extends Layout {
 
     /**
      * This method returns the focused view at the given index i
-     * @return: FileBufferView || null
+     * @return  | View || null
      */
     @Override
     public View getFocusedView(int i) {
@@ -290,7 +289,7 @@ public abstract class View extends Layout {
 
     /**
      * This method returns the number of views
-     * @return: int
+     * @return  | int
      */
     @Override
     public int countViews() {

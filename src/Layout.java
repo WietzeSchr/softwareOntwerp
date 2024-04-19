@@ -25,9 +25,6 @@ public abstract class Layout {
      * @post | getLeftUpperCorner() == leftUpperCorner
      */
     public Layout(int height, int width, Point leftUpperCorner) {
-        if (height < 1 || width < 1) {
-            throw new RuntimeException("Illegal layout size");
-        }
         this.box = new Box(height, width, leftUpperCorner);
         this.parent = null;
     }
@@ -46,9 +43,6 @@ public abstract class Layout {
      * @param newHeight | The newHeigth of the layout
      */
     public void setHeigth(int newHeight) {
-        if (newHeight < 1) {
-            throw new RuntimeException("illegal layout Heigth");
-        }
         getBox().setHeight(newHeight);
     }
 
@@ -67,9 +61,6 @@ public abstract class Layout {
      * @return  | void
      */
     public void setWidth(int newWidth) {
-        if (newWidth < 1) {
-            throw new RuntimeException("illegal layout width");
-        }
         getBox().setWidth(newWidth);
     }
 
@@ -342,6 +333,7 @@ public abstract class Layout {
      * @param parent1  | The parent of the focused view
      * @param parent2  | The parent of the next view
      * @return  | Layout, The new layout after rotating the view
+     */
     protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     /**
@@ -517,7 +509,7 @@ public abstract class Layout {
     /** 
      * This method returns the view with position i
      * @param i  | The index of the view that should be returned
-     * @return   | FileBufferView
+     * @return   | View
      */	
     public abstract View getFocusedView(int i);
 

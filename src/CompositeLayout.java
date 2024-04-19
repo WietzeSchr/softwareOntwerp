@@ -131,11 +131,13 @@ public abstract class CompositeLayout extends Layout {
      *    ROTATE VIEW  *
      * *****************/
 
-   /**
-     * This method directs how it should be rotated based on the focus and the direction
-     * @param dir the direction in which the view should be rotated
-     * @param focus the index of the focused view
-     * @return: Layout, the new layout after rotating the view
+    /**
+     * Checks the layout to call the appropriate method for rotating the focused view with the next focused view
+     * If the layout is only one view, nothing happens
+     * @pre | dir == 1 || dir == -1
+     * @param dir   | 1: counterclockwise, -1: clockwise
+     * @param focus | The index of the focused view
+     * @return      |Layout, the new layout after rotating the view
      */
     @Override
     protected Layout rotateView(int dir, int focus) {
@@ -161,49 +163,18 @@ public abstract class CompositeLayout extends Layout {
         return result;
     }
 
-    /** 
-     * This method rotates the view and updates the subLayouts
-     * @param dir direction of the rotation
-     * @param focus the index of the focused view
-     * @param nextFocus the index of the next focused view
-     * @param parent the parent of the view
-     * @return: SideBySideLayout
-     */
-    protected abstract CompositeLayout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent);
-
-    /** 
-     * This method rotates the view and updates the subLayouts
-     * @param dir direction of the rotation
-     * @param focus the index of the focused view
-     * @param nextFocus the index of the next focused view
-     * @param parent the parent of the view
-     * @return: CompositeLayout
-     */
-    protected abstract CompositeLayout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
-
-    /** 
-     * This method rotates the view and updates the subLayouts
-     * @param dir direction of the rotation
-     * @param focus the index of the focused view
-     * @param nextView the next view
-     * @param parent1 the parent of the view
-     * @param parent2 the parent of the view
-     * @return: CompositeLayout
-     */
-    protected abstract CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
-
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
 
     /**
      * This method updates the views of the given buffer
-     * @param focus this is the index of the focussed view
-     * @param insert this is the insertion point of the focused view
-     * @param c this is the character that should be added
-     * @param isDeleted this is a boolean that indicates if the character should be deleted
-     * @param buffer this is the buffer of the focused view
-     * @return void
+     * @param focus     | The index of the focussed view
+     * @param insert    | The insertion point of the focused view
+     * @param c         | The character that was deleted or added
+     * @param isDeleted | true: character was deleted, false: character was inserted
+     * @param buffer    | The buffer of the focused view
+     * @return  | void
      */
     @Override
     public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
@@ -225,7 +196,7 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method shows the layout of the subLayouts
-     * @return: void
+     * @return  | void
      */
     public void show() {
         Layout[] subLays = getSubLayouts();
@@ -240,19 +211,20 @@ public abstract class CompositeLayout extends Layout {
 
     /** 
      * This method returns the size of the subLayouts
-     * @return: Point, gives the size of the subLayouts with first value the height and second value the width of the subLayouts
+     * @return  | Point, Point.getX() = heigth subLayouts Point.getY() = width subLayouts
      */
     public abstract Point calcSubSize();
 
     /**
-     * This method returns the leftUpperCorner of the subLayouts
-     * @return: Point, the leftUpperCorner of the subLayouts
+     * This method returns the leftUpperCorner of the subLayout i
+     * @return  | Point, the leftUpperCorner of the subLayout i
      */
     public abstract Point calcLeftUpCorner(int i);
 
     /**
-     * This method initializes the position at the given index i
-     * @return: void
+     * This method initializes the view positions, assigning all views a position from i to i + countViews() - 1
+     * layout. The views are ordered depth first
+     * @return  | void
      */
     @Override
     public void initViewPosition(int i) {
@@ -265,9 +237,9 @@ public abstract class CompositeLayout extends Layout {
     }
 
     /**
-     * This method returns the focused view at the given index i
-     * @param i the index of the focused view
-     * @return: View, the focused view at the given index i
+     * This method returns the view with position i
+     * @param i  | The index of the view that should be returned
+     * @return   | View, returns null when this doesn't contain the view
      */
     @Override
     public View getFocusedView(int i) {
@@ -283,7 +255,7 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method returns a boolean that indicates if the sublayouts contain the given layout
-     * @return: boolean, true if the sublayouts contain the given layout, false otherwise
+     * @return  | boolean, true if the sublayouts contain the given layout, false otherwise
      */
     public boolean contains(Layout layout) {
         for (int i = 0; i < countSubLayouts(); i++) {
@@ -296,7 +268,7 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method returns the number of views
-     * @return: int, the number of views
+     * @return  | int, the number of views
      */
     @Override
     public int countViews() {
@@ -309,14 +281,15 @@ public abstract class CompositeLayout extends Layout {
     }
 
     /**
-     * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * @param heigth the new heigth of the layout
-     * @param width the new width of the layout
-     * @param leftUpperCorner the new leftUpperCorner of the layout
-     * @post getHeigth() == heigth
-     * @post getWidth() == width
-     * @post getLeftUpperCorner() == leftUpperCorner
-     * @return: void
+     * This method updates the size of the layout, possibly it's subLayouts
+     * @pre  | heigth > 0
+     * @pre  | width > 0
+     * @post | getHeigth() = heigth
+     * @post | getWidth() = width
+     * @post | getLeftUpperCorner() = leftUpperCorner
+     * @param heigth    | The new heigth of the layout
+     * @param width     | The new width of the layout
+     * @param leftUpperCorner | The new left upper corner of the layout
      */
     @Override
     public void updateSize(int heigth, int width, Point leftUpperCorner) {

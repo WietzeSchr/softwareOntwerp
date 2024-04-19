@@ -11,10 +11,10 @@ public class GameView extends View{
      * ******************/
     /**
      * This constructor creates a new GameView with the given parameters height, width and leftUpperCorner
-     * @param height the height of the GameView
-     * @param width the width of the GameView
-     * @param leftUpperCorner the left upper corner of the GameView
-     * @post getHeigth() == height
+     * @post  | getHeigth() == height
+     * @param height          | The height of the GameView
+     * @param width           | The width of the GameView
+     * @param leftUpperCorner | The left upper corner of the GameView
      */
     public GameView(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
@@ -28,9 +28,9 @@ public class GameView extends View{
 
     /**
      * This method sets the game of the GameView to the given parameter newGame
-     * @param newGame the new game of the GameView
-     * @post getGame() == newGame
-     * @return: void
+     * @post  | getGame() == newGame
+     * @param newGame  | The new game of the GameView
+     * @return  | void
      */
     public void setGame(Game newGame) {
         this.game = newGame;
@@ -38,7 +38,7 @@ public class GameView extends View{
 
     /**
      * This method returns the game of the GameView
-     * @return: Game, the game of the GameView
+     * @return  | Game, the game of the GameView
      */
     public Game getGame() {
         return game;
@@ -46,9 +46,9 @@ public class GameView extends View{
 
     /**
      * This method sets the last move of the GameView to the given parameter newLastMove
-     * @param newLastMove the new last move of the GameView
-     * @post getLastMove() == newLastMove
-     * @return: void
+     * @post | getLastMove() == newLastMove
+     * @param newLastMove | The new last move of the GameView
+     * @return            | void
      */
     public void setLastMove(long newLastMove) {
         this.lastMove = newLastMove;
@@ -56,7 +56,7 @@ public class GameView extends View{
 
     /**
      * This method returns the last move of the GameView
-     * @return: long, the last move of the GameView
+     * @return  | long, the last move of the GameView
      */
     public long getLastMove() {
         return lastMove;
@@ -68,8 +68,8 @@ public class GameView extends View{
 
     /**
      * This method moves the snake in the given direction and ticks the game if the snake is moving in the given direction 
-     * @param dir the direction to move the snake
-     * @return void
+     * @param dir  | The direction to move the snake
+     * @return     | void
      */
     public void move(Direction dir) {
         if (getGame().getSnake() != null) {
@@ -84,6 +84,10 @@ public class GameView extends View{
      *  EDIT BUFFER CONTENT *
      ************************/
 
+    /**
+     * Starts a new Game if the snake is dead (getSnake() == null)
+     * @return | boolean
+     */
     @Override
     public boolean addNewLineBreak() {
         if (getGame().getSnake() == null) {
@@ -150,7 +154,7 @@ public class GameView extends View{
    
     /** 
      * This method shows the content of the game and checks if the snake is still alive if not then it shows the loss screen
-     * @return: String, the content of the game
+     * @return  | String, the content of the game
      * Visibile for testing
      */
     @Override
@@ -168,7 +172,7 @@ public class GameView extends View{
 
     /**
      * This method shows the loss screen
-     * @return: String[], the loss screen
+     * @return  | String[], the loss screen
      * Visibile for testing
      */
     String[] showLoss() {
@@ -190,7 +194,7 @@ public class GameView extends View{
 
     /** 
      * This method returns the created vertical scrollbar of the game, what is just a string of '#' characters
-     * @return: char[], the vertical scrollbar
+     * @return  | char[], the vertical scrollbar
      * Visibile for testing
      */
     @Override
@@ -203,7 +207,7 @@ public class GameView extends View{
     /** 
      * This method returns the created horizontal scrollbar of the game, 
      * what is just a string of '#' characters with the score of the game
-     * @return: String, the horizontal scrollbar of the game
+     * @return  | String, the horizontal scrollbar of the game
      * Visibile for testing
      */
     @Override
@@ -221,7 +225,7 @@ public class GameView extends View{
 
     /**
      * This method returns the next deadline of the game which is the last move + the tick
-     * @return: long, the next deadline
+     * @return  | long, the next deadline
      */
     @Override
     public long getNextDeadline() {
@@ -230,7 +234,7 @@ public class GameView extends View{
 
     /**
      * This method returns the current tick of the system
-     * @return: long, the current tick
+     * @return  | long, the current tick
      */
     @Override
     public long getTick() {
@@ -239,7 +243,7 @@ public class GameView extends View{
 
     /**
      * This method ticks the game and sets the last move to the current time
-     * @return: void
+     * @return  | void
      */
     public void tick() {
         getGame().tick();
@@ -248,8 +252,8 @@ public class GameView extends View{
 
     /**
      * This method changes the direction of the snake to the given new direction
-     * @param newDir the new direction of the snake
-     * @return: void
+     * @param newDir | The new direction of the snake
+     * @return       | void
      */
     public void changeDir(Direction newDir) {
         getGame().changeDir(newDir);
@@ -257,7 +261,7 @@ public class GameView extends View{
 
     /**
      * This method start a new game 
-     * @return: void
+     * @return  | void
      */
     private void runNewGame() {
         setGame(new Game(getHeigth(), getWidth()));
@@ -268,7 +272,7 @@ public class GameView extends View{
      * ******************/
     /**
      * This method returns the cursor of the game which is the left upper corner
-     * @return: Point, LeftUpperCorner
+     * @return  | Point, LeftUpperCorner
      */
     public Point getCursor() {
         return getLeftUpperCorner();
@@ -276,10 +280,10 @@ public class GameView extends View{
 
     /** 
      * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * @post getHeigth() == heigth
-     * @post getWidth() == width
-     * @post getLeftUpperCorner() == leftUpperCorner
-     * @return: void
+     * @post   | getHeigth() == heigth
+     * @post   | getWidth() == width
+     * @post   | getLeftUpperCorner() == leftUpperCorner
+     * @return | void
      */
     @Override
     public void updateSize(int heigth, int width, Point leftUpperCorner) {

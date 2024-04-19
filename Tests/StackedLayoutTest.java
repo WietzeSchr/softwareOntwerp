@@ -67,7 +67,7 @@ class StackedLayoutTest {
         StackedLayout sbsl2 = new StackedLayout(1, 1, new Point(1, 1), new Layout[]{fbv3, fbv4});
         result1.getSubLayouts()[1] = sbsl2;
         result1.initViewPosition(1);
-        CompositeLayout result2 = result1.rotateSiblingsFlip(-1, 2, 3, sbsl2);
+        CompositeLayout result2 = (CompositeLayout) result1.rotateSiblingsFlip(-1, 2, 3, sbsl2);
         assertEquals(result2.getClass(), SideBySideLayout.class);
         assertEquals(result2.countSubLayouts(), 3);
         assertEquals(result2.getSubLayouts()[0], fbv1);

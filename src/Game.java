@@ -30,11 +30,11 @@ public class Game {
 
     /**
      * This constructor creates a new Game with the given parameters heigth and width
-     * @param heigth the heigth of the Game
-     * @param width the width of the Game
-     * @post getGrid().length == heigth
-     * @post getGrid()[0].length == width
-     * @post score == 0
+     * @post  | getGrid().length == heigth
+     * @post  | getGrid()[0].length == width
+     * @post  | score == 0
+     * @param heigth | The heigth of the Game
+     * @param width  | The width of the Game
      */
     public Game(int heigth, int width) {
         this.grid = new int[heigth][width];
@@ -71,9 +71,9 @@ public class Game {
 
     /**
      * This method sets the snake of the Game to the given parameter newSnake
-     * @param newSnake the new snake of the Game
-     * @post getSnake() == newSnake
-     * @return: void
+     * @post | getSnake() == newSnake
+     * @param newSnake | The new snake of the Game
+     * @return  | void
      */
     public void setSnake(Snake newSnake) {
         this.snake= newSnake;
@@ -81,7 +81,7 @@ public class Game {
 
     /**
      * This method returns the snake of the Game
-     * @return: Snake, the snake of the Game
+     * @return  | Snake, the snake of the Game
      */
     public Snake getSnake() {
         return snake;
@@ -89,9 +89,9 @@ public class Game {
 
     /**
      * This method sets the score of the Game to the given parameter newScore
-     * @param newScore the new score of the Game
-     * @post getScore() == newScore
-     * @return: void
+     * @post | getScore() == newScore
+     * @param newScore  | The new score of the Game
+     * @return  | void
      */
     public void setScore(int newScore) {
         this.score = newScore;
@@ -99,7 +99,7 @@ public class Game {
 
     /**
      * This method returns the score of the Game
-     * @return: int, the score of the Game
+     * @return  | int, the score of the Game
      */
     public int getScore() {
         return score;
@@ -107,9 +107,9 @@ public class Game {
 
     /**
      * This method sets the tick of the Game to the given parameter newTick
-     * @param newTick the new tick of the Game
-     * @post getTick() == newTick
-     * @return: void
+     * @param newTick  | The new tick of the Game
+     * @post    | getTick() == newTick
+     * @return  | void
      */
     public void setTick(long newTick) {
         this.tick = newTick;
@@ -117,7 +117,7 @@ public class Game {
 
     /**
      * This method returns the tick of the Game
-     * @return: long, the tick of the Game
+     * @return  | long, the tick of the Game
      */
     public long getTick() {
         return tick;
@@ -125,9 +125,9 @@ public class Game {
 
     /**
      * This method sets the grid of the Game to the given parameter newGrid
-     * @param newGrid the new grid of the Game
-     * @post getGrid() == newGrid
-     * @return: void
+     * @param newGrid  | The new grid of the Game
+     * @post    | getGrid() == newGrid
+     * @return  | void
      */
     public void setGrid(int[][] newGrid) {
         this.grid = newGrid;
@@ -135,7 +135,7 @@ public class Game {
 
     /**
      * This method returns the grid of the Game
-     * @return: int[][], the grid of the Game
+     * @return  | int[][], the grid of the Game
      */
     public int[][] getGrid() {
         int[][] result = new int[grid.length][grid[0].length];
@@ -149,8 +149,8 @@ public class Game {
 
     /**
      * This method returns the value of the grid at the given parameter point
-     * @param point the point at the grid of the Game
-     * @return: int, the value of the grid at the given parameter point
+     * @param point |The point at the grid of the Game
+     * @return      | int, the value of the grid at the given parameter point
      */
     public int getGridAt(Point point) {
         return getGrid()[point.getX() - 1][point.getY() - 1];
@@ -158,10 +158,10 @@ public class Game {
 
     /**
      * This method sets the value of the grid at the given parameter point to the given parameter newValue
-     * @param newValue the new value of the grid at the given parameter point
-     * @param point the point at the grid of the Game
-     * @post getGridAt(point) == newValue
-     * @return: void
+     * @param newValue | The new value of the grid at the given parameter point
+     * @param point    | The point at the grid of the Game
+     * @post    | getGridAt(point) == newValue
+     * @return  | void
      */
     public void setGridAt(int newValue, Point point) {
         int[][] grid = getGrid();
@@ -175,7 +175,7 @@ public class Game {
 
     /**
      * This method returns a list of all free points in the grid
-     * @return: Point[], a list of all free points in the grid
+     * @return  | Point[], a list of all free points in the grid
      */
     public Point[] getFreeSpace() {
         List<Point> result = new ArrayList<Point>();
@@ -197,7 +197,7 @@ public class Game {
 
     /**
      * This method ticks the Game by moving the snake and updating the score if the snake is not null 
-     * @return: void
+     * @return  | void
      */
     public void tick() {
         if (getSnake() != null) {
@@ -214,7 +214,7 @@ public class Game {
 
     /**
      * This method updates the score of the Game by adding 1 to the current score
-     * @return: void
+     * @return  | void
      */
     private void updateScore() {
         setScore(getScore() + 1);
@@ -224,7 +224,7 @@ public class Game {
      * This method moves the snake of the Game and checks if the snake is still valid
      * If the snake is not valid the game is lost
      * If the snake eats no apple, the tail of the snake gets smaller by 1
-     * @return: void
+     * @return  | void
      */
     public void moveSnake() {
         getSnake().move();
@@ -240,7 +240,7 @@ public class Game {
 
     /**
      * This method spawns an apple at a random free point in the grid
-     * @return: void
+     * @return  | void
      */
     public void spawnApple() {
         Point newApple = randomFreePoint();
@@ -249,7 +249,7 @@ public class Game {
 
     /**
      * This method checks if the snake eats an apple and updates the score and the tick of the Game 
-     * @return: boolean, true if the snake eats an apple, false otherwise
+     * @return  | boolean, true if the snake eats an apple, false otherwise
      */
     public boolean eatApple() {
         if (getGridAt(getSnake().getHead()) == 1) {
@@ -264,9 +264,9 @@ public class Game {
 
     /**
      * This method changes the direction of the snake in the direction of the given parameter newDir
-     * @param newDir the new direction of the snake
-     * @post getSnake().getDir() == newDir
-     * @return: void
+     * @param newDir | The new direction of the snake
+     * @post   | getSnake().getDir() == newDir
+     * @return | void
      */
     public void changeDir(Direction newDir) {
         getSnake().setDir(newDir);
@@ -274,7 +274,7 @@ public class Game {
 
     /**
      * This method sets the snake of the Game to null because the game is lost
-     * @return: void
+     * @return  | void
      */
     public void loseGame() {
         setSnake(null);
@@ -285,7 +285,7 @@ public class Game {
      * ******************/
     /**
      * This method returns the abstract grid of the Game with the snake and the apples in it 
-     * @return: char[][], the abstract grid of the Game
+     * @return  | char[][], the abstract grid of the Game
      */
     public char[][] getAbstractGrid() {
         char[][] result = new char[getGrid().length][getGrid()[0].length];
@@ -311,7 +311,7 @@ public class Game {
 
     /**
      * This method returns a random free point in the grid
-     * @return: Point, a random free point in the grid
+     * @return  | Point, a random free point in the grid
      */
     public Point randomFreePoint() {
         Point[] freeSpace = getFreeSpace();
@@ -321,9 +321,9 @@ public class Game {
     /**
      * This method updates the size of the grid and the snake
      * If the snake is too big for the new grid the game is lost
-     * @param heigth the new heigth of the grid
-     * @param width the new width of the grid
-     * @return: void
+     * @param heigth | The new heigth of the grid
+     * @param width  | The new width of the grid
+     * @return       | void
      */
     public void updateSize(int heigth, int width) {
         Box snakeBox = getSnake().getOuterBox();
@@ -338,7 +338,7 @@ public class Game {
 
     /**
      * This method returns the number of apples in the grid
-     * @return: int, the number of apples in the grid
+     * @return  | int, the number of apples in the grid
      * Visibile for testing
      */
      int countApples() {
@@ -355,9 +355,9 @@ public class Game {
     
     /**
      * This metod updates the grid of the game to the given heigth and width
-     * @param heigth the new heigth of the grid
-     * @param width the new width of the grid
-     * @return: void
+     * @param heigth | The new heigth of the grid
+     * @param width  | The new width of the grid
+     * @return       | void
      */
     private void updateGrid(int heigth, int width) {
         int[][] newGrid = new int[heigth][width];
@@ -370,10 +370,10 @@ public class Game {
 
     /**
      * This method finds the best fit for the snake in the new grid
-     * @param heigth the heigth of the new grid
-     * @param width the width of the new grid
-     * @param snakeBox the box around the snake to fit in the new grid
-     * @return: void
+     * @param heigth   | The heigth of the new grid
+     * @param width    | The width of the new grid
+     * @param snakeBox | The box around the snake to fit in the new grid
+     * @return  | void
      */
     private void findBestFit(int heigth, int width, Box snakeBox) {
         if(!rightPointValid(heigth, width, snakeBox) || !leftPointValid(snakeBox)){
@@ -400,8 +400,8 @@ public class Game {
     //translates the snake over the given vector
     /**
      * This method adds the given vector to the snake to translate it over the grid
-     * @param vector the vector to translate the snake over
-     * @return: void
+     * @param vector | The vector to translate the snake over
+     * @return       | void
      */
     private void translateSnake(Point vector){
         Snake oldSnake = getSnake();
@@ -418,16 +418,16 @@ public class Game {
     //checks if given box is fully in the grid
     /**
      * This method checks if the given box is fully in the grid, by looking at the left upper point 
-     * @param box the box to check if it is fully in the grid
-     * @return: boolean, true if the box is valid with the left upper point, false otherwise
+     * @param box  | The box to check if it is fully in the grid
+     * @return     | boolean, true if the box is valid with the left upper point, false otherwise
      */
     private boolean leftPointValid(Box box){
         return box.getLeftUpperPoint().getX()>0 && box.getLeftUpperPoint().getY()>0;
     }
      /**
      * This method checks if the given box is fully in the grid, by looking at the right lower point 
-     * @param box the box to check if it is fully in the grid
-     * @return: boolean, true if the box valid with the right lower point, false otherwise
+     * @param box | the box to check if it is fully in the grid
+     * @return    | boolean, true if the box valid with the right lower point, false otherwise
      */
     private boolean rightPointValid(int heigth, int width, Box box){
         return box.getRightLowerPoint().getX()<heigth && box.getRightLowerPoint().getY()<width;
@@ -435,8 +435,8 @@ public class Game {
 
     /**
      * This method checks if the given point is valid in the grid
-     * @param point the point to check if it is valid in the grid
-     * @return: boolean, true if the point is valid in the grid, false otherwise
+     * @param point | The point to check if it is valid in the grid
+     * @return      | boolean, true if the point is valid in the grid, false otherwise
      */
     public boolean isValid(Point point) {
         if (point.getX() < 1 || point.getY() < 1) {
