@@ -8,13 +8,24 @@ public class StackedLayout extends CompositeLayout {
      *  CONSTRUCTORS    *
      * ******************/
 
-    /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner, filepaths and newLine
+    /** 
+     * This constructor creates a new StackedLayout with the given height, width, leftUpperCorner, filepaths and newLine
+     * @param height the height of the StackedLayout
+     * @param width the width of the StackedLayout
+     * @param leftUpperCorner the leftUpperCorner of the StackedLayout
+     * @param filepaths the filepaths of the StackedLayout
+     * @param newLine the newLine separator of the StackedLayout
      */
     public StackedLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) throws FileNotFoundException {
         super(height, width, leftUpperCorner, filepaths, newLine);
     }
 
-    /** This constructor creates a new StackedLayout with the given height, width, leftUpperCorner and subLayouts
+    /** 
+     * This constructor creates a new StackedLayout with the given height, width, leftUpperCorner and subLayouts
+     * @param height the height of the StackedLayout
+     * @param width the width of the StackedLayout
+     * @param leftUpperCorner the leftUpperCorner of the StackedLayout
+     * @param subLayouts the subLayouts of the StackedLayout
      */
     public StackedLayout(int heigth, int width, Point leftUpperCorner, Layout[] subLayouts) {
         super(heigth, width, leftUpperCorner, subLayouts);
@@ -25,7 +36,11 @@ public class StackedLayout extends CompositeLayout {
      * *****************/
 
     /** This method rotates the view and updates the subLayouts
-     * @return: CompositeLayout || null
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the view
+     * @return: StackedLayout
      */
     @Override
     protected StackedLayout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
@@ -66,7 +81,11 @@ public class StackedLayout extends CompositeLayout {
 
     /** 
      * This method rotates the view and updates the subLayouts
-     * @return: CompositeLayout || null
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the view
+     * @return: CompositeLayout
      */
     @Override
     protected CompositeLayout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
@@ -110,6 +129,15 @@ public class StackedLayout extends CompositeLayout {
         }
     }
 
+     /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextView the next view
+     * @param parent1 the parent of the view
+     * @param parent2 the parent of the view
+     * @return: CompositeLayout
+     */
     @Override
     protected CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
@@ -156,6 +184,15 @@ public class StackedLayout extends CompositeLayout {
         }
     }
 
+    /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextView the next view
+     * @param parent1 the parent of the view
+     * @param parent2 the parent of the view
+     * @return: Layout
+     */
     @Override
     protected Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
@@ -230,6 +267,10 @@ public class StackedLayout extends CompositeLayout {
         }
     }
 
+    /** 
+     * This method flips the layout, so makes stackedlayout side by side
+     * @return: SideBySideLayout
+     */
     @Override
     protected SideBySideLayout flip() {
         Layout[] newSubLayouts = new Layout[countSubLayouts()];
@@ -243,6 +284,13 @@ public class StackedLayout extends CompositeLayout {
      *  OPEN GAME VIEW  *
      * ******************/
 
+    /** 
+     * This method inserts the given views in the layout
+     * @param focus this is the index of the focussed view
+     * @param parent this is the parent of the focussed view
+     * @param views this is the array of views that should be inserted
+     * @return: Layout, the new layout after inserting the views
+     */
     @Override
     public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
         View focussed = getFocusedView(focus);
@@ -269,6 +317,11 @@ public class StackedLayout extends CompositeLayout {
         return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
     }
 
+    /**
+     * This method calculates the width of the game
+     * @param focus the index of the focused view
+     * @return: int, the width of the game
+     */
     @Override
     public int calcGameWidth(int focus){
         View focused = getFocusedView(focus);

@@ -161,12 +161,35 @@ public abstract class CompositeLayout extends Layout {
         return result;
     }
 
+    /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the view
+     * @return: SideBySideLayout
+     */
     protected abstract CompositeLayout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent);
 
+    /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the view
+     * @return: CompositeLayout
+     */
     protected abstract CompositeLayout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
-    protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
-
+    /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextView the next view
+     * @param parent1 the parent of the view
+     * @param parent2 the parent of the view
+     * @return: CompositeLayout
+     */
     protected abstract CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     /* ************************
