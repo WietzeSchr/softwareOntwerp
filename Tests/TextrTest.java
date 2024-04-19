@@ -161,12 +161,12 @@ public class TextrTest {
 
     @Test
     void testSafeBuffer() throws IOException {
-        FileBuffer fb1 = new FileBuffer(new String[] {"test"}, "testFile.txt");
+        FileBuffer fb1 = new FileBuffer(new String[] {"test"}, "Tests\\testFile.txt");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),fb1);
         Textr test1 = new Textr("\n", fbv1);
         test1.initViewPositions();
         test1.updateSize(20, 40);
-        File f1 = new File("testFile.txt");
+        File f1 = new File("Tests\\testFile.txt");
 
         FileBuffer focus = ((FileBufferView)test1.getFocusedView()).getBuffer();
         assertFalse(focus.getDirty());
@@ -270,6 +270,30 @@ public class TextrTest {
         assertEquals(gameView.getWidth(), 30);
         snake = gameView.getGame().getSnake();
         assertEquals(snake.getHead(), new Point(19,14));
+    }
+
+    @Test
+    void testSnake(){
+        GameView gv1 = new GameView(20, 30, new Point(1,1));
+        Textr test1 = new Textr("\n", gv1);
+        test1.initViewPositions();
+        //test updateSize
+        Game g1 = gv1.getGame();
+        Snake s1 = g1.getSnake();
+        assertEquals(s1.getHead(), new Point(9, 14));
+        test1.updateSize(10, 20);
+        assertEquals(((GameView)test1.getLayout()).getGame().getGrid().length, 9);
+        assertEquals(((GameView)test1.getLayout()).getGame().getGrid()[0].length, 19);
+        s1 = ((GameView)test1.getLayout()).getGame().getSnake();
+        assertEquals(s1.getHead(), new Point(9, 14));
+
+        test1.updateSize(6,20);
+        s1 = ((GameView)test1.getLayout()).getGame().getSnake();
+        assertEquals(s1.getHead(), new Point(3, 10));
+
+        test1.updateSize(6, 8);
+        s1 = ((GameView)test1.getLayout()).getGame().getSnake();
+        assertEquals(s1.getHead(), new Point(3, 4));
     }
 
     @Test
