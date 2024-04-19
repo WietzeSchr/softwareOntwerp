@@ -17,12 +17,17 @@ public abstract class Layout {
 
     /** 
      * This constructor creates a new Layout with the given height, width and leftUpperCorner
-     * @post getHeigth() == height
-     * @post getWidth() == width
-     * @post getParent() == null
-     * @post getLeftUpperCorner() == leftUpperCorner
+     * @pre  | heigth > 0
+     * @pre  | width > 0
+     * @post | getHeigth() == height
+     * @post | getWidth() == width
+     * @post | getParent() == null
+     * @post | getLeftUpperCorner() == leftUpperCorner
      */
     public Layout(int height, int width, Point leftUpperCorner) {
+        if (height < 1 || width < 1) {
+            throw new RuntimeException("Illegal layout size");
+        }
         this.box = new Box(height, width, leftUpperCorner);
         this.parent = null;
     }
@@ -34,19 +39,22 @@ public abstract class Layout {
         return box;
     }
 
-     /** 
-     * This method sets the height of the layout to the given parameter newHeight
-     * @param newHeight this is the new height of the layout
-     * @post getHeigth() == newHeight
-     * @return: void
+    /**
+     * This method sets the heigth of the layout to the given parameter
+     * @pre  | newHeigth > 0
+     * @post | getHeigth() == newHeigth
+     * @param newHeight | The newHeigth of the layout
      */
     public void setHeigth(int newHeight) {
+        if (newHeight < 1) {
+            throw new RuntimeException("illegal layout Heigth");
+        }
         getBox().setHeight(newHeight);
     }
 
     /** 
      * This method returns the height of the layout
-     * @return: int, the height of the layout
+     * @return  | int, the height of the layout
      */
     public int getHeigth() {
         return getBox().getHeight();
@@ -54,16 +62,20 @@ public abstract class Layout {
 
     /** 
      * This method sets the width of the layout to the given parameter newWidth
-     * @post getWidth() == newWidth
-     * @return: void
+     * @pre  | newWidth > 0
+     * @post | getWidth() == newWidth
+     * @return  | void
      */
     public void setWidth(int newWidth) {
+        if (newWidth < 1) {
+            throw new RuntimeException("illegal layout width");
+        }
         getBox().setWidth(newWidth);
     }
 
     /** 
      * This method returns the width of the layout
-     * @return: int, the width of the layout
+     * @return  | int, the width of the layout
      */
     public int getWidth() {
         return getBox().getWidth();
@@ -71,8 +83,8 @@ public abstract class Layout {
 
     /** 
      * This method sets the parent of the layout to the given parameter newParent
-     * @post getParent() == newParent
-     * @return: void
+     * @post    | getParent() == newParent
+     * @return  | void
      */
     public void setParent(CompositeLayout newParent) {
         this.parent = newParent;
@@ -80,7 +92,7 @@ public abstract class Layout {
 
     /** 
      * This method returns the parent of the layout
-     * @return: CompositeLayout, the parent of the layout
+     * @return  | CompositeLayout, the parent of the layout
      */
     public CompositeLayout getParent() {
         return parent;
@@ -88,8 +100,8 @@ public abstract class Layout {
 
     /** 
      * This method sets the leftUpperCorner of the layout to the given parameter newLeftUpperCorner
-     * @post getLeftUpperCorner() == newLeftUpperCorner
-     * @return: void
+     * @post    | getLeftUpperCorner() == newLeftUpperCorner
+     * @return  |void
      */
     public void setLeftUpperCorner(Point newLeftUpperCorner) {
         getBox().setLeftUpperPoint(newLeftUpperCorner);
@@ -97,16 +109,24 @@ public abstract class Layout {
 
     /** 
      * This method returns the leftUpperCorner of the layout
-     * @return: Point, the leftUpperCorner of the layout
+     * @return  | Point, the leftUpperCorner of the layout
      */
     public Point getLeftUpperCorner() {
         return getBox().getLeftUpperPoint();
     }
 
+    /**
+     * This method returns the subLayouts of the layout. Returns itself when it has no subLayouts
+     * @return  | Layout[], the subLayouts of the layout
+     */
     public Layout[] getSubLayouts() {
         return new Layout[] {this};
     }
 
+    /**
+     * this method return the amount of subLayouts of the layout. Returns 1 if it has no subLayouts
+     * @return  | int, The amount of subLayouts
+     */
     public int countSubLayouts() {
         return 1;
     }
@@ -116,11 +136,11 @@ public abstract class Layout {
      * ******************/
 
     /** 
-     * This method moves the insertion point of the focused view in the given direction if the focussed view is a fileBufferView
-     * or moves the snake in the given direction if the focussed view is a gameView
-     * @param dir this is the direction in which the insertion point or the snake should move
-     * @param focus this is the index of the focussed view
-     * @return: void
+     * This method moves the insertion point of the focused view in the given direction if the focussed view is
+     * a fileBufferView or (tries to) move the snake in the given direction if the focussed view is a gameView
+     * @param dir   | The direction in which the insertion point or the snake should move
+     * @param focus | The index of the focussed view
+     * @return  | void
      */	
     public void arrowPressed(Direction dir, int focus) {
         View focussed = getFocusedView(focus);
@@ -128,9 +148,9 @@ public abstract class Layout {
     }
 
     /**
-     * This method returns the next focussed view
-     * @param focus this is the index of the focussed view
-     * @return: int, the index of the next focussed view
+     * This method returns the position of the next focused view
+     * @param focus | The index of the current focussed view
+     * @return      | int, the index of the next focussed view
      */
     public int getNextFocus(int focus) {
         if (focus == countViews()) {
@@ -140,9 +160,9 @@ public abstract class Layout {
     }
 
     /**
-     * This method returns the previous focussed view
-     * @param focus this is the index of the focussed view
-     * @return: int, the index of the previous focussed view
+     * This method returns position of the previous view
+     * @param focus | The index of the current focussed view
+     * @return      | int, the index of the previous focussed view
      */
     public int getPreviousFocus(int focus) {
         if (focus == 1) {
@@ -156,9 +176,11 @@ public abstract class Layout {
      ************************/
 
     /**
-     * This method adds a new line break at the insertion point of the focused view
-     * @param focus this is the index of the focussed view
-     * @return: void
+     * If the focused view is a FileBufferView, this method inserts a new line break at the FileBufferViews insertion
+     * point and possible update all views on the same buffer. If the focused view is a gameView this method starts
+     * a new game, if the game was game over
+     * @param focus | The index of the focussed view
+     * @return      | void
      */
     public void addNewLineBreak(int focus) {
         View focussed = getFocusedView(focus);
@@ -170,10 +192,11 @@ public abstract class Layout {
     }
 
     /** 
-     * This method adds a new character at the insertion point of the focused view
-     * @param c this is the character that should be added
-     * @param focus this is the index of the focussed view
-     * @return: void
+     * This method adds a new character at the insertion point of the focused view if it is a FileBufferView. If the
+     * focused view is a GameView, nothing happens
+     * @param c     | The character that should be added
+     * @param focus | The index of the focussed view
+     * @return      | void
      */
     public void addNewChar(char c, int focus) {
         View focussed = getFocusedView(focus);
@@ -185,9 +208,10 @@ public abstract class Layout {
     }
 
     /** 
-     * This method deletes the character at the insertion point of the focused view
-     * @param focus this is the index of the focussed view
-     * @return: void
+     * This method deletes the character at the insertion point of the focused view if it is a FileBufferView. If the
+     * focused view is a GameView, nothing happens
+     * @param focus | The index of the focussed view
+     * @return      | void
      */
     public void deleteChar(int focus) {
         View focussed = getFocusedView(focus);
@@ -202,10 +226,12 @@ public abstract class Layout {
      *   CLOSE VIEW     *
      * ******************/
 
-     /** 
-     * This method closes the focused view and updates the subLayouts
-     * @param focus this is the index of the focussed view
-     * @return: Layout, the new layout after closing the focused view
+    /**
+     * This method closes the focused view. If the focused view is a FileBufferView with a dirty buffer, the user
+     * should press y to discard changes and close the buffer or n to cancel the request. If the user doesn't press
+     * a key in 3 seconds, the request is cancelled automatically. This is done for testing purposes
+     * @param focus | The index of the focused view
+     * @return      | Layout, the new layout
      */
     public Layout closeView(int focus) throws IOException {
         int heigth = getHeigth();
@@ -221,8 +247,8 @@ public abstract class Layout {
 
     /** 
      * This method returns the new focus after closing the focussed view
-     * @param focus this is the index of the focussed view
-     * @return: int, the new index of the focussed view
+     * @param focus | The index of the focussed view
+     * @return      | int, The new index of the focussed view
      */
     public int getNewFocus(int focus) {
         if (focus > countViews()) {
@@ -242,10 +268,11 @@ public abstract class Layout {
      * ******************/
 
     /** 
-     * This method saves the buffer of the focused view
-     * @param focus this is the index of the focussed view
-     * @param newLine this is the new line that should be added to the buffer
-     * @return: void
+     * This method saves the buffer of the focused view if the focused view is a FileBufferView.
+     * If the focused view is a GameView, nothing happens
+     * @param focus   | The index of the focussed view
+     * @param newLine | The new line that should be added to the buffer
+     * @return        | void
      */
     public void saveBuffer(int focus, String newLine) throws IOException {
         View focussed = getFocusedView(focus);
@@ -261,54 +288,83 @@ public abstract class Layout {
      * *****************/
 
     /**
-     * This method directs how it should be rotated based on the focus and the direction
-     * @param dir the direction in which the view should be rotated
-     * @param focus the index of the focused view
-     * @return: Layout, the new layout after rotating the view
+     * Checks the layout to call the appropriate method for rotating the focused view with the next focused view
+     * If the layout is only one view, nothing happens
+     * @pre | dir == 1 || dir == -1
+     * @param dir   | 1: counterclockwise, -1: clockwise
+     * @param focus | The index of the focused view
+     * @return      |Layout, the new layout after rotating the view
      */
     protected abstract Layout rotateView(int dir, int focus);
 
     /**
-     * 
-     * @param dir the direction in which the view should be rotated
-     * @param focus the index of the focused view
-     * @param nextFocus the index of the next focused view
-     * @param parent the parent of the focused view
-     * @return: Layout, the new layout after rotating the siblings
+     * This method rotates the layout in the case that the view and the next view are siblings and their parent
+     * contains more than 2 subLayouts
+     * @pre | getFocusedView(focus).getParent() == parent
+     * @pre | getFocusedView(nextFocus).getParent() == parent
+     * @pre | parent.countSubLayouts() > 2
+     * @pre | dir == 1 || dir == -1
+     * @param dir       | 1: counterclockwise, -1: clockwise
+     * @param focus     | The index of the focused view
+     * @param nextFocus | The index of the next focused view
+     * @param parent    | The parent of the focused view
+     * @return  | Layout, the new layout after rotating the siblings
+     * Visible for testing
      */
     protected abstract Layout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent);
 
     /**
-     * 
-     * @param dir the direction in which the view should be rotated
-     * @param focus the index of the focused view
-     * @param nextFocus the index of the next focused view
-     * @param parent the parent of the focused view
-     * @return Layout, the new layout after rotating the siblings
+     * This method rotates the layout in the case that the view and the next view are siblings and their parent
+     * contains 2 subLayouts
+     * @pre | getFocusedView(focus).getParent() == parent
+     * @pre | getFocusedView(nextFocus).getParent() == parent
+     * @pre | parent.countSubLayouts() == 2
+     * @pre | dir == 1 || dir == -1
+     * @param dir       | 1: counterclockwise, -1: clockwise
+     * @param focus     | The index of the focused view
+     * @param nextFocus | The index of the next focused view
+     * @param parent    | The parent of the focused view
+     * @return   | Layout, the new layout after rotating the siblings
+     * Visible for testing
      */
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
-
-     /**
-     * @param dir the direction in which the view should be rotated
-     * @param focus the index of the focused view
-     * @param nextView the next focused view
-     * @param parent1 the parent of the focused view
-     * @param parent2 the parent of the next focused view
-     * @return Layout, the new layout after rotating the non siblings
-     */
+  
+    /**
+     * This parent rotates the layout in the case that the view and the next view aren't siblings and the parent
+     * of the next view has two subLayouts
+     * @pre | getFocusedView(focus).getParent() == parent1
+     * @pre | getFocusedView(nextFocus).getParent() == parent2
+     * @pre | parent2.countSubLayouts() == 2
+     * @pre | dir == 1 || dir == -1
+     * @param dir      | 1: counterclockwise, -1: clockwise
+     * @param focus    | The index of the focused view
+     * @param nextView | The next view
+     * @param parent1  | The parent of the focused view
+     * @param parent2  | The parent of the next view
+     * @return  | Layout, The new layout after rotating the view
     protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     /**
-     * 
-     * @param dir the direction in which the view should be rotated
-     * @param focus the index of the focused view 
-     * @param nextView the next focused view
-     * @param parent1 the parent of the focused view
-     * @param parent2 the parent of the next focused view
-     * @return Layout, the new layout after rotating the non siblings
+     * This parent rotates the layout in the case that the view and the next view aren't siblings and the parent
+     * of the next view has more than two subLayouts
+     * @pre | getFocusedView(focus).getParent() == parent1
+     * @pre | getFocusedView(nextFocus).getParent() == parent2
+     * @pre | parent2.countSubLayouts() > 2
+     * @pre | dir == 1 || dir == -1
+     * @param dir      | 1: counterclockwise, -1: clockwise
+     * @param focus    | The index of the focused view
+     * @param nextView | The next view
+     * @param parent1  | The parent of the focused view
+     * @param parent2  | The parent of the next view
+     * @return  | Layout, The new layout after rotating the view
      */
     protected abstract Layout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
+    /**
+     * This method flips the layout. If the layout is a view, it does nothing. If the layout is a CompositeLayout
+     * it return a new CompositeLayout from the other subClass with the same subLayouts
+     * @return  | Layout, the flipped layout
+     */
     protected abstract Layout flip();
 
     /* ******************
@@ -317,8 +373,9 @@ public abstract class Layout {
 
     /**
      * This method checks if the last edit of the focused view can be undone and if so, undoes it and updates the views
-     * @param focus this is the index of the focussed view
-     * @return: void
+     * If The focused view is a gameView nothing happens
+     * @param focus | The index of the focussed view
+     * @return      | void
      */
     public void undo(int focus) {
         View focussed = getFocusedView(focus);
@@ -329,8 +386,9 @@ public abstract class Layout {
         }
     }
 
-  /**
+    /**
      * This method checks if the last edit of the focused view can be redone and if so, redoes it and updates the views
+     * If the focused view is a GameView, nothing happens
      * @param focus this is the index of the focussed view
      * @return: void
      */
@@ -349,10 +407,13 @@ public abstract class Layout {
 
     /** 
      * This method opens the given views in the layout, updates the size of the layout and initializes the view positions
-     * @param focus this is the index of the focussed view
-     * @param parent this is the parent of the focussed view
-     * @param views this is the array of views that should be opened
-     * @return: Layout, the new layout after opening the views
+     * If parent is a SideBySideLayout the new views are inserted in the same parent, next to the focused view. If the
+     * parent is a StackedLayout the focused view is replaced by a SydeBySideLayout with the focused view and the
+     * given views as new SubLayouts
+     * @param focus  | This is the index of the focussed view
+     * @param parent | This is the parent of the focussed view
+     * @param views  | The array of views that should be opened
+     * @return  | Layout, the new layout after opening the views
      */
     public Layout openViews(int focus, CompositeLayout parent, View[] views) {
         if (views.length == 0) return this;
@@ -365,8 +426,8 @@ public abstract class Layout {
 
     /** 
      * This method opens a new gameview in the layout
-     * @param focus this is the index of the focussed view
-     * @return: Layout, the new layout after opening the gameView
+     * @param focus | this is the index of the focussed view
+     * @return  | Layout, the new layout after opening the gameView
      */
       public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
@@ -381,9 +442,10 @@ public abstract class Layout {
   
     /** 
      * This method inserts the given views in the layout
-     * @param focus this is the index of the focussed view
-     * @param parent this is the parent of the focussed view
-     * @param views this is the array of views that should be inserted
+     * @pre | views.length > 0
+     * @param focus  | The index of the focussed view
+     * @param parent | The parent of the focussed view
+     * @param views  | The array of views that should be inserted
      * @return: Layout, the new layout after inserting the views
      */
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
@@ -395,9 +457,9 @@ public abstract class Layout {
      * *******************/
   
     /**
-     * This method duplicates the focused view
-     * @param focus this is the index of the focussed view
-     * @return Layout, the new layout after duplicating the view
+     * This method duplicates the focused view if the focused view is a FileBufferView
+     * @param focus | this is the index of the focussed view
+     * @return      | Layout, the new layout after duplicating the view
      */
     public Layout newBufferView(int focus) {
         View focussed = getFocusedView(focus);
@@ -407,12 +469,12 @@ public abstract class Layout {
 
     /**
      * This method updates the views of the given buffer
-     * @param focus this is the index of the focussed view
-     * @param insert this is the insertion point of the focused view
-     * @param c this is the character that should be added
-     * @param isDeleted this is a boolean that indicates if the character should be deleted
-     * @param buffer this is the buffer of the focused view
-     * @return void
+     * @param focus     | The index of the focussed view
+     * @param insert    | The insertion point of the focused view
+     * @param c         | The character that was deleted or added
+     * @param isDeleted | true: character was deleted, false: character was inserted
+     * @param buffer    | The buffer of the focused view
+     * @return  | void
      */
     public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
 
@@ -424,8 +486,8 @@ public abstract class Layout {
 
     /**
      * This method runs the snake in the focused view
-     * @param focus this is the index of the focussed view
-     * @return void
+     * @param focus | The index of the focussed view
+     * @return      | void
      */
     public void tick(int focus) throws IOException {
         getFocusedView(focus).tick();
@@ -437,46 +499,53 @@ public abstract class Layout {
 
     /** 
      * This method shows the layout of the subLayouts
-     * @return: void
+     * @return  | void
      */
     public abstract void show();
 
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
-    
-     /** 
-     * This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
-     * @return: int, the viewposition at the given index i
+
+    /**
+     * This method initializes the view positions, assigning all views a position from i to i + countViews() - 1
+     * layout. The views are ordered depth first
+     * @return  | void
      */
     public abstract void initViewPosition(int i);
 
     /** 
-     * This method returns the focused view at the given index i
-     * @param i this is the index of the view that should be returned
-     * @return: FileBufferView
+     * This method returns the view with position i
+     * @param i  | The index of the view that should be returned
+     * @return   | FileBufferView
      */	
     public abstract View getFocusedView(int i);
 
     /** 
      * This method returns the number of views
-     * @return: int, the number of views
+     * @return  | int, the number of views
      */
     public abstract int countViews();
 
     /**
-     *  This method returns the number of subLayouts
-     * @param focus this is the index of the focussed view
-     * @return: long, the NextDeadline of the focused view
+     * This method returns the next deadline of the focused view
+     * @param focus | The index of the focussed view
+     * @return      | long, The NextDeadline of the focused view
      */
     public long getNextDeadline(int focus) {
          return getFocusedView(focus).getNextDeadline();
     }
 
-    /** 
-     * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     * @param heigth this is the new height of the layout
-     * @return: void
+    /**
+     * This method updates the size of the layout, possibly it's subLayouts
+     * @pre  | heigth > 0
+     * @pre  | width > 0
+     * @post | getHeigth() = heigth
+     * @post | getWidth() = width
+     * @post | getLeftUpperCorner() = leftUpperCorner
+     * @param heigth    | The new heigth of the layout
+     * @param width     | The new width of the layout
+     * @param leftUpperCorner | The new left upper corner of the layout
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 

@@ -65,10 +65,12 @@ public class Textr
      *  CONSTRUCTORS    *
      * ******************/
 
-    /** 
+    /**
      * This constructor creates a new Textr with the given newLine and filepaths
-     * @post : getNewLine() == newLine
-     * @post : getFocus() == 1
+     * @pre  | filePaths.length > 0
+     * @pre  | newLine == "\n" || newLine == "\r\n"
+     * @post | getNewLine() == newLine
+     * @post | getFocus() == 1
      */
     public Textr(String newLine, String[] filepaths) throws IOException {
         Point size;
@@ -96,8 +98,8 @@ public class Textr
     }
 
     /** 
-     * This constructor creates a new Textr object that can be used for testing.
-     * @pre | newLine == "\n" || newLine == "\r\n"
+     * This constructor creates a new Textr object used for testing.
+     * @pre  | newLine == "\n" || newLine == "\r\n"
      * @post | getLayout() = layout
      * @post | getNewLine() = newLine
      */
@@ -114,8 +116,8 @@ public class Textr
 
     /** 
      * This method sets the layout to newLayout
-     * @return: void
-     * @post : getLayout() == newLayout
+     * @post     | getLayout() == newLayout
+     * @return   |void
      */
     private void setLayout(Layout newLayout) {
         this.layout = newLayout;
@@ -123,7 +125,7 @@ public class Textr
 
     /** 
      * This method returns the layout
-     * @return: Layout, the layout of Textr
+     * @return   | Layout, the layout of Textr
      */
     protected Layout getLayout() {
         return layout;
@@ -131,7 +133,7 @@ public class Textr
 
     /** 
      * This method returns the newLine
-     * @return: String, the newLine
+     * @return  | String, the newLine
      */
     private String getNewLine() {
         return newLine;
@@ -139,8 +141,7 @@ public class Textr
 
     /** 
      * This method sets the focus to newFocus
-     * @return: void
-     * @post : getFocus() == newFocus
+     * @post     | getFocus() == newFocus
      */
     private void setFocus(int newFocus) {
         this.focus = newFocus;
@@ -148,7 +149,7 @@ public class Textr
 
     /** 
      * This method returns the focussed view
-     * @return: int, the index of the focussed view
+     * @return  | int, the index of the focussed view
      * Visible for testing
      */
     int getFocus() {
@@ -160,8 +161,9 @@ public class Textr
      * **************/
 
     /** 
-     * This method runs the main loop of the program and checks for the input and handles it
-     * @return: void
+     * This method runs the main loop of the program, reading bytes from user input and calling the appropriate methods
+     * for handling user input. The loop stops when all files are closed (layout == null)
+     * @return  | void
      */
     private void run() throws IOException {
         while (getLayout() != null) {
@@ -246,7 +248,7 @@ public class Textr
 
     /** 
      * This method returns the focussed view
-     * @return: FileBufferView
+     * @return   | FileBufferView
      * Visible for testing
      */
     View getFocusedView() {
@@ -258,9 +260,8 @@ public class Textr
      * ******************/
 
     /** 
-     * This method changes the focus to the next view
-     * It also updates the cursor's position and optionally the scroll states if needed
-     * @return: void
+     * This method changes focus to the next view and
+     * moves the cursor's position to the new focus' insertion point
      * Visible for testing
      */
     void changeFocusNext() {
@@ -268,9 +269,8 @@ public class Textr
     }
 
     /** 
-     * This method changes the focus to the previous view
-     *  It also updates the cursor's position and optionally the scroll states if needed
-     * @return: void
+     * This method changes the focus to the previous view and
+     * moves the cursor's position to the new focus' insertion point
      * Visible for testing
      */
     void changeFocusPrevious() {
@@ -278,9 +278,11 @@ public class Textr
     }
 
     /** 
-     * This method updates the cursor's position and optionally the scroll states if needed when a arrowkey is pressed
-     * @param dir this is the direction of the arrowkey that is pressed indicated by an enum
-     * @return: void
+     * This method handles arrow key presses. If the focused view is a FileBufferView, it's insertion point
+     * is moved is the given direction. Else if it is a gameView, the game (tries) to move the snake in the given
+     * direction changing to the next game state
+     * @param dir | the direction of the arrowkey that is pressed indicated by an enum
+     * @return    | void
      */
     void arrowPressed(Direction dir) {
         getLayout().arrowPressed(dir, getFocus());
@@ -291,9 +293,10 @@ public class Textr
      ************************/
 
     /** 
-     * This method adds a new line break to the focused file buffer at the insertion point. It also updates the
-     * cursor's position and optionally the scroll states if needed.
-     * @return: void
+     * This method handles Enter key presses. If the focused view is a FileBufferView, a new line break
+     * is inserted at the insertion point. If the focused view is a GameView, this starts a new game if
+     * the game was over
+     * @return    | void
      * Visible for testing
      */
     void addNewLineBreak() {
@@ -301,10 +304,10 @@ public class Textr
     }
 
     /** 
-     * This method adds char c to the focused file buffer at the insertion point
-     * It also changes the cursor's position and optionally changes the scroll states and bars if needed
-     * @param c this is the char that will be added to the focused filebufferview
-     * @return: void
+     * This method handles character key presses. If the focused view is a FileBufferView, character is added
+     * at its insertion point. If the focused view is a GameView, nothing happens
+     * @param c  | The char that was pressed
+     * @return   | void
      * Visible for testing
      */
     protected void addNewChar(char c) {
@@ -312,9 +315,9 @@ public class Textr
     }
 
     /** 
-     * This method deletes the character at the insertion point in the focused file buffer
-     *  It also updates the cursor's position and optionally the scroll states if needed
-     * @return: void
+     * This method handles backspace key presses. If the focused view is a FileBufferView, a character or line break
+     * is deleted at its insertion point. If the focused view is a GameView, nothing happens
+     * @return   | void
      * Visible for testing
      */
     void deleteChar() {
@@ -326,9 +329,12 @@ public class Textr
      * ******************/
 
     /** 
-     * This method closes the focused file buffer and removes it from the layout
-     * It also updates the layout and the cursor's position and optionally the scroll states if needed
-     * @return: void
+     * This method closes the focused view. If the focused View is a FileBufferView and the buffer is dirty, the user
+     * can press y to discard changes and close the buffer or press n to cancel. If the user doesn't respond in time the
+     * request is cancelled automatically.
+     * Closing a view results in a resize of the layout and views, possibly changing scrollstates and shown content
+     * for FileBufferViews. Resizing a game could result kill the snake if no possible fit is found
+     * @return:  | void
      */
     void closeView() throws IOException {
         setLayout(getLayout().closeView(getFocus()));
@@ -342,9 +348,9 @@ public class Textr
      * ******************/
 
     /**
-     *  This method saves the focused file buffer
-     *  It shows the updated view without dirty sign
-     * @return: void
+     * This method saves the focused file buffer and clears the edits in all FileBufferViews that have the same buffer
+     * This shows the views now not dirty
+     * @return   | void
      */
     void saveBuffer() throws IOException {
         getLayout().saveBuffer(getFocus(), getNewLine());
@@ -355,9 +361,12 @@ public class Textr
      * *****************/
 
     /** 
-     * This method rotates the layout, it also updates the layout, the size and the cursor's position and optionally the scroll states if needed
-     * @param dir this is an integer that gives the direction in which the view will be rotated
-     * @return: void
+     * This method rotates the focused view with the next view counterclockwise or clockwise. If there is only one view,
+     * nothing happens. Else this changes the layout and the sizes of the Views, possibly changing scrollStates,
+     * shown content, or ending the game if no possible fit for the snake is found.
+     * @pre       | dir == 1 || dir == -1
+     * @param dir | 1: counterclockwise, -1: clockwise
+     * @return    | void
      */
     void rotateView(int dir) {
         setLayout(getLayout().rotateView(dir, getFocus()));
@@ -366,12 +375,15 @@ public class Textr
     /* ******************
      *  DUPLICATE VIEW  *
      * ******************/
+
     /**
-     * This method duplicates the focused view and adds it to the layout
-     * @return: void
+     * If the focused view is a FileBufferView, a new FileBufferView is inserted next to the focused view with
+     * the same FileBuffer as the focused view. This changes the layout and the sizes of the Views, possibly
+     * changing scrollStates, shown content, or ending the game if no possible fit for the snake is found.
+     * If the focused view is a GameView nothing happens.
+     * @return  | void
      * Visible for testing
      */
-
     void duplicateView() {
         setLayout(getLayout().newBufferView(getFocus()));
     }
@@ -381,11 +393,12 @@ public class Textr
      * ******************/
 
     /**
-     * This method opens a new game view and adds it to the layout
-     * @return: void
+     * This method opens a new GameView next to the focused view. This changes the layout and the sizes of the Views,
+     * possibly changing scrollStates, shown content, or ending the game if no possible fit for the snake is found.
+     * If the focused view is a GameView nothing happens.
+     * @return  | void
      * Visible for testing
      */
-
     void openGameView() {
         setLayout(getLayout().newGame(getFocus()));
     }
@@ -395,17 +408,20 @@ public class Textr
      * ******************/
 
     /** 
-     * This method undoes the last action in the focused filebufferview
+     * This method (tries) to undo the last edit done by the focused view if it is a FileBufferView, possibly
+     * changing scrollStates on all FileBufferView with the same FileBuffer as the focused view. If this is a
+     * GameView nothing happens
      * @return: void
      * Visible for testing
      */
-
     void undo() {
         getLayout().undo(getFocus());
     }
 
-    /** 
-     * This method redoes the last action in the focused filebufferview
+    /**
+     * This method (tries) to redo the last undo done by the focused view if it is a FileBufferView, possibly
+     * changing scrollStates on all FileBufferView with the same FileBuffer as the focused view. If this is a
+     * GameView nothing happens
      * @return: void
      * Visible for testing
      */
@@ -418,7 +434,8 @@ public class Textr
      * ****************/
     
     /** 
-     * This method ticks the view, it doesn't do anything if the focussedview is a filebufferview, but it does if it's a gameview
+     * This method ticks the view. If the focused view is a FileBufferView nothing happens. If the focused view is
+     * a GameView the game changes to the next game state
      * @return: void
      * Visible for testing
      */
@@ -431,7 +448,7 @@ public class Textr
      * ******************/
 
     /** 
-     * This method ensures that the layout and the cursor is well shown on the terminal
+     * This method shows the layout on the Terminal
      * @return: void
      */
     void show() {
@@ -445,7 +462,7 @@ public class Textr
     }
 
     /** 
-     * This method shows the cursor and moves the cursor's position
+     * This method shows the cursor at the focused view's insertion point
      * @return: void
      */
     private void showCursor() {
@@ -459,24 +476,25 @@ public class Textr
      * ******************/
 
     /** 
-     * This method sets the focus to the next focus and returns the next focus
-     * @return: int, the index of next focus
+     * This method gives the next focus
+     * @return  | int, the index of next focus
      */
     private int nextFocus() {
         return getLayout().getNextFocus(getFocus());
     }
 
     /** 
-     * This method sets the focus to the previous focus and returns the previous focus
-     * @return: int, the index of previous focus
+     * This method gives the previous focus
+     * @return  | int, the index of previous focus
      */
     private int previousFocus() {
         return getLayout().getPreviousFocus(getFocus());
     }
 
     /** 
-     * This method initializes the view positions
-     * @return: void 
+     * This method initializes the view positions, assigning all views a position from 1 to the amount of view in the
+     * layout. The views are ordered depth first
+     * @return  | void
      * Visible for testing
      */
     void initViewPositions() {
@@ -485,9 +503,9 @@ public class Textr
 
     /** 
      * This method updates the size of the layout to the given height and width and sets the leftUpperCorner to (1,1)
-     * @param heigth this is the new height of the layout
-     * @param width this is the new width of the layout
-     * @return: void
+     * @param heigth | The new height of the layout
+     * @param width  | The new width of the layout
+     * @return       |void
      * Visible for testing
      */
     void updateSize(int heigth, int width) {
@@ -495,8 +513,10 @@ public class Textr
     }
 
     /** 
-     * This method returns the next deadline
-     * @return: long, the next deadline
+     * This method returns the next deadline. If the focused view is a FileBufferView the nextDeadline is the current
+     * time. If the focused view is a GameView the nextDeadline is the time of the last tick + the time in between ticks
+     * of the Game
+     * @return   | long, the next deadline
      * Visible for testing
      */
     long getNextDeadline() {
@@ -505,7 +525,7 @@ public class Textr
 
     /** 
      * This method returns the size of the terminalHandler
-     * @return: Point, the size of the terminalHandler
+     * @return  | Point, the size of the terminalHandler
      */
     private Point getSize() throws IOException {
         terminalHandler.reportTextAreaSize();
