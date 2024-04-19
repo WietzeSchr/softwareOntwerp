@@ -288,7 +288,7 @@ public abstract class Layout {
      */
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
-     * 
+     /**
      * @param dir the direction in which the view should be rotated
      * @param focus the index of the focused view
      * @param nextView the next focused view
@@ -371,7 +371,7 @@ public abstract class Layout {
       public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
         return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(focussed.getHeigth(), focussed.getWidth() / 2, focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
+                new View[] {new GameView(focussed.getHeigth(), calcGameWidth(focus), focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
     }
 
 
@@ -387,17 +387,6 @@ public abstract class Layout {
      * @return: Layout, the new layout after inserting the views
      */
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
-
-    /** 
-     * This method opens a new game view in the layout
-     * @param focus this is the index of the focussed view
-     * @return: Layout, the new layout after opening the gameView
-     */
-    public Layout newGame(int focus) {
-        View focussed = getFocusedView(focus);
-        return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(focussed.getHeigth(), calcGameWidth(focus), focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
-    }
 
     abstract int calcGameWidth(int focus);
 
