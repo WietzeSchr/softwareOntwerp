@@ -67,6 +67,8 @@ public class Textr
 
     /** 
      * This constructor creates a new Textr with the given newLine and filepaths
+     * @param newLine this is the newLine that will be used in the Textr
+     * @param filepaths this is the array of filepaths that will be opened in the Textr
      * @post : getNewLine() == newLine
      * @post : getFocus() == 1
      */
@@ -97,6 +99,8 @@ public class Textr
 
     /** 
      * This constructor creates a new Textr object that can be used for testing.
+     * @param newLine this is the newLine that will be used in the Textr
+     * @param layout this is the layout that will be used in the Textr
      * @pre | newLine == "\n" || newLine == "\r\n"
      * @post | getLayout() = layout
      * @post | getNewLine() = newLine
@@ -139,6 +143,7 @@ public class Textr
 
     /** 
      * This method sets the focus to newFocus
+     * @param newFocus this is the new focus that will be set
      * @return: void
      * @post : getFocus() == newFocus
      */
@@ -246,7 +251,7 @@ public class Textr
 
     /** 
      * This method returns the focussed view
-     * @return: FileBufferView
+     * @return: View
      * Visible for testing
      */
     View getFocusedView() {
@@ -269,7 +274,7 @@ public class Textr
 
     /** 
      * This method changes the focus to the previous view
-     *  It also updates the cursor's position and optionally the scroll states if needed
+     * It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      * Visible for testing
      */
@@ -281,6 +286,7 @@ public class Textr
      * This method updates the cursor's position and optionally the scroll states if needed when a arrowkey is pressed
      * @param dir this is the direction of the arrowkey that is pressed indicated by an enum
      * @return: void
+     * Visible for testing
      */
     void arrowPressed(Direction dir) {
         getLayout().arrowPressed(dir, getFocus());
@@ -313,7 +319,7 @@ public class Textr
 
     /** 
      * This method deletes the character at the insertion point in the focused file buffer
-     *  It also updates the cursor's position and optionally the scroll states if needed
+     * It also updates the cursor's position and optionally the scroll states if needed
      * @return: void
      * Visible for testing
      */
@@ -329,6 +335,7 @@ public class Textr
      * This method closes the focused file buffer and removes it from the layout
      * It also updates the layout and the cursor's position and optionally the scroll states if needed
      * @return: void
+     * Visible for testing
      */
     void closeView() throws IOException {
         setLayout(getLayout().closeView(getFocus()));
@@ -345,6 +352,7 @@ public class Textr
      *  This method saves the focused file buffer
      *  It shows the updated view without dirty sign
      * @return: void
+     * Visible for testing
      */
     void saveBuffer() throws IOException {
         getLayout().saveBuffer(getFocus(), getNewLine());
@@ -358,6 +366,7 @@ public class Textr
      * This method rotates the layout, it also updates the layout, the size and the cursor's position and optionally the scroll states if needed
      * @param dir this is an integer that gives the direction in which the view will be rotated
      * @return: void
+     * Visible for testing
      */
     void rotateView(int dir) {
         setLayout(getLayout().rotateView(dir, getFocus()));
