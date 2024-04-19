@@ -14,23 +14,48 @@ public class FileBufferView extends View
 
         private Edit previous;
 
+        /**
+         * This constructor creates a new Edit object
+         * @post getNext() == this
+         * @post getPrevious() == this
+         */
         public Edit() {
             this.next = this;
             this.previous = this;
         }
 
+        /**
+         * This method returns the next Edit object
+         * @return: Edit
+         */
         public Edit getNext() {
             return next;
         }
 
+        /**
+         * This method sets the next Edit object
+         * @param newNext the new next Edit object
+         * @post getNext() == newNext
+         * @return: void
+         */
         public void setNext(Edit newNext) {
             this.next = newNext;
         }
 
+        /**
+         * This method returns the previous Edit object
+         * @return: Edit
+         */
         public Edit getPrevious() {
             return previous;
         }
 
+        /**
+         * This method sets the previous Edit object
+         * @param newPrevious the new previous Edit object
+         * @post getPrevious() == newPrevious
+         * @return: void
+         */
         public void setPrevious(Edit newPrevious) {
             this.previous = newPrevious;
         }
@@ -45,6 +70,9 @@ public class FileBufferView extends View
     /* ****************
      *   EMPTY EDIT   *
      * ****************/
+    /**
+     * This class represents an empty Edit object, so an Edit object when there are no changes
+     */
       class EmptyEdit extends Edit {
         public EmptyEdit() {
             super();
@@ -76,6 +104,16 @@ public class FileBufferView extends View
         private final Point insertionPoint;
 
         private final Point insertionPointAfter;
+
+        /**
+         * This constructor creates a new NonEmptyEdit object with the given parameters c, insert and insertAfter
+         * @param c the character that is changed
+         * @param insert the insertion point before the change
+         * @param insertAfter the insertion point after the change
+         * @post getChange() == c
+         * @post getInsertionPoint() == insert
+         * @post getInsertionPointAfter() == insertAfter
+         */
         public NonEmptyEdit(char c, Point insert, Point insertAfter) {
             super();
             this.change = c;
@@ -87,14 +125,26 @@ public class FileBufferView extends View
             getPrevious().setNext(this);
         }
 
+        /**
+         * This method returns the character that is changed
+         * @return: char
+         */
         public char getChange() {
             return change;
         }
 
+        /**
+         * This method returns the insertion point before the change
+         * @return: Point
+         */
         public Point getInsertionPoint() {
             return insertionPoint;
         }
 
+        /**
+         * This method returns the insertion point after the change
+         * @return: Point
+         */
         public Point getInsertionPointAfter() {
             return insertionPointAfter;
         }
@@ -109,16 +159,29 @@ public class FileBufferView extends View
      *   INSERTION EDIT  *
      * *******************/
     class Insertion extends NonEmptyEdit {
+
+        /**
+         * This constructor creates a new Insertion object with the given parameters c, insert and insertAfter
+         * when the change is a line break or adding a character
+         */
         public Insertion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
+        /**
+         * This method undoes the insertion and deletes the character at the insertion point or the line break
+         * @return: boolean, true if the undo was successful, false otherwise
+         */
         public boolean undo() {
             fileBuffer.deleteChar(getInsertionPointAfter());
             insertionPoint = getInsertionPoint();
             return true;
         }
 
+        /**
+         * This method redoes the insertion and adds the character at the insertion point or adds the line break back
+         * @return: boolean, true if the redo was successful, false otherwise
+         */
         public boolean redo() {
             if (getChange() == 13) {
                 fileBuffer.insertLineBreak(getInsertionPoint());
@@ -135,10 +198,18 @@ public class FileBufferView extends View
      *   DELETION EDIT   *
      * *******************/
     class Deletion extends NonEmptyEdit {
+        /**
+         * This constructor creates a new Deletion object with the given parameters c, insert and insertAfter
+         * when the change is deleting a line break or deleting a character
+         */
         public Deletion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
+        /**
+         * This method undoes the deletion and adds the character at the insertion point or adds the line break back
+         * @return: boolean, true if the undo was successful, false otherwise
+         */
         public boolean undo() {
             if (getChange() == 13) {
                 fileBuffer.insertLineBreak(getInsertionPointAfter());
@@ -150,6 +221,10 @@ public class FileBufferView extends View
             return true;
         }
 
+        /**
+         * This method redoes the deletion and deletes the character at the insertion point or the line break
+         * @return: boolean, true if the redo was successful, false otherwise
+         */
         public boolean redo() {
             fileBuffer.deleteChar(getInsertionPoint());
             insertionPoint = getInsertionPointAfter();
@@ -387,9 +462,10 @@ public class FileBufferView extends View
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    /** This method adds a new line break to the buffer
+    /** 
+     * This method adds a new line break to the buffer 
      * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: void
+     * @return: boolean
      */
     public boolean addNewLineBreak() {
         Point insert = getInsertionPoint();
@@ -403,9 +479,11 @@ public class FileBufferView extends View
         return true;
     }
 
-    /** This method adds a new character to the file
+    /**
+     *  This method adds a new character to the file
      *  It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: void
+     * @param c the character to add
+     * @return: boolean
      */
     public boolean addNewChar(char c) {
         Point insert = getInsertionPoint();
@@ -418,9 +496,10 @@ public class FileBufferView extends View
         return true;
     }
 
-    /** This method deletes the character before the insertionPoint.
+    /** 
+     * This method deletes the character before the insertionPoint.
      *  It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: void
+     * @return: boolean
      */
     public boolean deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
@@ -491,7 +570,9 @@ public class FileBufferView extends View
      *    SAVE BUFFER   *
      * ******************/
 
-    /** This method saves the buffer of the file and updates the scroll states
+    /** 
+     * This method saves the buffer of the file and updates the scroll states
+     * @param newLine the new line to add to the buffer
      * @return: void
      */
     @Override
@@ -508,6 +589,11 @@ public class FileBufferView extends View
      *   UNDO / REDO    *
      * ******************/
 
+    /**
+     * This method undoes the last edit and uses therefor the undo method of the lastEdit
+     * It also sets the lastEdit to the previous edit 
+     * @return: boolean, true if the undo was successful, false otherwise
+     */
     public boolean undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
         boolean result = getLastEdit().undo();
@@ -518,6 +604,11 @@ public class FileBufferView extends View
         return result;
     }
 
+    /**
+     * This method redoes the last edit and uses therefor the redo method of the lastEdit
+     * It also sets the lastEdit to the next edit 
+     * @return: boolean, true if the redo was successful, false otherwise
+     */
     public boolean redo() {
         boolean result = getLastEdit().getNext().redo();
         setLastEdit(getLastEdit().getNext());
@@ -528,6 +619,10 @@ public class FileBufferView extends View
      *    RUN SNAKE   *
      * ****************/
 
+   /**
+     * This method returns the next deadline of the system
+     * @return: long, the next deadline
+     */
     @Override
     public long getNextDeadline() {
         return System.currentTimeMillis();
@@ -539,12 +634,25 @@ public class FileBufferView extends View
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
 
+    /**
+     * This method duplicates the FileBufferView
+     * @return: View[], an array with the FileBufferView duplicated
+     */
     @Override
     public View[] duplicate() {
         return new View[]
                 {new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), getBuffer())};
     }
 
+    /**
+     * This method updates the views of the given buffer
+     * @param focus this is the index of the focussed view
+     * @param insert this is the insertion point of the focused view
+     * @param c this is the character that should be added
+     * @param isDeleted this is a boolean that indicates if the character should be deleted
+     * @param buffer this is the buffer of the focused view
+     * @return void
+     */
     @Override
     public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
         if (getPosition() != focus && getBuffer() == buffer) {
@@ -594,6 +702,11 @@ public class FileBufferView extends View
      *  SHOW FUNCTIONS  *
      * ******************/
 
+    /** 
+     * This method shows the content of the FileBufferView and the updated scrollbars
+     * @return: String, the content of the FileBufferView
+     * Visibile for testing
+     */
     @Override
     String[] makeShow() {
         updateScrollStates();
@@ -617,8 +730,10 @@ public class FileBufferView extends View
         return result;
     }
 
-    /** This method returns the created vertical scrollbar
-     * @return: char[]
+    /** 
+     * This method returns the created vertical scrollbar
+     * @return: char[], the vertical scrollbar
+     * Visibile for testing
      */
     char[] makeVerticalScrollBar() {
         char[] result = new char[getHeigth() - 1];
@@ -640,8 +755,10 @@ public class FileBufferView extends View
         return result;
     }
 
-    /** This method returns the created horizontal scrollbar
-     * @return: String
+    /** 
+     * This method returns the created horizontal scrollbar
+     * @return: String, the horizontal scrollbar
+     * Visibile for testing
      */
     String makeHorizontalScrollBar() {
         StringBuilder result = makeFileHeader();
@@ -667,6 +784,10 @@ public class FileBufferView extends View
         return result.toString();
     }
 
+    /**
+     * This method makes the header of the file for the horizontal scrollbar
+     * @return: StringBuilder, the header of the file
+     */
     public StringBuilder makeFileHeader() {
         StringBuilder result = new StringBuilder();
         String filename = getFileName();
@@ -683,7 +804,8 @@ public class FileBufferView extends View
      *  HELP FUNCTIONS  *
      * ******************/
 
-    /** This method updates the scroll states
+    /** 
+     *  This method updates the scroll states
      * @return: void
      */
     public void updateScrollStates() {
@@ -709,7 +831,8 @@ public class FileBufferView extends View
         }
     }
 
-    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+    /** 
+     * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
      * and updates the scroll states
      * @post getHeigth() == heigth
      * @post getWidth() == width

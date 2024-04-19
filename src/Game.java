@@ -252,8 +252,20 @@ public class Game {
             Point snakeHeadToMid = (new Point(heigth/2, width/2)).minus(getSnake().getHead());
             translateSnake(snakeHeadToMid);
             snakeBox = getSnake().getOuterBox();
-            if(!leftPointValid(snakeBox)) translateSnake(snakeBox.getLeftUpperPoint().times(-1).add(new Point(1, 1)));
-            if(!rightPointValid(heigth,width, snakeBox)) translateSnake((new Point(heigth, width)).minus(snakeBox.getRightLowerPoint()).add(new Point(1, 1)));
+            Point translateVector = new Point(0,0);
+            if(snakeBox.getLeftUpperPoint().getX()<1) {
+                translateVector.minus(new Point(snakeBox.getLeftUpperPoint().getX(), 0));
+            }
+            if(snakeBox.getLeftUpperPoint().getY()<1) {
+                translateVector.minus(new Point(0, snakeBox.getLeftUpperPoint().getY()));
+            }
+            if(snakeBox.getRightLowerPoint().getX()>heigth) {
+                translateVector.minus(new Point(width-snakeBox.getRightLowerPoint().getX(), 0));
+            }
+            if(snakeBox.getRightLowerPoint().getY()>width) {
+                translateVector.minus(new Point(0, heigth-snakeBox.getRightLowerPoint().getY()));
+            }
+
         }
     }
 

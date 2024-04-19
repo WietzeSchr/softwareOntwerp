@@ -16,8 +16,10 @@ public class File
      *  CONSTRUCTOR *
      ****************/
 
-    /** This constructor creates a new file with the given path and newLine
-     *  and sets the buffer to a new FileBuffer with the given path and newLine.
+    /** 
+     * This constructor creates a new file with the given path and newLine
+     * and sets the buffer to a new FileBuffer with the given path and newLine.
+     * @param path the path of the file
      * @post getpath() == path
     */
     public File(String path) {
@@ -35,14 +37,15 @@ public class File
         return this.path;
     }
 
-    /** This method returns true if the given parameter c is a line separator
-     * @return: boolean
-     */
-
     /****************
      *  LOAD FILE   *
      ****************/
 
+    /**
+     *  This method loads the file and returns the content of the file as a String array
+     * @param newLine the new line separator
+     * @return: String[] the content of the file with the given new line separator
+     */
     public String[] load(String newLine) throws FileNotFoundException {
         ArrayList<String> content = new ArrayList<>();
         FileInputStream file = new FileInputStream(path);
@@ -74,7 +77,10 @@ public class File
      *  SAVE BUFFER *
      ****************/
 
-    /** This method saves the buffer of the file to the file and sets the buffer to not dirty
+    /** 
+     * This method saves the buffer of the file to the file and sets the buffer to not dirty
+     * @param newLine the new line separator
+     * @param content the content to save
      * @return: void
      */
     public void save(String newLine, String[] content) throws IOException {
@@ -92,6 +98,10 @@ public class File
      *  HELP FUNCTIONS  *
      ********************/
 
+    /** 
+     * This method returns true if the given parameter c is a line separator
+     * @return: boolean
+     */
     private boolean isLineSeparator(int c, byte[] lineSep, FileInputStream file) throws IOException {
         if(c != lineSep[0]){return false;}
         if(c == 13) {

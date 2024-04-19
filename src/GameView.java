@@ -170,11 +170,19 @@ public class GameView extends View{
         return getLastMove() + getTick();
     }
 
+    /**
+     * This method returns the current tick of the system
+     * @return: long, the current tick
+     */
     @Override
     public long getTick() {
         return getGame().getTick();
     }
 
+    /**
+     * This method ticks the game
+     * @return: void
+     */
     public void tick() {
         getGame().tick();
         setLastMove(System.currentTimeMillis());

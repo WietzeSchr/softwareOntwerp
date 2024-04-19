@@ -44,7 +44,7 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method sets the subLayouts to the given parameter newSubLayouts
-     *
+     * @param newSubLayouts the new subLayouts of the layout
      * @post getSubLayouts() == newSubLayouts
      * @return: void
      */
@@ -57,8 +57,7 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method returns the subLayouts of the layout
-     *
-     * @return: Layout[]
+     * @return: Layout[], the subLayouts of the layout
      */
     public Layout[] getSubLayouts() {
         return subLayouts;
@@ -70,8 +69,7 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method returns the number of subLayouts
-     *
-     * @return: int
+     * @return: int, the number of subLayouts
      */
     @Override
     public int countSubLayouts() {
@@ -84,9 +82,10 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method closes the buffer at the given focus and returns the new focused layout and updates the subLayouts
-     *
+     * @param focus the focussed view
+     * @param parent the parent of the view
      * @post getSubLayouts().length == countSubLayouts() - 1
-     * @return: Layout
+     * @return: Layout, the new layout after closing the current focused view
      */
     @Override
     public Layout closeView(int focus, CompositeLayout parent) throws IOException {
@@ -126,6 +125,12 @@ public abstract class CompositeLayout extends Layout {
      *    ROTATE VIEW  *
      * *****************/
 
+   /**
+     * This method directs how it should be rotated based on the focus and the direction
+     * @param dir the direction in which the view should be rotated
+     * @param focus the index of the focused view
+     * @return: Layout, the new layout after rotating the view
+     */
     @Override
     protected Layout rotateView(int dir, int focus) {
         int heigth = getHeigth();
@@ -162,6 +167,15 @@ public abstract class CompositeLayout extends Layout {
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
 
+    /**
+     * This method updates the views of the given buffer
+     * @param focus this is the index of the focussed view
+     * @param insert this is the insertion point of the focused view
+     * @param c this is the character that should be added
+     * @param isDeleted this is a boolean that indicates if the character should be deleted
+     * @param buffer this is the buffer of the focused view
+     * @return void
+     */
     @Override
     public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
         for (int i = 0; i < countSubLayouts(); i++) {
@@ -182,7 +196,6 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method shows the layout of the subLayouts
-     *
      * @return: void
      */
     public void show() {
@@ -198,22 +211,19 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method returns the size of the subLayouts
-     *
-     * @return: Point
+     * @return: Point, the size of the subLayouts
      */
     public abstract Point calcSubSize();
 
     /**
      * This method returns the leftUpperCorner of the subLayouts
-     *
-     * @return: Point
+     * @return: Point, the leftUpperCorner of the subLayouts
      */
     public abstract Point calcLeftUpCorner(int i);
 
     /**
      * This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
-     *
-     * @return: int
+     * @return: int, the viewposition
      */
     @Override
     public void initViewPosition(int i) {
@@ -227,8 +237,8 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method returns the focused view at the given index i
-     *
-     * @return: FileBufferView
+     * @param i the index of the focused view
+     * @return: FileBufferView, the focused view at the given index i
      */
     @Override
     public View getFocusedView(int i) {
@@ -242,6 +252,10 @@ public abstract class CompositeLayout extends Layout {
         return res;
     }
 
+    /**
+     * This method returns a boolean that indicates if the sublayouts contain the given layout
+     * @return: boolean, true if the sublayouts contain the given layout, false otherwise
+     */
     public boolean contains(Layout layout) {
         for (int i = 0; i < countSubLayouts(); i++) {
             if (getSubLayouts()[i] == layout) {
@@ -253,8 +267,7 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method returns the number of views
-     *
-     * @return: int
+     * @return: int, the number of views
      */
     @Override
     public int countViews() {
@@ -268,7 +281,9 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
-     *
+     * @param heigth the new heigth of the layout
+     * @param width the new width of the layout
+     * @param leftUpperCorner the new leftUpperCorner of the layout
      * @post getHeigth() == heigth
      * @post getWidth() == width
      * @post getLeftUpperCorner() == leftUpperCorner
