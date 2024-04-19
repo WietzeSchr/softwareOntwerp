@@ -64,7 +64,7 @@ class GameViewTest {
     @Test
     void testMakeShow() {
         GameView gv = new GameView(3, 6, new Point(5, 15));
-        Game newGame = new Game(3, 6);
+        Game newGame = new Game(2, 5);
         Point[] points = new Point[] {new Point(1,4), new Point(1,3), new Point(1,2), new Point(1,1)};
         Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.EAST);
         newGame.setSnake(snake);

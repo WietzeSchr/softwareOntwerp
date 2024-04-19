@@ -11,7 +11,7 @@ public class GameView extends View{
      * ******************/
     public GameView(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
-        this.game = new Game(height, width);
+        this.game = new Game(height - 1, width - 1);
         this.lastMove = System.currentTimeMillis();
     }
 
@@ -211,6 +211,6 @@ public class GameView extends View{
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
-        getGame().updateSize(heigth, width);
+        getGame().updateSize(heigth - 1, width - 1);
     }
 }
