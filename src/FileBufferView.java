@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.TimeoutException;
 
 public class FileBufferView extends View
 {
@@ -454,7 +455,7 @@ public class FileBufferView extends View
      * @return: FileBufferView || null
      */
     @Override
-    public FileBufferView closeView(int focus, CompositeLayout parent) {
+    public FileBufferView closeView(int focus, CompositeLayout parent) throws IOException {
         if (getPosition() != focus) {
             return this;
         }
@@ -462,16 +463,12 @@ public class FileBufferView extends View
             if (getBuffer().getDirty()) {
                 showCloseErr();
                 int c = 0;
-                try {
-                    c = terminalHandler.readByte();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                long deadline = System.currentTimeMillis() + 3000;
                 while (c != 121 && c != 89 && c != 78 && c != 110) {
                     try {
-                        c = terminalHandler.readByte();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        c = terminalHandler.readByte(deadline);
+                    } catch (TimeoutException e) {
+                        c = 78;
                     }
                 }
                 if (c == 121 || c == 89) {
@@ -499,18 +496,6 @@ public class FileBufferView extends View
      */
     public void saveBuffer(String newLine) throws IOException {
         getBuffer().saveBuffer(newLine);
-    }
-
-    /* *****************
-     *    ROTATE VIEW  *
-     * *****************/
-
-    /** This method returns the focused Layout
-     * @return: FileBufferView
-     */
-    @Override
-    protected FileBufferView rotateView(int dir, int focus) {
-         return this;
     }
 
     /* ******************

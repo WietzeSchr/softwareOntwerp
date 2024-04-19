@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,15 +51,15 @@ class LayoutTest {
     }
 
     @Test
-    void testCloseView() {
-        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3"}, "test1");
-        FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
-        FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
-        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
-        SideBySideLayout sbsl1 = new SideBySideLayout(1, 1, new Point(1,1), new Layout[] {fbv1, fbv2});
-        FileBuffer f3 = new FileBuffer(new String[] {"h", "ha","hal", "hall", "hallo"}, "test3");
-        FileBufferView fbv3 = new FileBufferView(1,1,new Point(1,1),f3 );
-        StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, fbv3});
+    void testCloseView() throws IOException {
+        FileBuffer f1 = new FileBuffer(new String[]{"rij1", "rij2", "rij3"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1, 1, new Point(1, 1), f1);
+        FileBuffer f2 = new FileBuffer(new String[]{"t", "te", "tes", "test"}, "test2");
+        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1, 1), f2);
+        SideBySideLayout sbsl1 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[]{fbv1, fbv2});
+        FileBuffer f3 = new FileBuffer(new String[]{"h", "ha", "hal", "hall", "hallo"}, "test3");
+        FileBufferView fbv3 = new FileBufferView(1, 1, new Point(1, 1), f3);
+        StackedLayout sl1 = new StackedLayout(1, 1, new Point(1, 1), new Layout[]{sbsl1, fbv3});
         sl1.initViewPosition(1);
         sl1.updateSize(20, 20, new Point(1, 1));
         CompositeLayout result = (CompositeLayout) sl1.closeView(1);
@@ -68,7 +69,7 @@ class LayoutTest {
         assertEquals(result.getSubLayouts()[1].getWidth(), 20);
         assertEquals(result.getSubLayouts()[0].getLeftUpperCorner(), new Point(1, 1));
         assertEquals(result.getSubLayouts()[1].getLeftUpperCorner(), new Point(11, 1));
-        assertArrayEquals(result.getSubLayouts(), new Layout[] {fbv2, fbv3});
+        assertArrayEquals(result.getSubLayouts(), new Layout[]{fbv2, fbv3});
     }
 
     @Test
