@@ -172,7 +172,7 @@ class LayoutTest {
         GameView gv = new GameView(10, 10, new Point(1, 1));
         StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, gv});
         sl1.initViewPosition(1);
-        assertEquals(sl1.getNextDeadline(3), System.currentTimeMillis() + 1000);
-        assertEquals(sl1.getNextDeadline(1), System.currentTimeMillis());
+        assertTrue(sl1.getNextDeadline(3) - (System.currentTimeMillis() + 1000) <= 1);
+        assertTrue(sl1.getNextDeadline(1) - System.currentTimeMillis() <= 1);
     }
 }

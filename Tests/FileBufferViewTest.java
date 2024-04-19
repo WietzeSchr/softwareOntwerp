@@ -147,6 +147,11 @@ class FileBufferViewTest {
         assertTrue(fbv1.getBuffer().getDirty());
         fbv1.saveBuffer("\n");
         assertFalse(fbv1.getBuffer().getDirty());
+        assertTrue(fbv1.lastEditIsEmptyEdit());
+        fbv1.addNewLineBreak();
+        assertFalse(fbv1.lastEditIsEmptyEdit());
+        fbv1.updateViewsSaved(2, buffer);
+        assertTrue(fbv1.lastEditIsEmptyEdit());
     }
 
     @Test

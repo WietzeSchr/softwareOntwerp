@@ -60,7 +60,9 @@ public abstract class View extends Layout {
      *    SAVE BUFFER   *
      * ******************/
 
-    public abstract void saveBuffer(String newLine) throws IOException;
+    public void saveBuffer(String newLine) throws IOException {
+        return;
+    }
 
     /* *****************
      *    ROTATE VIEW  *

@@ -1,4 +1,4 @@
-import java.io.File;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -231,6 +231,10 @@ public abstract class Layout {
     public void saveBuffer(int focus, String newLine) throws IOException {
         View focussed = getFocusedView(focus);
         focussed.saveBuffer(newLine);
+        if (focussed.getClass() == FileBufferView.class) {
+            updateViewsSaved(focus, ((FileBufferView) focussed).getBuffer());
+        }
+
     }
 
     /* *****************
@@ -265,7 +269,6 @@ public abstract class Layout {
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
 
     /**
-     * 
      * @param dir
      * @param focus
      * @param nextView
@@ -388,6 +391,8 @@ public abstract class Layout {
      * @return void
      */
     public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
+
+    public abstract void updateViewsSaved(int focus, FileBuffer buffer);
 
     /* ****************
      *    RUN SNAKE   *

@@ -494,8 +494,14 @@ public class FileBufferView extends View
     /** This method saves the buffer of the file and updates the scroll states
      * @return: void
      */
+    @Override
     public void saveBuffer(String newLine) throws IOException {
         getBuffer().saveBuffer(newLine);
+        clearEdits();
+    }
+
+    private void clearEdits() {
+        setLastEdit(new EmptyEdit());
     }
 
     /* ******************
@@ -574,6 +580,13 @@ public class FileBufferView extends View
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void updateViewsSaved(int focus, FileBuffer buffer) {
+        if (getPosition() != focus && buffer == getBuffer()) {
+            clearEdits();
         }
     }
 
