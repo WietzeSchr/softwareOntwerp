@@ -330,7 +330,7 @@ public abstract class Layout {
      * ******************/
 
     /**
-     * This method undoes the last edit of the focused view
+     * This method checks if the last edit of the focused view can be undone and if so, undoes it and updates the views
      * @param focus this is the index of the focussed view
      * @return: void
      */
@@ -343,8 +343,8 @@ public abstract class Layout {
         }
     }
 
-    /**
-     * This method redoes the last edit of the focused view
+  /**
+     * This method checks if the last edit of the focused view can be redone and if so, redoes it and updates the views
      * @param focus this is the index of the focussed view
      * @return: void
      */
@@ -396,6 +396,8 @@ public abstract class Layout {
     /** 
      * This method inserts the given views in the layout
      * @param focus this is the index of the focussed view
+     * @param parent this is the parent of the focussed view
+     * @param views this is the array of views that should be inserted
      * @return: Layout, the new layout after inserting the views
      */
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
@@ -427,7 +429,7 @@ public abstract class Layout {
     }
 
     /**
-     * This method updates the views of the buffer
+     * This method updates the views of the given buffer
      * @param focus this is the index of the focussed view
      * @param insert this is the insertion point of the focused view
      * @param c this is the character that should be added
