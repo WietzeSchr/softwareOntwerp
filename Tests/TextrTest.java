@@ -273,7 +273,7 @@ public class TextrTest {
     }
 
     @Test
-    void testSnake(){
+    void testSnake() throws IOException {
         GameView gv1 = new GameView(20, 30, new Point(1,1));
         Textr test1 = new Textr("\n", gv1);
         test1.initViewPositions();
@@ -285,19 +285,105 @@ public class TextrTest {
         assertEquals(((GameView)test1.getLayout()).getGame().getGrid().length, 9);
         assertEquals(((GameView)test1.getLayout()).getGame().getGrid()[0].length, 19);
         s1 = ((GameView)test1.getLayout()).getGame().getSnake();
-        assertEquals(s1.getHead(), new Point(9, 14));
-
+        assertEquals(s1.getHead(), new Point(5, 10));
         test1.updateSize(6,20);
         s1 = ((GameView)test1.getLayout()).getGame().getSnake();
         assertEquals(s1.getHead(), new Point(3, 10));
-
         test1.updateSize(6, 8);
         s1 = ((GameView)test1.getLayout()).getGame().getSnake();
         assertEquals(s1.getHead(), new Point(3, 4));
+        //test input
+        gv1 = new GameView(20, 30, new Point(1,1));
+        test1 = new Textr("\n", gv1);
+        assertEquals(gv1.getGame().getSnake().getHead(), new Point(9, 14));
+        int score = ((GameView)test1.getFocusedView()).getGame().getScore();
+        assertEquals(score, 0);
+        ((GameView)test1.getFocusedView()).getGame().setGridAt(0, new Point(9,15));
+        test1.tick();
+        score = ((GameView)test1.getFocusedView()).getGame().getScore();
+        assertEquals(score, 1);
+        s1 = gv1.getGame().getSnake();
+        assertEquals(s1.getHead(), new Point(9, 15));
+        ((GameView)test1.getFocusedView()).getGame().setGridAt(0, new Point(10,15));
+        test1.arrowPressed(Direction.SOUTH);
+        assertEquals(s1.getHead(), new Point(10, 15));
+        score = ((GameView)test1.getFocusedView()).getGame().getScore();
+        assertEquals(score, 2);
+        test1.arrowPressed(Direction.NORD);
+        assertEquals(s1.getHead(), new Point(10, 15));
+        test1.arrowPressed(Direction.EAST);
+        assertEquals(s1.getHead(), new Point(10, 16));
+        test1.arrowPressed(Direction.SOUTH);
+        assertEquals(s1.getHead(), new Point(11, 16));
+        test1.arrowPressed(Direction.WEST);
+        assertEquals(s1.getHead(), new Point(11, 15));
+
+        //test eatApple
+        score = ((GameView)test1.getFocusedView()).getGame().getScore();
+        int snakeLength = ((GameView)test1.getFocusedView()).getGame().getSnake().getBody().size();
+        ((GameView)test1.getFocusedView()).getGame().setGridAt(1, new Point(11,14));
+        test1.tick();
+        assertEquals(((GameView)test1.getFocusedView()).getGame().getScore(), score+11);
+        assertEquals(((GameView)test1.getFocusedView()).getGame().getSnake().getBody().size(), snakeLength+1);
+
+        //test gameOver
+        test1.arrowPressed(Direction.NORD);
+        test1.arrowPressed(Direction.EAST);
+        assertNull(((GameView) test1.getFocusedView()).getGame().getSnake());
+
+        gv1 = new GameView(20, 30, new Point(1,1));
+        test1 = new Textr("\n", gv1);
+        test1.arrowPressed(Direction.NORD);
+        test1.tick();
+        test1.tick();
+        test1.tick();
+        test1.tick();
+        test1.tick();
+        test1.tick();
+        test1.tick();
+        test1.tick();
+        assertNull(((GameView) test1.getFocusedView()).getGame().getSnake());
+
+        gv1 = new GameView(20, 30, new Point(1,1));
+        test1 = new Textr("\n", gv1);
+        test1.updateSize(20, 2);
+        assertNull(((GameView) test1.getFocusedView()).getGame().getSnake());
     }
 
     @Test
-    void testUndoRedo() {
+    void testUndoRedo() throws IOException {
+        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
+        Textr test1 = new Textr("\n", fbv1);
+        test1.initViewPositions();
+        test1.updateSize(10, 20);
 
+        //test undo/redo
+        FileBufferView focus = (FileBufferView) test1.getFocusedView();
+        test1.addNewChar('a');
+        assertArrayEquals(focus.getBuffer().getContent(), new String[] {"arij1", "rij2","rij3", "rij4", "rij5"});
+        assertTrue(focus.getBuffer().getDirty());
+        test1.undo();
+        assertArrayEquals(focus.getBuffer().getContent(), new String[] {"rij1", "rij2","rij3", "rij4", "rij5"});
+        assertFalse(focus.getBuffer().getDirty());
+        test1.redo();
+        assertArrayEquals(focus.getBuffer().getContent(), new String[] {"arij1", "rij2","rij3", "rij4", "rij5"});
+        assertTrue(focus.getBuffer().getDirty());
+        test1.undo();
+        assertArrayEquals(focus.getBuffer().getContent(), new String[] {"rij1", "rij2","rij3", "rij4", "rij5"});
+        assertFalse(focus.getBuffer().getDirty());
+
+        //test when saved
+        test1.addNewChar('a');
+        assertArrayEquals(focus.getBuffer().getContent(), new String[] {"arij1", "rij2","rij3", "rij4", "rij5"});
+        test1.saveBuffer();
+        test1.undo();
+        assertArrayEquals(focus.getBuffer().getContent(), new String[] {"arij1", "rij2","rij3", "rij4", "rij5"});
+        assertFalse(focus.getBuffer().getDirty());
+        assertInstanceOf(FileBufferView.EmptyEdit.class, focus.getLastEdit());
+        test1.redo();
+        assertArrayEquals(focus.getBuffer().getContent(), new String[] {"arij1", "rij2","rij3", "rij4", "rij5"});
+        assertFalse(focus.getBuffer().getDirty());
+        assertInstanceOf(FileBufferView.EmptyEdit.class, focus.getLastEdit());
     }
 }

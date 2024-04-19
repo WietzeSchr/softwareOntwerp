@@ -328,7 +328,7 @@ public abstract class Layout {
      * Visible for testing
      */
     protected abstract Layout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent);
-
+  
     /**
      * This parent rotates the layout in the case that the view and the next view aren't siblings and the parent
      * of the next view has two subLayouts
@@ -342,7 +342,6 @@ public abstract class Layout {
      * @param parent1  | The parent of the focused view
      * @param parent2  | The parent of the next view
      * @return  | Layout, The new layout after rotating the view
-     */
     protected abstract Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2);
 
     /**
@@ -433,7 +432,7 @@ public abstract class Layout {
       public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
         return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(focussed.getHeigth(), focussed.getWidth() / 2, focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
+                new View[] {new GameView(focussed.getHeigth(), calcGameWidth(focus), focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
     }
 
 

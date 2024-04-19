@@ -67,7 +67,7 @@ public class GameView extends View{
      * ******************/
 
     /**
-     * This method moves the snake in the given direction
+     * This method moves the snake in the given direction and ticks the game if the snake is moving in the given direction 
      * @param dir the direction to move the snake
      * @return void
      */
@@ -147,6 +147,12 @@ public class GameView extends View{
      *  SHOW FUNCTIONS  *
      * ******************/
 
+   
+    /** 
+     * This method shows the content of the game and checks if the snake is still alive if not then it shows the loss screen
+     * @return: String, the content of the game
+     * Visibile for testing
+     */
     @Override
     String[] makeShow() {
         if (getGame().getSnake() != null) {
@@ -160,6 +166,11 @@ public class GameView extends View{
         return showLoss();
     }
 
+    /**
+     * This method shows the loss screen
+     * @return: String[], the loss screen
+     * Visibile for testing
+     */
     String[] showLoss() {
         String lossStr = "GAME OVER - Press enter to restart";
         String[] result = new String[getHeigth() - 1];
@@ -177,6 +188,11 @@ public class GameView extends View{
         return result;
     }
 
+    /** 
+     * This method returns the created vertical scrollbar of the game, what is just a string of '#' characters
+     * @return: char[], the vertical scrollbar
+     * Visibile for testing
+     */
     @Override
     char[] makeVerticalScrollBar() {
         char[] result = new char[getHeigth()];
@@ -184,6 +200,12 @@ public class GameView extends View{
         return result;
     }
 
+    /** 
+     * This method returns the created horizontal scrollbar of the game, 
+     * what is just a string of '#' characters with the score of the game
+     * @return: String, the horizontal scrollbar of the game
+     * Visibile for testing
+     */
     @Override
     String makeHorizontalScrollBar() {
         String result = "Score: " + getGame().getScore() + " ";
@@ -197,6 +219,10 @@ public class GameView extends View{
      *    RUN SNAKE   *
      * ****************/
 
+    /**
+     * This method returns the next deadline of the game which is the last move + the tick
+     * @return: long, the next deadline
+     */
     @Override
     public long getNextDeadline() {
         return getLastMove() + getTick();
@@ -212,7 +238,7 @@ public class GameView extends View{
     }
 
     /**
-     * This method ticks the game
+     * This method ticks the game and sets the last move to the current time
      * @return: void
      */
     public void tick() {
@@ -220,10 +246,19 @@ public class GameView extends View{
         setLastMove(System.currentTimeMillis());
     }
 
+    /**
+     * This method changes the direction of the snake to the given new direction
+     * @param newDir the new direction of the snake
+     * @return: void
+     */
     public void changeDir(Direction newDir) {
         getGame().changeDir(newDir);
     }
 
+    /**
+     * This method start a new game 
+     * @return: void
+     */
     private void runNewGame() {
         setGame(new Game(getHeigth(), getWidth()));
     }
@@ -231,12 +266,16 @@ public class GameView extends View{
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
-
+    /**
+     * This method returns the cursor of the game which is the left upper corner
+     * @return: Point, LeftUpperCorner
+     */
     public Point getCursor() {
         return getLeftUpperCorner();
     }
 
-    /** This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
+    /** 
+     * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
      * @post getHeigth() == heigth
      * @post getWidth() == width
      * @post getLeftUpperCorner() == leftUpperCorner

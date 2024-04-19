@@ -9,14 +9,25 @@ public class SideBySideLayout extends CompositeLayout{
      *  CONSTRUCTORS    *
      * ******************/
 
-    /** This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner, filepaths and newLine
+    /** 
+     * This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner, filepaths and newLine
+     * @param height the height of the SideBySideLayout
+     * @param width the width of the SideBySideLayout
+     * @param leftUpperCorner the leftUpperCorner of the SideBySideLayout
+     * @param filepaths the filepaths of the SideBySideLayout
+     * @param newLine the newLine separator of the SideBySideLayout 
      */
     public SideBySideLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) throws FileNotFoundException {
         super(height, width, leftUpperCorner, filepaths, newLine);
     }
         //  Deze kunnen we bij houden voor initialisatie met SideBySide
 
-    /** This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner and subLayouts
+    /** 
+     * This constructor creates a new SideBySideLayout with the given height, width, leftUpperCorner and subLayouts
+     * @param height the height of the SideBySideLayout
+     * @param width the width of the SideBySideLayout
+     * @param leftUpperCorner the leftUpperCorner of the SideBySideLayout
+     * @param subLayouts the subLayouts of the SideBySideLayout
      */
     public SideBySideLayout(int height, int width, Point leftUpperCorner, Layout[] subLayouts) {
         super(height, width, leftUpperCorner, subLayouts);
@@ -26,8 +37,13 @@ public class SideBySideLayout extends CompositeLayout{
      *    ROTATE VIEW  *
      * *****************/
 
-    /** This method rotates the view and updates the subLayouts
-     * @return: CompositeLayout || null
+    /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the view
+     * @return: SideBySideLayout
      */
     @Override
     protected SideBySideLayout rotateSiblings(int dir, int focus, int nextFocus, CompositeLayout parent) {
@@ -66,8 +82,13 @@ public class SideBySideLayout extends CompositeLayout{
         }
     }
 
-    /** This method rotates the view and updates the subLayouts
-     * @return: CompositeLayout || null
+     /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextFocus the index of the next focused view
+     * @param parent the parent of the view
+     * @return: CompositeLayout
      */
     @Override
     protected CompositeLayout rotateSiblingsFlip(int dir, int focus, int nextFocus, CompositeLayout parent) {
@@ -109,6 +130,15 @@ public class SideBySideLayout extends CompositeLayout{
         }
     }
 
+    /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextView the next view
+     * @param parent1 the parent of the view
+     * @param parent2 the parent of the view
+     * @return: CompositeLayout
+     */
     @Override
     protected CompositeLayout rotateNonSiblings(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
@@ -154,6 +184,15 @@ public class SideBySideLayout extends CompositeLayout{
         }
     }
 
+     /** 
+     * This method rotates the view and updates the subLayouts
+     * @param dir direction of the rotation
+     * @param focus the index of the focused view
+     * @param nextView the next view
+     * @param parent1 the parent of the view
+     * @param parent2 the parent of the view
+     * @return: Layout
+     */
     @Override
     protected Layout rotateNonSiblingsPromote(int dir, int focus, View nextView, CompositeLayout parent1, CompositeLayout parent2) {
         if (this == parent1)
@@ -228,6 +267,10 @@ public class SideBySideLayout extends CompositeLayout{
         }
     }
 
+    /** 
+     * This method flips the layout, so makes sidebysideLayout to stackedLayout
+     * @return: SideBySideLayout
+     */
     @Override
     protected StackedLayout flip() {
         Layout[] newSubLayouts = new Layout[countSubLayouts()];
@@ -241,6 +284,13 @@ public class SideBySideLayout extends CompositeLayout{
      *  OPEN GAME VIEW  *
      * ******************/
 
+    /** 
+     * This method inserts the given views in the layout
+     * @param focus this is the index of the focussed view
+     * @param parent this is the parent of the focussed view
+     * @param views this is the array of views that should be inserted
+     * @return: Layout, the new layout after inserting the views
+     */
     @Override
     public Layout insertViews(int focus, CompositeLayout parent, View[] views) {
         View focussed = getFocusedView(focus);
@@ -271,6 +321,11 @@ public class SideBySideLayout extends CompositeLayout{
         return new SideBySideLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
     }
 
+    /**
+     * This method calculates the width of the game
+     * @param focus the index of the focused view
+     * @return: int, the width of the game
+     */
     public int calcGameWidth(int focus) {
         View focused = getFocusedView(focus);
         int result = -1;
