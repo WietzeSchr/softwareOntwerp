@@ -65,7 +65,8 @@ public class StackedLayout extends CompositeLayout {
         }
     }
 
-    /** This method rotates the view and updates the subLayouts
+    /** 
+     * This method rotates the view and updates the subLayouts
      * @return: CompositeLayout || null
      */
     @Override
@@ -289,7 +290,7 @@ public class StackedLayout extends CompositeLayout {
 
     /** 
      * This method returns the size of the subLayouts
-     * @return: Point, gives the size of the subLayouts
+     * @return: Point, gives the size of the subLayouts with first value the height and second value the width of the subLayouts
      */
     @Override
     public Point calcSubSize() {

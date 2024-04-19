@@ -9,6 +9,13 @@ public class GameView extends View{
     /* ******************
      *  CONSTRUCTORS    *
      * ******************/
+    /**
+     * This constructor creates a new GameView with the given parameters height, width and leftUpperCorner
+     * @param height the height of the GameView
+     * @param width the width of the GameView
+     * @param leftUpperCorner the left upper corner of the GameView
+     * @post getHeigth() == height
+     */
     public GameView(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
         this.game = new Game(height - 1, width - 1);
@@ -19,18 +26,38 @@ public class GameView extends View{
      *  GETTERS AND SETTERS *
      * **********************/
 
+    /**
+     * This method sets the game of the GameView to the given parameter newGame
+     * @param newGame the new game of the GameView
+     * @post getGame() == newGame
+     * @return: void
+     */
     public void setGame(Game newGame) {
         this.game = newGame;
     }
 
+    /**
+     * This method returns the game of the GameView
+     * @return: Game, the game of the GameView
+     */
     public Game getGame() {
         return game;
     }
 
+    /**
+     * This method sets the last move of the GameView to the given parameter newLastMove
+     * @param newLastMove the new last move of the GameView
+     * @post getLastMove() == newLastMove
+     * @return: void
+     */
     public void setLastMove(long newLastMove) {
         this.lastMove = newLastMove;
     }
 
+    /**
+     * This method returns the last move of the GameView
+     * @return: long, the last move of the GameView
+     */
     public long getLastMove() {
         return lastMove;
     }
@@ -39,6 +66,11 @@ public class GameView extends View{
      *  INSPECT CONTENT *
      * ******************/
 
+    /**
+     * This method moves the snake in the given direction
+     * @param dir the direction to move the snake
+     * @return void
+     */
     public void move(Direction dir) {
         if (getGame().getSnake() != null) {
             changeDir(dir);

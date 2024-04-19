@@ -10,7 +10,10 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This constructor creates a new CompositeLayout with the given height, width, leftUpperCorner and subLayouts
-     *
+     * @param height the height of the layout
+     * @param width the width of the layout
+     * @param leftUpperCorner the leftUpperCorner of the layout
+     * @param subLayouts the subLayouts of the layout
      * @post getSubLayouts() == subLayouts
      */
     public CompositeLayout(int height, int width, Point leftUpperCorner, Layout[] subLayouts) {
@@ -23,7 +26,10 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This constructor creates a new CompositeLayout with the given height, width, leftUpperCorner, filepaths and newLine
-     *
+     * @param height the height of the layout
+     * @param width the width of the layout
+     * @param leftUpperCorner the leftUpperCorner of the layout
+     * @param filepaths the filepaths that are loaded in the layout
      * @post getSubLayouts().length == filepaths.length
      */
     public CompositeLayout(int height, int width, Point leftUpperCorner, String[] filepaths, String newLine) throws FileNotFoundException {
@@ -225,9 +231,9 @@ public abstract class CompositeLayout extends Layout {
      *  HELP FUNCTIONS  *
      * ******************/
 
-    /**
+    /** 
      * This method returns the size of the subLayouts
-     * @return: Point, the size of the subLayouts
+     * @return: Point, gives the size of the subLayouts with first value the height and second value the width of the subLayouts
      */
     public abstract Point calcSubSize();
 
@@ -238,8 +244,8 @@ public abstract class CompositeLayout extends Layout {
     public abstract Point calcLeftUpCorner(int i);
 
     /**
-     * This method returns the viewposition at the given index i and updates the viewpositions of the subLayouts
-     * @return: int, the viewposition
+     * This method initializes the position at the given index i
+     * @return: void
      */
     @Override
     public void initViewPosition(int i) {
@@ -254,7 +260,7 @@ public abstract class CompositeLayout extends Layout {
     /**
      * This method returns the focused view at the given index i
      * @param i the index of the focused view
-     * @return: FileBufferView, the focused view at the given index i
+     * @return: View, the focused view at the given index i
      */
     @Override
     public View getFocusedView(int i) {
