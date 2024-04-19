@@ -161,12 +161,12 @@ public class TextrTest {
 
     @Test
     void testSafeBuffer() throws IOException {
-        FileBuffer fb1 = new FileBuffer(new String[] {"test"}, "Tests\\testFile.txt");
+        FileBuffer fb1 = new FileBuffer(new String[] {"test"}, "testFile.txt");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),fb1);
         Textr test1 = new Textr("\n", fbv1);
         test1.initViewPositions();
         test1.updateSize(20, 40);
-        File f1 = new File("Tests\\testFile.txt");
+        File f1 = new File("testFile.txt");
 
         FileBuffer focus = ((FileBufferView)test1.getFocusedView()).getBuffer();
         assertFalse(focus.getDirty());

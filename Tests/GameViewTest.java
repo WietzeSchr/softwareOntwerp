@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameViewTest {
 
     @Test
-    void testSetters() {
+    void testSetters() throws IOException {
         GameView gv = new GameView(10, 20, new Point(5, 15));
         Game newGame = new Game(10, 20);
         gv.setGame(newGame);
