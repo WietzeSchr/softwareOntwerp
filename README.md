@@ -20,7 +20,7 @@
 * [x] Duplicate the focused view using Ctrl + D
     - [x] Keep views on the same buffer locked in place 
 * [x] Open a new Snake game using Ctrl + G
-    - [ ] Resize the game, fitting the snake as centered as possible (if possible at all) in new grid
+    - [x] Resize the game, fitting the snake as centered as possible (if possible at all) in new grid
 * [x] Undo the last made edit (adding/deleting characters/linebreaks) using Ctrl + Z
 * [x] Redo the last undo using Ctrl + U
 
@@ -38,10 +38,12 @@
 * [x] Make edit class abstract to deal with different types of edits
 * [x] Check for use of ENUM classes
 * [x] Make a general function for inserting a list of views
+* [x] Add Observer pattern for filebuffer edits
 
 ### Found bugs
 
 * [x] NullPointerException bij Snake closeGame
 * [x] OpenNewGame geeft direct GameOver
 * [x] Grid word niet altijd goed aangepast
-* [ ] NullpointerException bij sluiten FileBufferView naast GameView
+* [ ] NullpointerException bij closeView in treeLayout
+* [ ] NullPointerException bij rotateNonSiblings/rotateNonSiblingsPromote met focus laatste view en nextview eerste view
