@@ -39,6 +39,8 @@
 * [x] Check for use of ENUM classes
 * [x] Make a general function for inserting a list of views
 * [x] Add Observer pattern for filebuffer edits
+* [ ] Add LayoutManager class to move focus out of Textr class
+* [ ] Use mockito to mock userinput (Testing purposes)
 
 ### Found bugs
 
