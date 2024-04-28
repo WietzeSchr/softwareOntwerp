@@ -89,21 +89,10 @@ public class GameView extends View{
      * @return | boolean
      */
     @Override
-    public boolean addNewLineBreak() {
+    public void addNewLineBreak() {
         if (getGame().getSnake() == null) {
             runNewGame();
         }
-        return false;
-    }
-
-    @Override
-    public boolean addNewChar(char c) {
-        return false;
-    }
-
-    @Override
-    public boolean deleteChar() {
-        return false;
     }
 
     /* ******************
@@ -115,18 +104,6 @@ public class GameView extends View{
         return null;
     }
 
-    /* ******************
-     *   UNDO / REDO    *
-     * ******************/
-
-    public boolean undo() {
-        return false;
-    }
-
-    public boolean redo() {
-        return false;
-    }
-
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
@@ -135,17 +112,6 @@ public class GameView extends View{
     public View[] duplicate() {
         return new View[] {};
     }
-
-    @Override
-    public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
-        return;
-    }
-
-    @Override
-    public void updateViewsSaved(int focus, FileBuffer buffer) {
-        return;
-    }
-
 
     /* ******************
      *  SHOW FUNCTIONS  *

@@ -150,7 +150,7 @@ class FileBufferViewTest {
         assertTrue(fbv1.lastEditIsEmptyEdit());
         fbv1.addNewLineBreak();
         assertFalse(fbv1.lastEditIsEmptyEdit());
-        fbv1.updateViewsSaved(2, buffer);
+        fbv1.updateViewSaved();
         assertTrue(fbv1.lastEditIsEmptyEdit());
     }
 
@@ -218,7 +218,7 @@ class FileBufferViewTest {
         assertEquals(v.getBuffer(), buffer);
     }
 
-    @Test
+   /* @Test
     void testUpdateViews() {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
@@ -244,7 +244,7 @@ class FileBufferViewTest {
         buffer.insertLineBreak(new Point(3,1));
         fbv1.updateViews(2, new Point(3,1), (char) 13, false, buffer);
         assertEquals(fbv1.getInsertionPoint(), new Point(4,2));
-    }
+    }*/
 
     @Test
     void testUpdateScrollState() {

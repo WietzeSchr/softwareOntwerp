@@ -12,7 +12,9 @@ public class FileBuffer {
 
     private boolean dirty;
 
-    /*****************
+    private final FileBufferListenerService listenerService = new FileBufferListenerService();
+
+    /* ***************
      *  CONSTRUCTORS *
      *****************/
 
@@ -150,6 +152,42 @@ public class FileBuffer {
         return result;
     }
 
+    /* ***************
+     *   OBSERVER    *
+     * ***************/
+
+    public void subscribeView(FileBufferView view) {
+        listenerService.addInsertionListener(new InsertionListener(view));
+        listenerService.addDeletionListener(new DeletionListener(view));
+        listenerService.addSaveListener(new SaveListener(view));
+    }
+
+    public void unSubscribeView(FileBufferView view) {
+        listenerService.removeInsertionListener(view);
+        listenerService.removeDeletionListener(view);
+        listenerService.removeSaveListener(view);
+    }
+
+    private void fireNewChar(Point insert) {
+        listenerService.fireNewChar(insert);
+    }
+
+    private void fireNewLineBreak(Point insert) {
+        listenerService.fireNewLineBreak(insert);
+    }
+
+    private void fireDelChar(Point insert) {
+        listenerService.fireDelChar(insert);
+    }
+
+    private void fireDelLineBreak(Point insert) {
+        listenerService.fireDelLineBreak(insert);
+    }
+
+    private void fireSaved() {
+        listenerService.fireSaved();
+    }
+
     /* **********************
      *  EDIT BUFFER CONTENT *
      ************************/
@@ -170,6 +208,7 @@ public class FileBuffer {
         cont.add(row + 1, secondPart);
         setContent(cont.toArray(new String[0]));
         setDirty(true);
+        fireNewLineBreak(insert);
     }
 
 
@@ -216,6 +255,7 @@ public class FileBuffer {
         }
         setContent(content);
         setDirty(true);
+        fireNewChar(insert);
     }
 
     /** 
@@ -242,6 +282,7 @@ public class FileBuffer {
                     newContent[i - 1] = firstPart + secondPart;
                 }
             }
+            fireDelLineBreak(insert);
         }
         else {
             newContent = new String[content.length];
@@ -259,6 +300,7 @@ public class FileBuffer {
                     newContent[i] = newRow.toString();
                 }
             }
+            fireDelChar(insert);
         }
         setContent(newContent);
         setDirty(true);
@@ -277,6 +319,7 @@ public class FileBuffer {
     public void saveBuffer(String newLine) throws IOException {
         getFile().save(newLine, getContent());
         setDirty(false);
+        fireSaved();
     }
 
     /* ******************
