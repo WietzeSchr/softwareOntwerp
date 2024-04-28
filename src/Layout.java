@@ -175,11 +175,7 @@ public abstract class Layout {
      */
     public void addNewLineBreak(int focus) {
         View focussed = getFocusedView(focus);
-        if (focussed.addNewLineBreak()) {
-            FileBufferView f = (FileBufferView) focussed;
-            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
-            updateViews(focus, edit.getInsertionPoint(), (char) 13, false, f.getBuffer());
-        }
+        focussed.addNewLineBreak();
     }
 
     /** 
@@ -191,11 +187,7 @@ public abstract class Layout {
      */
     public void addNewChar(char c, int focus) {
         View focussed = getFocusedView(focus);
-        if (focussed.addNewChar(c)) {
-            FileBufferView f = (FileBufferView) focussed;
-            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
-            updateViews(focus, edit.getInsertionPoint(), c, false, f.getBuffer());
-        }
+        focussed.addNewChar(c);
     }
 
     /** 
@@ -206,11 +198,7 @@ public abstract class Layout {
      */
     public void deleteChar(int focus) {
         View focussed = getFocusedView(focus);
-        if (focussed.deleteChar()) {
-            FileBufferView f = (FileBufferView) focussed;
-            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
-            updateViews(focus, edit.getInsertionPoint(), edit.getChange(), true, f.getBuffer());
-        }
+        focussed.deleteChar();
     }
 
     /* ******************
@@ -268,9 +256,6 @@ public abstract class Layout {
     public void saveBuffer(int focus, String newLine) throws IOException {
         View focussed = getFocusedView(focus);
         focussed.saveBuffer(newLine);
-        if (focussed.getClass() == FileBufferView.class) {
-            updateViewsSaved(focus, ((FileBufferView) focussed).getBuffer());
-        }
 
     }
 
@@ -371,11 +356,7 @@ public abstract class Layout {
      */
     public void undo(int focus) {
         View focussed = getFocusedView(focus);
-        if (focussed.undo()) {
-            FileBufferView f = (FileBufferView) focussed;
-            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit().getNext();
-            updateViews(focus, edit.getInsertionPointAfter(), edit.getChange(), edit.getClass() != FileBufferView.Deletion.class, f.getBuffer());
-        }
+        focussed.undo();
     }
 
     /**
@@ -386,11 +367,7 @@ public abstract class Layout {
      */
     public void redo(int focus) {
         View focussed =getFocusedView(focus);
-        if (focussed.redo()) {
-            FileBufferView f = (FileBufferView) focussed;
-            FileBufferView.NonEmptyEdit edit = (FileBufferView.NonEmptyEdit) f.getLastEdit();
-            updateViews(focus, edit.getInsertionPoint(), edit.getChange(), edit.getClass() == FileBufferView.Insertion.class, f.getBuffer());
-        }
+        focussed.redo();
     }
 
     /* *************
@@ -424,7 +401,7 @@ public abstract class Layout {
       public Layout newGame(int focus) {
         View focussed = getFocusedView(focus);
         return openViews(focus, focussed.getParent(),
-                new View[] {new GameView(focussed.getHeigth(), calcGameWidth(focus), focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
+                new View[] {new GameView(focussed.getHeigth(), focussed.getWidth(), focussed.getLeftUpperCorner().add(new Point(0, focussed.getWidth() / 2)))});
     }
 
 
@@ -442,8 +419,6 @@ public abstract class Layout {
      */
     public abstract Layout insertViews(int focus, CompositeLayout parent, View[] views);
 
-    abstract int calcGameWidth(int focus);
-
     /* *******************
      *  DUPLICATED VIEW  *
      * *******************/
@@ -458,19 +433,6 @@ public abstract class Layout {
         View[] duplicates = focussed.duplicate();
         return openViews(focus, focussed.getParent(), duplicates);
     }
-
-    /**
-     * This method updates the views of the given buffer
-     * @param focus     | The index of the focussed view
-     * @param insert    | The insertion point of the focused view
-     * @param c         | The character that was deleted or added
-     * @param isDeleted | true: character was deleted, false: character was inserted
-     * @param buffer    | The buffer of the focused view
-     * @return  | void
-     */
-    public abstract void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer);
-
-    public abstract void updateViewsSaved(int focus, FileBuffer buffer);
 
     /* ****************
      *    RUN SNAKE   *
@@ -550,7 +512,7 @@ public abstract class Layout {
             return false;
         }
         if (o instanceof CompositeLayout) {
-            Layout[] subLayouts = ((CompositeLayout) this).getSubLayouts();
+            Layout[] subLayouts = this.getSubLayouts();
             Layout[] otherSubLayouts = ((CompositeLayout) o).getSubLayouts();
             return Arrays.equals(subLayouts, otherSubLayouts);
         }

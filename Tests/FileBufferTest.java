@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.Test;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,7 +67,7 @@ class FileBufferTest {
     @Test
     void testDeleteChar() {
         FileBuffer fb1 = new FileBuffer(new String[] {"ha", "w", "lolo", ""}, "test1.txt");
-        fb1.deleteChar(new Point(3,3));
+        fb1.deleteChar( new Point(3,3));
         assertArrayEquals(fb1.getContent(), new String[] {"ha", "w", "llo", ""});
         fb1.deleteChar(new Point(2,1));
         assertArrayEquals(fb1.getContent(), new String[] {"haw", "llo", ""});

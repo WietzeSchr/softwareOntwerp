@@ -71,7 +71,9 @@ public abstract class View extends Layout {
      * point. If the focused view is a gameView this method starts a new game, if the game was game over.
      * @return      | void
      */
-    public abstract boolean addNewLineBreak();
+    public void addNewLineBreak() {
+        return;
+    }
 
     /**
      * This method adds a new character to the file
@@ -79,13 +81,17 @@ public abstract class View extends Layout {
      * @param c  | The character to add
      * @return:  | boolean, return true if the character was added
      */
-    public abstract boolean addNewChar(char c);
+    public void addNewChar(char c) {
+        return;
+    }
 
     /** This method deletes the character before the insertionPoint.
      *  It also makes a new Edit object and set this new Edit as the lastEdit
      * @return  | boolean
      */
-    public abstract boolean deleteChar();
+    public void deleteChar() {
+        return;
+    }
 
     /* ******************
      *    SAVE BUFFER   *
@@ -140,14 +146,18 @@ public abstract class View extends Layout {
      * It also sets the lastEdit to the previous edit 
      * @return  | boolean, true if the undo was successful, false otherwise
      */
-    public abstract boolean undo();
+    public void undo() {
+        return;
+    }
 
     /**
      * This method redoes the last edit and uses therefor the redo method of the lastEdit
      * It also sets the lastEdit to the next edit 
      * @return  | boolean, true if the redo was successful, false otherwise
      */
-    public abstract boolean redo();
+    public void redo() {
+        return;
+    }
 
     /* ******************
      *  OPEN GAME VIEW  *
@@ -294,11 +304,5 @@ public abstract class View extends Layout {
     @Override
     public int countViews() {
         return 1;
-    }
-
-    @Override
-    public int calcGameWidth(int focus) {
-        if (getPosition() == focus) return getWidth() / 2;
-        return -1;
     }
 }

@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
-public class FileBufferView extends View
+                public class FileBufferView extends View
 {
     /* *******************
      *   ABSTRACT EDIT   *
@@ -262,6 +262,7 @@ public class FileBufferView extends View
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
+        fileBuffer.subscribeView(this);
     }
 
     /** This method sets the verticalScrollState of the FileBufferView
@@ -275,6 +276,7 @@ public class FileBufferView extends View
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
+        fileBuffer.subscribeView(this);
     }
 
     /* **********************
@@ -467,7 +469,7 @@ public class FileBufferView extends View
      * It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: boolean
      */
-    public boolean addNewLineBreak() {
+    public void addNewLineBreak() {
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
@@ -475,8 +477,6 @@ public class FileBufferView extends View
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
-        updateScrollStates();
-        return true;
     }
 
     /**
@@ -485,15 +485,13 @@ public class FileBufferView extends View
      * @param c | The character to add
      * @return  | boolean
      */
-    public boolean addNewChar(char c) {
+    public void addNewChar(char c) {
         Point insert = getInsertionPoint();
         getBuffer().addNewChar(c, insert);
-        move(Direction.EAST);
         Edit nextEdit = new Insertion(c, insert, getInsertionPoint());
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
-        return true;
     }
 
     /** 
@@ -501,27 +499,25 @@ public class FileBufferView extends View
      * It also makes a new Edit object and set this new Edit as the lastEdit
      * @return  | boolean
      */
-    public boolean deleteChar() {
+    public void deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
             Point insert = getInsertionPoint();
             char c;
-            if (getInsertionPoint().getY() == 1) {
+            Point newInsert;
+            if (insert.getY() == 1) {
                 c = (char) 13;
-                setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getContent()[getInsertionPoint().getX() - 2].length() + 1));
-                updateScrollStates();
-            }
-            else {
-                c = getContent()[getInsertionPoint().getX() - 1].charAt(getInsertionPoint().getY() - 2);
-                setInsertionPoint(new Point(getInsertionPoint().getX(), getInsertionPoint().getY() - 1));
+                newInsert = new Point(insert.getX() - 1, getContent()[insert.getX() - 2].length() + 1);
+            } else {
+                c = getContent()[insert.getX() - 1].charAt(insert.getY() - 2);
+                newInsert = new Point(insert.getX(), insert.getY() - 1);
             }
             getBuffer().deleteChar(insert);
+            setInsertionPoint(newInsert);
             Edit nextEdit = new Deletion(c, insert, getInsertionPoint());
             nextEdit.setPrevious(getLastEdit());
             getLastEdit().setNext(nextEdit);
             setLastEdit(nextEdit);
-            return true;
         }
-        return false;
     }
 
     /* ******************
@@ -551,11 +547,13 @@ public class FileBufferView extends View
                     }
                 }
                 if (c == 121 || c == 89) {
+                    fileBuffer.unSubscribeView(this);
                     return null;
                 }
                 return this;
             }
             else {
+                fileBuffer.unSubscribeView(this);
                 return null;
             }
         }
@@ -579,7 +577,6 @@ public class FileBufferView extends View
     @Override
     public void saveBuffer(String newLine) throws IOException {
         getBuffer().saveBuffer(newLine);
-        clearEdits();
     }
 
     private void clearEdits() {
@@ -595,14 +592,13 @@ public class FileBufferView extends View
      * It also sets the lastEdit to the previous edit 
      * @return  | boolean, true if the undo was successful, false otherwise
      */
-    public boolean undo() {
+    public void undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
-        boolean result = getLastEdit().undo();
+        getLastEdit().undo();
         setLastEdit(getLastEdit().getPrevious());
         if (getLastEdit().isFirst()) {
             getBuffer().setDirty(false);
         }
-        return result;
     }
 
     /**
@@ -610,10 +606,9 @@ public class FileBufferView extends View
      * It also sets the lastEdit to the next edit 
      * @return  | boolean, true if the redo was successful, false otherwise
      */
-    public boolean redo() {
-        boolean result = getLastEdit().getNext().redo();
+    public void redo() {
+        getLastEdit().getNext().redo();
         setLastEdit(getLastEdit().getNext());
-        return result;
     }
 
     /* ****************
@@ -621,9 +616,9 @@ public class FileBufferView extends View
      * ****************/
 
    /**
-     * This method returns the next deadline of the system
-     * @return  | long, the next deadline
-     */
+    * This method returns the next deadline of the system
+    * @return  | long, the next deadline
+    */
     @Override
     public long getNextDeadline() {
         return System.currentTimeMillis();
@@ -645,59 +640,39 @@ public class FileBufferView extends View
                 {new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), getBuffer())};
     }
 
-    /**
-     * This method updates the view if needed so that edits made in other views don't change the shown content
-     * by this view (if possible)
-     * @param focus     | The index of the focussed view
-     * @param insert    | The insertion point of the lastEdit
-     * @param c         | The character that was added or deleted
-     * @param isDeleted | A boolean that indicates if the character was deleted
-     *                  | true if deleted, false otherwise
-     * @param buffer    | The buffer on which the edit was made
-     * @return void
-     */
-    @Override
-    public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
-        if (getPosition() != focus && getBuffer() == buffer) {
-            if (c == (char) 13) {
-                if (insert.getX() < getInsertionPoint().getX()) {
-                    if (isDeleted) {
-                        setVerticalScrollState(getVerticalScrollState() - 1);
-                        move(Direction.NORD);
-                    }
-                    else {
-                        setVerticalScrollState(getVerticalScrollState() + 1);
-                        move(Direction.SOUTH);
-                    }
-                }
-                else if (insert.getX() == getInsertionPoint().getX()) {
-                    if (insert.getY() < getInsertionPoint().getY()) {
-                        if (isDeleted) {
+    public void updateViewSaved() {
+        clearEdits();
+    }
 
-                        }
-                        else {
-                            setInsertionPoint(new Point(insert.getX() + 1, getInsertionPoint().getY() - insert.getY() + 1));
-                        }
-                    }
-                }
-            }
-            else {
-                if (insert.getX() == getInsertionPoint().getX()) {
-                    if (isDeleted) {
-                        move(Direction.WEST);
-                    }
-                    else {
-                        move(Direction.EAST);
-                    }
-                }
-            }
+    public void updateViewNewLineBreak(Point insert) {
+        if (insert.getX() < getInsertionPoint().getX()) {
+            move(Direction.SOUTH);
+            setVerticalScrollState(getVerticalScrollState() + 1);
+        }
+        else if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
+            setInsertionPoint(new Point(getInsertionPoint().getX() + 1, getInsertionPoint().getY() - insert.getY() + 1));
         }
     }
 
-    @Override
-    public void updateViewsSaved(int focus, FileBuffer buffer) {
-        if (getPosition() != focus && buffer == getBuffer()) {
-            clearEdits();
+    public void updateViewDelLineBreak(Point insert) {
+        if (insert.getX() < getInsertionPoint().getX()) {
+            move(Direction.NORD);
+            setVerticalScrollState(getVerticalScrollState() - 1);
+        }
+        else if (insert.getX() == getInsertionPoint().getX()) {
+            setInsertionPoint(new Point(getInsertionPoint().getX() - 1, getInsertionPoint().getY()));
+        }
+    }
+
+    public void updateViewNewChar(Point insert) {
+        if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
+            move(Direction.EAST);
+        }
+    }
+
+    public void updateViewDelChar(Point insert) {
+        if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
+            move(Direction.WEST);
         }
     }
 

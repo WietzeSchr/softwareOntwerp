@@ -317,25 +317,6 @@ public class StackedLayout extends CompositeLayout {
         return new StackedLayout(getHeigth(), getWidth(), getLeftUpperCorner(), newSubLayouts);
     }
 
-    /**
-     * This method calculates the width of the game
-     * @param focus the index of the focused view
-     * @return: int, the width of the game
-     */
-    @Override
-    public int calcGameWidth(int focus){
-        View focused = getFocusedView(focus);
-        int result = -1;
-        if(focused.getParent() == this) result = getWidth()/2;
-        else {
-            int i=0;
-            while(result<0) {
-                result = getSubLayouts()[i++].calcGameWidth(focus);
-            }
-        }
-        return result;
-    }
-
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/

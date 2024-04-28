@@ -163,33 +163,6 @@ public abstract class CompositeLayout extends Layout {
         return result;
     }
 
-    /* ************************
-     *  OPEN FILEBUFFER VIEW  *
-     * ************************/
-
-    /**
-     * This method updates the views of the given buffer
-     * @param focus     | The index of the focussed view
-     * @param insert    | The insertion point of the focused view
-     * @param c         | The character that was deleted or added
-     * @param isDeleted | true: character was deleted, false: character was inserted
-     * @param buffer    | The buffer of the focused view
-     * @return  | void
-     */
-    @Override
-    public void updateViews(int focus, Point insert, char c, boolean isDeleted, FileBuffer buffer) {
-        for (int i = 0; i < countSubLayouts(); i++) {
-            getSubLayouts()[i].updateViews(focus, insert, c, isDeleted, buffer);
-        }
-    }
-
-    @Override
-    public void updateViewsSaved(int focus, FileBuffer buffer) {
-        for (int i = 0; i < countSubLayouts(); i++) {
-            getSubLayouts()[i].updateViewsSaved(focus, buffer);
-        }
-    }
-
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/

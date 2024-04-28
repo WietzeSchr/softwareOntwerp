@@ -20,7 +20,7 @@ class GameViewTest {
         gv.deleteChar();
         gv.undo();
         gv.redo();
-        gv.updateViews(1, new Point(1, 1), 'x', true, new FileBuffer(new String[] {}, "test"));
+        //gv.updateViews(1, new Point(1, 1), 'x', true, new FileBuffer(new String[] {}, "test"));
         assertEquals(gv.getGame(), newGame);
         assertEquals(gv.getLastMove(), 1500);
         assertArrayEquals(gv.duplicate(), new View[] {});
