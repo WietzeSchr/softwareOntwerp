@@ -54,11 +54,8 @@ class TerminalParser {
 
 public class Textr
 {
-    private Layout layout;
+    private LayoutManager layoutManager;
 
-    private String newLine;
-
-    private int focus;
     TerminalHandler terminalHandler = new TerminalHandler();
 
     /* ******************
@@ -86,13 +83,11 @@ public class Textr
             throw new RuntimeException("please give one or more filepaths to open");
         }
         else if (filepaths.length > 1) {
-            this.layout = new StackedLayout(1,1, new Point(1,1), filepaths, newLine);
+            this.layoutManager = new LayoutManager(new StackedLayout(1,1, new Point(1,1), filepaths, newLine), 1, newLine);
         }
         else {
-            this.layout = new FileBufferView(1,1, new Point(1, 1), filepaths[0], newLine);
+            this.layoutManager = new LayoutManager(new FileBufferView(1,1, new Point(1, 1), filepaths[0], newLine), 1, newLine);
         }
-        this.newLine = newLine;
-        this.focus = 1;
         updateSize(size.getX(), size.getY());
         initViewPositions();
         show();
@@ -108,9 +103,7 @@ public class Textr
      * @post | getNewLine() = newLine
      */
     public Textr(String newLine, Layout layout ) {
-        this.layout = layout;
-        this.newLine = newLine;
-        this.focus = 1;
+        this.layoutManager = new LayoutManager(layout, 1, newLine);
         initViewPositions();
     }
 
@@ -118,13 +111,15 @@ public class Textr
      *  GETTERS AND SETTERS *
      * **********************/
 
+    private LayoutManager getLayoutManager() {return this.layoutManager;}
+
     /** 
      * This method sets the layout to newLayout
      * @post     | getLayout() == newLayout
      * @return   |void
      */
     private void setLayout(Layout newLayout) {
-        this.layout = newLayout;
+        getLayoutManager().setLayout(newLayout);
     }
 
     /** 
@@ -132,15 +127,7 @@ public class Textr
      * @return   | Layout, the layout of Textr
      */
     protected Layout getLayout() {
-        return layout;
-    }
-
-    /** 
-     * This method returns the newLine
-     * @return  | String, the newLine
-     */
-    private String getNewLine() {
-        return newLine;
+        return getLayoutManager().getLayout();
     }
 
     /** 
@@ -151,7 +138,7 @@ public class Textr
      * @post : getFocus() == newFocus
      */
     private void setFocus(int newFocus) {
-        this.focus = newFocus;
+        getLayoutManager().setFocus(newFocus);
     }
 
     /** 
@@ -160,7 +147,7 @@ public class Textr
      * Visible for testing
      */
     int getFocus() {
-        return focus;
+        return getLayoutManager().getFocus();
     }
 
     /* **************
@@ -219,7 +206,7 @@ public class Textr
             else if (c == 21) {             //  Ctrl + U
                 redo();
             }
-            else if (c == 26) {             //  Ctrl + Z
+            else if (c == -1) {             //  Ctrl + Z
                 undo();
             }
             else if (c == 127) {
@@ -259,7 +246,7 @@ public class Textr
      * Visible for testing
      */
     View getFocusedView() {
-        return getLayout().getFocusedView(getFocus());
+        return getLayoutManager().getFocusedView();
     }
 
     /* ******************
@@ -271,8 +258,7 @@ public class Textr
      * moves the cursor's position to the new focus' insertion point
      * Visible for testing
      */
-    void changeFocusNext() {
-        setFocus(nextFocus());
+    void changeFocusNext() {getLayoutManager().changeFocusNext();
     }
 
     /** 
@@ -281,8 +267,7 @@ public class Textr
      * @return: void
      * Visible for testing
      */
-    void changeFocusPrevious() {
-        setFocus(previousFocus());
+    void changeFocusPrevious() {getLayoutManager().changeFocusPrevious();
     }
 
     /** 
@@ -294,7 +279,7 @@ public class Textr
      * Visible for testing
      */
     void arrowPressed(Direction dir) {
-        getLayout().arrowPressed(dir, getFocus());
+        getLayoutManager().arrowPressed(dir);
     }
 
     /* **********************
@@ -309,7 +294,7 @@ public class Textr
      * Visible for testing
      */
     void addNewLineBreak() {
-        getLayout().addNewLineBreak(getFocus());
+        getLayoutManager().addNewLineBreak();
     }
 
     /** 
@@ -320,7 +305,7 @@ public class Textr
      * Visible for testing
      */
     protected void addNewChar(char c) {
-        getLayout().addNewChar(c, getFocus());
+        getLayoutManager().addNewChar(c);
     }
 
     /** 
@@ -329,8 +314,7 @@ public class Textr
      * @return   | void
      * Visible for testing
      */
-    void deleteChar() {
-        getLayout().deleteChar(getFocus());
+    void deleteChar() { getLayoutManager().deleteChar();
     }
 
     /* ******************
@@ -347,10 +331,7 @@ public class Textr
      * Visible for testing
      */
     void closeView() throws IOException {
-        setLayout(getLayout().closeView(getFocus()));
-        if (getLayout() != null) {
-            setFocus(getLayout().getNewFocus(getFocus()));
-        }
+        getLayoutManager().closeView();
     }
 
     /* ******************
@@ -364,7 +345,7 @@ public class Textr
      * Visible for testing
      */
     void saveBuffer() throws IOException {
-        getLayout().saveBuffer(getFocus(), getNewLine());
+        getLayoutManager().saveBuffer();
     }
 
     /* *****************
@@ -381,7 +362,7 @@ public class Textr
      * Visible for testing
      */
     void rotateView(int dir) {
-        setLayout(getLayout().rotateView(dir, getFocus()));
+        getLayoutManager().rotateView(dir);
     }
 
     /* ******************
@@ -397,7 +378,7 @@ public class Textr
      * Visible for testing
      */
     void duplicateView() {
-        setLayout(getLayout().newBufferView(getFocus()));
+        getLayoutManager().duplicateView();
     }
 
     /* ******************
@@ -412,7 +393,7 @@ public class Textr
      * Visible for testing
      */
     void openGameView() {
-        setLayout(getLayout().newGame(getFocus()));
+        getLayoutManager().openGameView();
     }
 
     /* ******************
@@ -427,7 +408,7 @@ public class Textr
      * Visible for testing
      */
     void undo() {
-        getLayout().undo(getFocus());
+        getLayoutManager().undo();
     }
 
     /**
@@ -438,7 +419,7 @@ public class Textr
      * Visible for testing
      */
     void redo() {
-        getLayout().redo(getFocus());
+        getLayoutManager().redo();
     }
 
     /* ****************
@@ -452,7 +433,7 @@ public class Textr
      * Visible for testing
      */
     void tick() throws IOException {
-        getLayout().tick(getFocus());
+        getLayoutManager().tick();
     }
 
     /* ******************
@@ -465,11 +446,7 @@ public class Textr
      */
     void show() {
         terminalHandler.clearScreen();
-        setFocus(getLayout().getNewFocus(getFocus()));
-        View focused = getFocusedView();
-        initViewPositions();
-        setFocus(focused.getPosition());
-        getLayout().show();
+        getLayoutManager().show();
         showCursor();
     }
 
@@ -481,26 +458,6 @@ public class Textr
         View focussed = getFocusedView();
         Point cursor = focussed.getCursor();
         terminalHandler.moveCursor(cursor.getX(), cursor.getY());
-    }
-
-    /* ******************
-     *  HELP FUNCTIONS  *
-     * ******************/
-
-    /** 
-     * This method gives the next focus
-     * @return  | int, the index of next focus
-     */
-    private int nextFocus() {
-        return getLayout().getNextFocus(getFocus());
-    }
-
-    /** 
-     * This method gives the previous focus
-     * @return  | int, the index of previous focus
-     */
-    private int previousFocus() {
-        return getLayout().getPreviousFocus(getFocus());
     }
 
     /** 
@@ -532,7 +489,7 @@ public class Textr
      * Visible for testing
      */
     long getNextDeadline() {
-        return getLayout().getNextDeadline(getFocus());
+        return getLayoutManager().getNextDeadline();
     }
 
     /** 
