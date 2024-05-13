@@ -2,34 +2,22 @@ import java.util.ArrayList;
 
 public class FileBufferListenerService {
     
-    private ArrayList<InsertionListener> insertionListeners = new ArrayList<>();
+    private final ArrayList<InsertionListener> insertionListeners = new ArrayList<>();
     
-    private ArrayList<DeletionListener> deletionListeners = new ArrayList<>();
+    private final ArrayList<DeletionListener> deletionListeners = new ArrayList<>();
 
-    private ArrayList<SaveListener> saveListeners = new ArrayList<>();
+    private final ArrayList<SaveListener> saveListeners = new ArrayList<>();
 
     public ArrayList<InsertionListener> getInsertionListeners() {
         return new ArrayList<>(insertionListeners);
-    }
-
-    public void setInsertionListeners(ArrayList<InsertionListener> newInsertionListeners) {
-        this.insertionListeners = newInsertionListeners;
     }
 
     public ArrayList<DeletionListener> getDeletionListeners() {
         return new ArrayList<>(deletionListeners);
     }
 
-    public void setDeletionListeners(ArrayList<DeletionListener> newDeletionListeners) {
-        this.deletionListeners = newDeletionListeners;
-    }
-
     public ArrayList<SaveListener> getSaveListeners() {
         return new ArrayList<>(saveListeners);
-    }
-
-    public void setSaveListeners(ArrayList<SaveListener> newSaveListeners) {
-        this.saveListeners = newSaveListeners;
     }
     
     public void addInsertionListener(InsertionListener listener) {
