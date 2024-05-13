@@ -433,7 +433,7 @@ public class Textr
         Point cursor = getLayoutManager().getCursor();
         terminalHandler.moveCursor(cursor.getX(), cursor.getY());
     }
-    
+
     /*
      * This method returns the next deadline. If the focused view is a FileBufferView the nextDeadline is the current
      * time. If the focused view is a GameView the nextDeadline is the time of the last tick + the time in between ticks
