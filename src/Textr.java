@@ -83,13 +83,11 @@ public class Textr
             throw new RuntimeException("please give one or more filepaths to open");
         }
         else if (filepaths.length > 1) {
-            this.layoutManager = new LayoutManager(new StackedLayout(1,1, new Point(1,1), filepaths, newLine), 1, newLine);
+            this.layoutManager = new LayoutManager(new StackedLayout(size.getX(), size.getY(), new Point(1,1), filepaths, newLine), 1, newLine);
         }
         else {
-            this.layoutManager = new LayoutManager(new FileBufferView(1,1, new Point(1, 1), filepaths[0], newLine), 1, newLine);
+            this.layoutManager = new LayoutManager(new FileBufferView(size.getX(), size.getY(), new Point(1, 1), filepaths[0], newLine), 1, newLine);
         }
-        updateSize(size.getX(), size.getY());
-        initViewPositions();
         show();
         run();
     }
@@ -104,23 +102,13 @@ public class Textr
      */
     public Textr(String newLine, Layout layout ) {
         this.layoutManager = new LayoutManager(layout, 1, newLine);
-        initViewPositions();
     }
 
     /* **********************
      *  GETTERS AND SETTERS *
      * **********************/
 
-    private LayoutManager getLayoutManager() {return this.layoutManager;}
-
-    /** 
-     * This method sets the layout to newLayout
-     * @post     | getLayout() == newLayout
-     * @return   |void
-     */
-    private void setLayout(Layout newLayout) {
-        getLayoutManager().setLayout(newLayout);
-    }
+    LayoutManager getLayoutManager() {return this.layoutManager;}
 
     /** 
      * This method returns the layout
@@ -130,21 +118,13 @@ public class Textr
         return getLayoutManager().getLayout();
     }
 
-    /** 
-     * This method sets the focus to newFocus
-
-     * @param newFocus this is the new focus that will be set
-     * @return: void
-     * @post : getFocus() == newFocus
-     */
-    private void setFocus(int newFocus) {
-        getLayoutManager().setFocus(newFocus);
-    }
 
     /** 
      * This method returns the focussed view
      * @return  | int, the index of the focussed view
      * Visible for testing
+     *
+     * Only used in testing -> delete
      */
     int getFocus() {
         return getLayoutManager().getFocus();
@@ -166,7 +146,7 @@ public class Textr
                 c = terminalHandler.readByte(getNextDeadline());
             } catch (TimeoutException e) {
                 tick();
-                if (getFocusedView().getTick() != 0) show();
+                if (getTick() != 0) show();
             }
 
             if (c == 27) {                          //  ARROWS
@@ -231,8 +211,8 @@ public class Textr
                 addNewChar((char) c);
             }
             if (getLayout() == null) break;
-            if (getFocusedView().getTick() == 0 && c != 0) show();
-            else if (getFocusedView().getTick() != 0) show();
+            if (getTick() == 0 && c != 0) show();
+            else if (getTick() != 0) show();
         }
     }
 
@@ -240,13 +220,8 @@ public class Textr
      *  DERIVED ATTRIBUTES  *
      * **********************/
 
-    /** 
-     * This method returns the focussed view
-     * @return  | View
-     * Visible for testing
-     */
-    View getFocusedView() {
-        return getLayoutManager().getFocusedView();
+    long getTick() {
+        return getLayoutManager().getTick();
     }
 
     /* ******************
@@ -455,33 +430,11 @@ public class Textr
      * @return: void
      */
     private void showCursor() {
-        View focussed = getFocusedView();
-        Point cursor = focussed.getCursor();
+        Point cursor = getLayoutManager().getCursor();
         terminalHandler.moveCursor(cursor.getX(), cursor.getY());
     }
-
-    /** 
-     * This method initializes the view positions, assigning all views a position from 1 to the amount of view in the
-     * layout. The views are ordered depth first
-     * @return  | void
-     * Visible for testing
-     */
-    void initViewPositions() {
-        getLayout().initViewPosition(1);
-    }
-
-    /** 
-     * This method updates the size of the layout to the given height and width and sets the leftUpperCorner to (1,1)
-     * @param heigth | The new height of the layout
-     * @param width  | The new width of the layout
-     * @return       |void
-     * Visible for testing
-     */
-    void updateSize(int heigth, int width) {
-        getLayout().updateSize(heigth, width, new Point(1,1));
-    }
-
-    /** 
+    
+    /*
      * This method returns the next deadline. If the focused view is a FileBufferView the nextDeadline is the current
      * time. If the focused view is a GameView the nextDeadline is the time of the last tick + the time in between ticks
      * of the Game

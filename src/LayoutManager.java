@@ -10,6 +10,7 @@ public class LayoutManager {
         this.layout = layout;
         this.focus = focus;
         this.newLine = newLine;
+        initViewPositions();
     }
 
     /* **********************
@@ -23,6 +24,7 @@ public class LayoutManager {
      */
     void setLayout(Layout newLayout) {
         this.layout = newLayout;
+        initViewPositions();
     }
 
     /**
@@ -72,6 +74,14 @@ public class LayoutManager {
      */
     View getFocusedView() {
         return getLayout().getFocusedView(getFocus());
+    }
+
+    Point getCursor() {
+        return getFocusedView().getCursor();
+    }
+
+    long getTick() {
+        return getFocusedView().getTick();
     }
 
     /* ******************
@@ -304,13 +314,14 @@ public class LayoutManager {
      * @return  | void
      * Visible for testing
      */
-    void initViewPositions() {getLayout().initViewPosition(1);
+    void initViewPositions() {
+        getLayout().initViewPosition(1);
     }
 
 
     /* ************
-     * HELP
-     */
+     *   HELP     *
+     * ************/
     /**
      * This method returns the next deadline. If the focused view is a FileBufferView the nextDeadline is the current
      * time. If the focused view is a GameView the nextDeadline is the time of the last tick + the time in between ticks

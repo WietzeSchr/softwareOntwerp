@@ -490,6 +490,10 @@ public abstract class Layout {
          return getFocusedView(focus).getNextDeadline();
     }
 
+    public void updateSize(int heigth, int width) {
+        updateSize(heigth, width, new Point(1,1));
+    }
+
     /**
      * This method updates the size of the layout, possibly it's subLayouts
      * @pre  | heigth > 0
