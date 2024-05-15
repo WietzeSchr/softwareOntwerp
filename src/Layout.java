@@ -1,4 +1,5 @@
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -173,9 +174,9 @@ public abstract class Layout {
      * @param focus | The index of the focussed view
      * @return      | void
      */
-    public void addNewLineBreak(int focus) {
+    public void addNewLineBreak(int focus, String newLine) throws FileNotFoundException {
         View focussed = getFocusedView(focus);
-        focussed.addNewLineBreak();
+        focussed.addNewLineBreak(newLine);
     }
 
     /** 
@@ -445,6 +446,11 @@ public abstract class Layout {
      */
     public void tick(int focus) throws IOException {
         getFocusedView(focus).tick();
+    }
+
+    public Layout openDirectoryView(int focus) {
+        View[] newViews = getFocusedView(focus).getDirectoryView();
+        return openViews(focus, getFocusedView(focus).getParent(), newViews);
     }
 
     /* ******************

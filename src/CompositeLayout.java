@@ -276,4 +276,17 @@ public abstract class CompositeLayout extends Layout {
         }
     }
 
+    public void replace(View oldView, View newView) {
+        Layout[] newSubLayouts = new Layout[countSubLayouts()];
+        for (int i = 0; i < countSubLayouts(); i++) {
+            if (getSubLayouts()[i] == oldView) {
+                newSubLayouts[i] = newView;
+            }
+            else {
+                newSubLayouts[i] = getSubLayouts()[i];
+            }
+        }
+        setSubLayouts(newSubLayouts);
+    }
+
 }

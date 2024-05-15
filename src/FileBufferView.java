@@ -3,8 +3,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
-                public class FileBufferView extends View
-{
+public class FileBufferView extends View {
     /* *******************
      *   ABSTRACT EDIT   *
      * *******************/
@@ -360,6 +359,14 @@ import java.util.concurrent.TimeoutException;
         return lastEdit;
     }
 
+    Path getPath() {
+        return getBuffer().getFile().getPath();
+    }
+
+    String getPathString() {
+        return getPath().toString();
+    }
+
     /* **********************
      *  DERIVED ATTRIBUTES  *
      * **********************/
@@ -392,17 +399,8 @@ import java.util.concurrent.TimeoutException;
         return getBuffer().countCharacters();
     }
 
-    /** This method returns the path of the file
-     * @return: String
-     */
-    public String getPath() {
-        return getBuffer().getPath();
-    }
-
     public String getFileName() {
-        String[] filepath = getPath().split("/");
-        filepath = filepath[filepath.length - 1].split("\\\\");
-        return filepath[filepath.length - 1];
+        return getPath().getName();
     }
 
     /** This method returns the position of the cursor
@@ -469,7 +467,7 @@ import java.util.concurrent.TimeoutException;
      * It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: boolean
      */
-    public void addNewLineBreak() {
+    public View addNewLineBreak() {
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
@@ -477,6 +475,7 @@ import java.util.concurrent.TimeoutException;
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
+        return this;
     }
 
     /**
@@ -674,6 +673,15 @@ import java.util.concurrent.TimeoutException;
         if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
             move(Direction.WEST);
         }
+    }
+
+    public View[] getDirectoryView() {
+        String path = getParentPath();
+        return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), path)};
+    }
+
+    public String getParentPath() {
+        return getPath().getParentPath();
     }
 
     /* ******************

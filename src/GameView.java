@@ -89,10 +89,11 @@ public class GameView extends View{
      * @return | boolean
      */
     @Override
-    public void addNewLineBreak() {
+    public View addNewLineBreak(String newLine) {
         if (getGame().getSnake() == null) {
             runNewGame();
         }
+        return this;
     }
 
     /* ******************

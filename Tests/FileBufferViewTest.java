@@ -62,7 +62,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getRowCount(), 3);
         assertEquals(fbv1.getColumnCount(), 7);
         assertEquals(fbv1.getCharacterCount(), 13);
-        assertEquals(fbv1.getPath(), "Home/Documents/test1.txt");
+        assertEquals(fbv1.getPathString(), "Home/Documents/test1.txt");
         assertEquals(fbv1.getFileName(), "test1.txt");
         assertEquals(fbv2.getFileName(), "test2.txt");
         fbv1.setInsertionPoint(new Point(3,4));

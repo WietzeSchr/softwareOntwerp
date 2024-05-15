@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -78,7 +79,7 @@ public class TextrTest {
     }
 
     @Test
-    void testEditBufferContent() {
+    void testEditBufferContent() throws FileNotFoundException {
         FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
         FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
@@ -184,7 +185,7 @@ public class TextrTest {
     }
 
     @Test
-    void testDuplicateView() {
+    void testDuplicateView() throws FileNotFoundException {
         FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
         FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");

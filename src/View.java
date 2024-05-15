@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public abstract class View extends Layout {
@@ -71,8 +72,8 @@ public abstract class View extends Layout {
      * point. If the focused view is a gameView this method starts a new game, if the game was game over.
      * @return      | void
      */
-    public void addNewLineBreak() {
-        return;
+    public View addNewLineBreak(String newLine) throws FileNotFoundException {
+        return this;
     }
 
     /**
@@ -214,7 +215,15 @@ public abstract class View extends Layout {
      * This method ticks the game
      * @return  | void
      */
-    public abstract void tick() throws IOException;
+    public void tick() throws IOException {};
+
+    public View openDirectoryView() {
+        return this;
+    }
+
+    public View[] getDirectoryView() {
+        return new View[] {};
+    }
 
     /* ******************
      *  SHOW FUNCTIONS  *
@@ -268,6 +277,13 @@ public abstract class View extends Layout {
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
+
+    @Override
+    public void updateSize(int heigth, int width, Point leftUpperCorner) {
+        setHeigth(heigth);
+        setWidth(width);
+        setLeftUpperCorner(leftUpperCorner);
+    }
 
     /**
      * This method returns the cursor of the view

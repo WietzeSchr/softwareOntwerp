@@ -1,16 +1,11 @@
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /************
  *  FILE    *
  ************/
-public class File
+public class File extends DirEntry
 {
-   
-    private final String path;
 
     /* **************
      *  CONSTRUCTOR *
@@ -23,18 +18,7 @@ public class File
      * @param path | The path of the file
     */
     public File(String path) {
-        this.path = path;
-    }
-
-    /* **********************
-     *  GETTERS AND SETTERS *
-     ************************/
-
-    /** This method returns the path of the file.
-     * @return | String
-     */
-    public String getPath(){
-        return this.path;
+        super(path);
     }
 
     /****************
@@ -48,7 +32,7 @@ public class File
      */
     public String[] load(String newLine) throws FileNotFoundException {
         ArrayList<String> content = new ArrayList<>();
-        FileInputStream file = new FileInputStream(path);
+        FileInputStream file = new FileInputStream(getPathString());
         byte[] newLineBytes = newLine.getBytes();
         int c;
         StringBuilder line = new StringBuilder();
@@ -56,7 +40,7 @@ public class File
         try {
             while ((c = file.read()) != -1) {
                 if (c != 10 && c != 13 && c < 32 || 127 <= c) {
-                    throw new RuntimeException("File" + path + "contains an illegal byte");
+                    throw new RuntimeException("File" + getPath() + "contains an illegal byte");
                 } else {
                     if (c != 13 && c != 10) {
                         line.append((char) c);
@@ -84,7 +68,7 @@ public class File
      * @return        | void
      */
     public void save(String newLine, String[] content) throws IOException {
-        FileOutputStream file = new FileOutputStream(getPath());
+        FileOutputStream file = new FileOutputStream(getPathString());
         for (int i = 0; i < content.length; i++){
             file.write(content[i].getBytes());
             if (i != content.length - 1) {
@@ -109,5 +93,10 @@ public class File
             return c==10;
         }
         return c==10;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
