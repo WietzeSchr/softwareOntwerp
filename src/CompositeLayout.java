@@ -276,6 +276,16 @@ public abstract class CompositeLayout extends Layout {
         }
     }
 
+    @Override
+    public FileBuffer getBufferByName(String name) {
+        FileBuffer result = null;
+        for (Layout subLayout : getSubLayouts()) {
+            result = subLayout.getBufferByName(name);
+            if (result != null) break;
+        }
+        return result;
+    }
+
     public void replace(View oldView, View newView) {
         Layout[] newSubLayouts = new Layout[countSubLayouts()];
         for (int i = 0; i < countSubLayouts(); i++) {

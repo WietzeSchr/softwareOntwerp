@@ -313,6 +313,11 @@ public abstract class View extends Layout {
         return null;
     }
 
+    @Override
+    public FileBuffer getBufferByName(String name) {
+        return null;
+    }
+
     /**
      * This method returns the number of views
      * @return  | int

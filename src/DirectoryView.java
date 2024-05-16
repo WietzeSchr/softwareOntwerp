@@ -142,6 +142,7 @@ public class DirectoryView extends View{
     }
 
     public FileBuffer findBuffer(String name) {
-        return null;
+        Layout root = getRoot();
+        return root.getBufferByName(name);
     }
 }

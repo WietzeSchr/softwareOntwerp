@@ -465,9 +465,9 @@ public class FileBufferView extends View {
     /** 
      * This method adds a new line break to the buffer 
      * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: boolean
+     * @return: View
      */
-    public View addNewLineBreak() {
+    public View addNewLineBreak(String newLine) {
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
@@ -588,8 +588,7 @@ public class FileBufferView extends View {
 
     /**
      * This method undoes the last edit and uses therefor the undo method of the lastEdit
-     * It also sets the lastEdit to the previous edit 
-     * @return  | boolean, true if the undo was successful, false otherwise
+     * It also sets the lastEdit to the previous edit
      */
     public void undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
@@ -602,8 +601,7 @@ public class FileBufferView extends View {
 
     /**
      * This method redoes the last edit and uses therefor the redo method of the lastEdit
-     * It also sets the lastEdit to the next edit 
-     * @return  | boolean, true if the redo was successful, false otherwise
+     * It also sets the lastEdit to the next edit
      */
     public void redo() {
         getLastEdit().getNext().redo();
@@ -830,6 +828,14 @@ public class FileBufferView extends View {
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
+    }
+
+    @Override
+    public FileBuffer getBufferByName(String name) {
+        if (getFileName().equals(name)) {
+            return getBuffer();
+        }
+        return null;
     }
 
     @Override
