@@ -167,17 +167,7 @@ public abstract class Layout {
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    /**
-     * If the focused view is a FileBufferView, this method inserts a new line break at the FileBufferViews insertion
-     * point and possible update all views on the same buffer. If the focused view is a gameView this method starts
-     * a new game, if the game was game over
-     * @param focus | The index of the focussed view
-     * @return      | void
-     */
-    public void addNewLineBreak(int focus, String newLine) throws FileNotFoundException {
-        View focussed = getFocusedView(focus);
-        focussed.addNewLineBreak(newLine);
-    }
+
 
     /** 
      * This method adds a new character at the insertion point of the focused view if it is a FileBufferView. If the

@@ -21,7 +21,7 @@ public class File extends DirEntry
         super(path);
     }
 
-    /****************
+    /* **************
      *  LOAD FILE   *
      ****************/
 
@@ -36,7 +36,6 @@ public class File extends DirEntry
         byte[] newLineBytes = newLine.getBytes();
         int c;
         StringBuilder line = new StringBuilder();
-        int column = 1;
         try {
             while ((c = file.read()) != -1) {
                 if (c != 10 && c != 13 && c < 32 || 127 <= c) {

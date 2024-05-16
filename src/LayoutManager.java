@@ -339,16 +339,13 @@ public class LayoutManager {
         return getLayout().getNextDeadline(getFocus());
     }
     void replace(View oldView, View newView) {
+        newView.setPosition(oldView.getPosition());
         if (oldView != newView) {
-            if (oldView.getParent() == null) {
+            if (oldView.getParent() != null) {
                 oldView.getParent().replace(oldView, newView);
             } else {
                 setLayout(newView);
             }
         }
-    }
-
-    void updateSize(int heigth, int width) {
-        getLayout().updateSize(heigth, width, new Point(1, 1));
     }
 }
