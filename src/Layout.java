@@ -167,8 +167,6 @@ public abstract class Layout {
      *  EDIT BUFFER CONTENT *
      ************************/
 
-
-
     /** 
      * This method adds a new character at the insertion point of the focused view if it is a FileBufferView. If the
      * focused view is a GameView, nothing happens
@@ -438,8 +436,8 @@ public abstract class Layout {
         getFocusedView(focus).tick();
     }
 
-    public Layout openDirectoryView(int focus) {
-        View[] newViews = getFocusedView(focus).getDirectoryView();
+    public Layout openDirectoryView(int focus, LayoutManager manager) {
+        View[] newViews = getFocusedView(focus).getDirectoryView(manager);
         return openViews(focus, getFocusedView(focus).getParent(), newViews);
     }
 

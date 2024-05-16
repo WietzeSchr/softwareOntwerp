@@ -8,6 +8,8 @@ public class DirectoryView extends View{
 
     private int line;
 
+    private final LayoutManager manager;
+
     /**
      * This constructor creates a new View
      *
@@ -15,10 +17,11 @@ public class DirectoryView extends View{
      * @param width           the width of the view
      * @param leftUpperCorner the left upper corner of the view
      */
-    public DirectoryView(int height, int width, Point leftUpperCorner, String path) {
+    public DirectoryView(int height, int width, Point leftUpperCorner, String path, LayoutManager manager) {
         super(height, width, leftUpperCorner);
         this.directory = new Directory(path);
         this.line = 1;
+        this.manager = manager;
     }
 
     /**
@@ -28,10 +31,11 @@ public class DirectoryView extends View{
      * @param width           the width of the view
      * @param leftUpperCorner the left upper corner of the view
      */
-    public DirectoryView(int height, int width, Point leftUpperCorner) {
+    public DirectoryView(int height, int width, Point leftUpperCorner, LayoutManager manager) {
         super(height, width, leftUpperCorner);
         this.directory = null;
         this.line = 1;
+        this.manager = manager;
     }
 
     public void setDirectory(Directory newDirectory) {
@@ -52,6 +56,10 @@ public class DirectoryView extends View{
         return line;
     }
 
+    private LayoutManager getManager() {
+        return manager;
+    }
+
     @Override
     public Layout closeView(int focus, CompositeLayout parent) throws IOException {
         return null;
@@ -68,17 +76,16 @@ public class DirectoryView extends View{
     }
 
     @Override
-    public View addNewLineBreak(String newLine) throws FileNotFoundException {
+    public void addNewLineBreak(String newLine) throws FileNotFoundException {
         String str = makeShow()[getLine() - 1];
         if (str.equals("..") || str.charAt(str.length() - 1) == '/') {
             Directory newDir = getDirectory().openDir(getLine() - 1);
             setLine(1);
             setDirectory(newDir);
-            return this;
         }
         else {
             FileBuffer buffer = openFile(str, newLine);
-            return new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), buffer);
+            getManager().replace(this, new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), buffer));
         }
     }
 
