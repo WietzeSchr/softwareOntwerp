@@ -62,7 +62,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getRowCount(), 3);
         assertEquals(fbv1.getColumnCount(), 7);
         assertEquals(fbv1.getCharacterCount(), 13);
-        assertEquals(fbv1.getPath(), "Home/Documents/test1.txt");
+        assertEquals(fbv1.getPathString(), "Home/Documents/test1.txt");
         assertEquals(fbv1.getFileName(), "test1.txt");
         assertEquals(fbv2.getFileName(), "test2.txt");
         fbv1.setInsertionPoint(new Point(3,4));
@@ -92,7 +92,7 @@ class FileBufferViewTest {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
         fbv1.setPosition(1);
-        fbv1.addNewLineBreak();
+        fbv1.addNewLineBreak("\n");
         assertArrayEquals(fbv1.getContent(), new String[] {"", "test12", "", "test123"});
         assertTrue(fbv1.lastEditEquals((char) 13, false, new Point(1,1), new Point(2,1)));
         assertTrue(fbv1.getBuffer().getDirty());
@@ -148,7 +148,7 @@ class FileBufferViewTest {
         fbv1.saveBuffer("\n");
         assertFalse(fbv1.getBuffer().getDirty());
         assertTrue(fbv1.lastEditIsEmptyEdit());
-        fbv1.addNewLineBreak();
+        fbv1.addNewLineBreak("\n");
         assertFalse(fbv1.lastEditIsEmptyEdit());
         fbv1.updateViewSaved();
         assertTrue(fbv1.lastEditIsEmptyEdit());
@@ -164,7 +164,7 @@ class FileBufferViewTest {
         fbv1.deleteChar();
         fbv1.deleteChar();
         fbv1.move(Direction.WEST);
-        fbv1.addNewLineBreak();
+        fbv1.addNewLineBreak("\n");
         fbv1.move(Direction.SOUTH);
         assertArrayEquals(fbv1.getContent(), new String[] {"xtest", "1", "test123"});
         fbv1.redo();

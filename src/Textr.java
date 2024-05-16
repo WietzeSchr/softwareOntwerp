@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -183,6 +184,9 @@ public class Textr
             else if (c == 13) {             //  ENTER
                 addNewLineBreak();
             }
+            else if (c == 15) {
+                openDirectoryView();
+            }
             else if (c == 21) {             //  Ctrl + U
                 redo();
             }
@@ -268,7 +272,7 @@ public class Textr
      * @return    | void
      * Visible for testing
      */
-    void addNewLineBreak() {
+    void addNewLineBreak() throws FileNotFoundException {
         getLayoutManager().addNewLineBreak();
     }
 
@@ -409,6 +413,10 @@ public class Textr
      */
     void tick() throws IOException {
         getLayoutManager().tick();
+    }
+
+    void openDirectoryView() {
+        getLayoutManager().openDirectoryView();
     }
 
     /* ******************

@@ -19,7 +19,7 @@ public class FileBufferListenerService {
     public ArrayList<SaveListener> getSaveListeners() {
         return new ArrayList<>(saveListeners);
     }
-    
+
     public void addInsertionListener(InsertionListener listener) {
         insertionListeners.add(listener);
     }

@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -126,8 +127,9 @@ public class LayoutManager {
      * @return    | void
      * Visible for testing
      */
-    void addNewLineBreak() {
-        getLayout().addNewLineBreak(getFocus());
+    void addNewLineBreak() throws FileNotFoundException {
+        View focussedView = getFocusedView();
+        replace(focussedView, focussedView.addNewLineBreak(getNewLine()));
     }
 
     /**
@@ -272,6 +274,10 @@ public class LayoutManager {
         getLayout().tick(getFocus());
     }
 
+    void openDirectoryView() {
+        setLayout(getLayout().openDirectoryView(getFocus()));
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
@@ -332,5 +338,14 @@ public class LayoutManager {
     long getNextDeadline() {
         return getLayout().getNextDeadline(getFocus());
     }
-
+    void replace(View oldView, View newView) {
+        newView.setPosition(oldView.getPosition());
+        if (oldView != newView) {
+            if (oldView.getParent() != null) {
+                oldView.getParent().replace(oldView, newView);
+            } else {
+                setLayout(newView);
+            }
+        }
+    }
 }

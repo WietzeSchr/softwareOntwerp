@@ -3,8 +3,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
-                public class FileBufferView extends View
-{
+public class FileBufferView extends View {
     /* *******************
      *   ABSTRACT EDIT   *
      * *******************/
@@ -360,6 +359,14 @@ import java.util.concurrent.TimeoutException;
         return lastEdit;
     }
 
+    Path getPath() {
+        return getBuffer().getFile().getPath();
+    }
+
+    String getPathString() {
+        return getPath().toString();
+    }
+
     /* **********************
      *  DERIVED ATTRIBUTES  *
      * **********************/
@@ -392,17 +399,8 @@ import java.util.concurrent.TimeoutException;
         return getBuffer().countCharacters();
     }
 
-    /** This method returns the path of the file
-     * @return: String
-     */
-    public String getPath() {
-        return getBuffer().getPath();
-    }
-
     public String getFileName() {
-        String[] filepath = getPath().split("/");
-        filepath = filepath[filepath.length - 1].split("\\\\");
-        return filepath[filepath.length - 1];
+        return getPath().getName();
     }
 
     /** This method returns the position of the cursor
@@ -467,9 +465,9 @@ import java.util.concurrent.TimeoutException;
     /** 
      * This method adds a new line break to the buffer 
      * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: boolean
+     * @return: View
      */
-    public void addNewLineBreak() {
+    public View addNewLineBreak(String newLine) {
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
@@ -477,6 +475,7 @@ import java.util.concurrent.TimeoutException;
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
+        return this;
     }
 
     /**
@@ -589,8 +588,7 @@ import java.util.concurrent.TimeoutException;
 
     /**
      * This method undoes the last edit and uses therefor the undo method of the lastEdit
-     * It also sets the lastEdit to the previous edit 
-     * @return  | boolean, true if the undo was successful, false otherwise
+     * It also sets the lastEdit to the previous edit
      */
     public void undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
@@ -603,8 +601,7 @@ import java.util.concurrent.TimeoutException;
 
     /**
      * This method redoes the last edit and uses therefor the redo method of the lastEdit
-     * It also sets the lastEdit to the next edit 
-     * @return  | boolean, true if the redo was successful, false otherwise
+     * It also sets the lastEdit to the next edit
      */
     public void redo() {
         getLastEdit().getNext().redo();
@@ -674,6 +671,15 @@ import java.util.concurrent.TimeoutException;
         if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
             move(Direction.WEST);
         }
+    }
+
+    public View[] getDirectoryView() {
+        String path = getParentPath();
+        return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), path)};
+    }
+
+    public String getParentPath() {
+        return getPath().getParentPath();
     }
 
     /* ******************
@@ -822,6 +828,14 @@ import java.util.concurrent.TimeoutException;
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
+    }
+
+    @Override
+    public FileBuffer getBufferByName(String name) {
+        if (getFileName().equals(name)) {
+            return getBuffer();
+        }
+        return null;
     }
 
     @Override

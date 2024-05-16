@@ -73,7 +73,7 @@ public class FileBuffer {
      * @return  | String, path of the file
      */
     public String getPath() {
-        return getFile().getPath();
+        return getFile().getPathString();
     }
 
     /** 

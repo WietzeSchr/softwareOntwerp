@@ -1,4 +1,5 @@
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -166,17 +167,7 @@ public abstract class Layout {
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    /**
-     * If the focused view is a FileBufferView, this method inserts a new line break at the FileBufferViews insertion
-     * point and possible update all views on the same buffer. If the focused view is a gameView this method starts
-     * a new game, if the game was game over
-     * @param focus | The index of the focussed view
-     * @return      | void
-     */
-    public void addNewLineBreak(int focus) {
-        View focussed = getFocusedView(focus);
-        focussed.addNewLineBreak();
-    }
+
 
     /** 
      * This method adds a new character at the insertion point of the focused view if it is a FileBufferView. If the
@@ -447,6 +438,11 @@ public abstract class Layout {
         getFocusedView(focus).tick();
     }
 
+    public Layout openDirectoryView(int focus) {
+        View[] newViews = getFocusedView(focus).getDirectoryView();
+        return openViews(focus, getFocusedView(focus).getParent(), newViews);
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
@@ -506,6 +502,15 @@ public abstract class Layout {
      * @param leftUpperCorner | The new left upper corner of the layout
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
+
+    public Layout getRoot() {
+        if (getParent() != null) {
+            return getParent().getRoot();
+        }
+        return this;
+    }
+
+    public abstract FileBuffer getBufferByName(String name);
 
     /**
      * Checks if the structure of the Layouts match
