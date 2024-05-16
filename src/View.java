@@ -72,8 +72,8 @@ public abstract class View extends Layout {
      * point. If the focused view is a gameView this method starts a new game, if the game was game over.
      * @return      | void
      */
-    public View addNewLineBreak(String newLine) throws FileNotFoundException {
-        return this;
+    public void addNewLineBreak(String newLine) throws FileNotFoundException {
+        return;
     }
 
     /**
@@ -221,7 +221,7 @@ public abstract class View extends Layout {
         return this;
     }
 
-    public View[] getDirectoryView() {
+    public View[] getDirectoryView(LayoutManager manager) {
         return new View[] {};
     }
 

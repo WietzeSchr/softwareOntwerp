@@ -467,7 +467,7 @@ public class FileBufferView extends View {
      * It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: View
      */
-    public View addNewLineBreak(String newLine) {
+    public void addNewLineBreak(String newLine) {
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
@@ -475,7 +475,6 @@ public class FileBufferView extends View {
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
-        return this;
     }
 
     /**
@@ -673,9 +672,9 @@ public class FileBufferView extends View {
         }
     }
 
-    public View[] getDirectoryView() {
+    public View[] getDirectoryView(LayoutManager manager) {
         String path = getParentPath();
-        return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), path)};
+        return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), path, manager)};
     }
 
     public String getParentPath() {

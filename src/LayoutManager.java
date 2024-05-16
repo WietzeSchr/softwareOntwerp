@@ -129,7 +129,7 @@ public class LayoutManager {
      */
     void addNewLineBreak() throws FileNotFoundException {
         View focussedView = getFocusedView();
-        replace(focussedView, focussedView.addNewLineBreak(getNewLine()));
+        focussedView.addNewLineBreak(getNewLine());
     }
 
     /**
@@ -275,7 +275,7 @@ public class LayoutManager {
     }
 
     void openDirectoryView() {
-        setLayout(getLayout().openDirectoryView(getFocus()));
+        setLayout(getLayout().openDirectoryView(getFocus(), this));
     }
 
     /* ******************
