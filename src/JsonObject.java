@@ -3,11 +3,11 @@ import java.io.FileNotFoundException;
 public class JsonObject extends FileSystemNode {
 
     public JsonObject(String name) {
-        super(name, '.');
+        super(name, ".");
     }
 
     public JsonObject(String name, FileSystemNode parent) {
-        super(name, '.', parent);
+        super(name, ".", parent);
     }
 
     @Override

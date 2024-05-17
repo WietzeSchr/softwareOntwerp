@@ -30,9 +30,9 @@ public class DirectoryView extends View{
      * @param width           the width of the view
      * @param leftUpperCorner the left upper corner of the view
      */
-    public DirectoryView(int height, int width, Point leftUpperCorner, LayoutManager manager) {
+    public DirectoryView(int height, int width, Point leftUpperCorner, FileSystemNode fileSystemNode, LayoutManager manager) {
         super(height, width, leftUpperCorner);
-        this.fileSystemNode = null;
+        this.fileSystemNode = fileSystemNode;
         this.line = 1;
         this.manager = manager;
     }

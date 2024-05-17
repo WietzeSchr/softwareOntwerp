@@ -24,4 +24,9 @@ class FileTest {
         assertArrayEquals(content, new String[] {"test12", "", "test123"});
 
     }
+
+    @Test
+    void testNormalizePath() {
+        File f1 = new File("../testTxt/test1.txt");
+    }
 }

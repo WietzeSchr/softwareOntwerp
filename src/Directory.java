@@ -6,11 +6,11 @@ import java.util.Objects;
 public class Directory extends FileSystemNode {
 
     public Directory(String absPath) {
-        super(absPath, '/');
+        super(absPath, "/");
     }
 
     public Directory(String absPath, Directory parent) {
-        super(absPath, '/', parent);
+        super(absPath, "/", parent);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class Directory extends FileSystemNode {
 
     @Override
     public View open(LayoutManager manager, FileBuffer buffer, String newLine) {
-        return new DirectoryView(5,5, new Point(1,1), getPathString(), manager);
+        return new DirectoryView(5,5, new Point(1,1), this, manager);
     }
 
     @Override

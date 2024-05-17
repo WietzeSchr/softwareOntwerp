@@ -6,11 +6,11 @@ public abstract class FileSystemEntry {
 
     private FileSystemNode parent = null;
 
-    public FileSystemEntry(String path, char delimiter) {
+    public FileSystemEntry(String path, String delimiter) {
         this.absPath = new Path(path, delimiter);
     }
 
-    public FileSystemEntry(String path, char delimiter, FileSystemNode parent) {
+    public FileSystemEntry(String path, String delimiter, FileSystemNode parent) {
         this.absPath = new Path(path, delimiter);
         this.parent = parent;
     }
