@@ -4,7 +4,7 @@ import java.util.ArrayList;
 /************
  *  FILE    *
  ************/
-public class File extends DirEntry
+public class File extends FileSystemLeaf
 {
 
     /* **************
@@ -18,11 +18,11 @@ public class File extends DirEntry
      * @param path | The path of the file
     */
     public File(String path) {
-        super(path);
+        super(path, "/");
     }
 
     public File(String path, Directory parent) {
-        super(path, parent);
+        super(path, "/", parent);
     }
 
     /* **************

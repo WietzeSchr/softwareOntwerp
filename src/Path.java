@@ -3,17 +3,24 @@ public class Path {
 
     private final String absolutePath;
 
-    public Path(String path) {
+    private final String delimiter;
+
+    public Path(String path, String delimiter) {
         String absPath = new java.io.File(path).getAbsolutePath();
-        absolutePath = normalize(absPath);
+        this.delimiter = delimiter;
+        this.absolutePath = normalize(absPath);
     }
 
     public String getPath() {
         return absolutePath;
     }
 
+    private String getDelimiter() {
+        return delimiter;
+    }
+
     private String normalize(String path) {
-        String[] splittedPath = path.split("/");
+        String[] splittedPath = path.split(getDelimiter());
         ArrayList<String> copy = new ArrayList<>();
         for (String s : splittedPath) {
             if (copy.size() > 0 && s.equals("..")) {
@@ -26,7 +33,7 @@ public class Path {
         String[] splittedNormalized = copy.toArray(new String[0]);
         for (int i = 0; i < splittedNormalized.length; i++) {
             if (i != 0) {
-                result.append("/");
+                result.append(getDelimiter());
             }
             result.append(splittedNormalized[i]);
         }
@@ -34,7 +41,7 @@ public class Path {
     }
 
     public String getName() {
-        String[] filepath = getPath().split("/");
+        String[] filepath = getPath().split(getDelimiter());
         filepath = filepath[filepath.length - 1].split("\\\\");
         return filepath[filepath.length - 1];
     }
@@ -43,7 +50,7 @@ public class Path {
         String absPath = getPath();
         String name = getName();
         String parentPath = absPath.substring(0, absPath.length() - name.length());
-        if (parentPath.equals("/")) {
+        if (parentPath.equals(getDelimiter())) {
             return null;
         }
         return parentPath;

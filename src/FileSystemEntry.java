@@ -1,17 +1,17 @@
 import java.io.FileNotFoundException;
 
-public abstract class DirEntry {
+public abstract class FileSystemEntry {
 
     private final Path absPath;
 
-    private Directory parent = null;
+    private FileSystemNode parent = null;
 
-    public DirEntry(String path) {
-        this.absPath = new Path(path);
+    public FileSystemEntry(String path, String delimiter) {
+        this.absPath = new Path(path, delimiter);
     }
 
-    public DirEntry(String path, Directory parent) {
-        this.absPath = new Path(path);
+    public FileSystemEntry(String path, String delimiter, FileSystemNode parent) {
+        this.absPath = new Path(path, delimiter);
         this.parent = parent;
     }
 
@@ -19,11 +19,11 @@ public abstract class DirEntry {
         return absPath;
     }
 
-    public Directory getParent() {
+    public FileSystemNode getParent() {
         return parent;
     }
 
-    public void setParent(Directory newParent) {
+    public void setParent(FileSystemNode newParent) {
         this.parent = newParent;
     }
 
@@ -41,7 +41,5 @@ public abstract class DirEntry {
 
     public abstract View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException;
 
-    @Override
     public abstract String toString();
-
 }
