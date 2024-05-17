@@ -3,7 +3,7 @@ import java.io.IOException;
 
 public class DirectoryView extends View{
 
-    private final Directory directory;
+    private final FileSystemNode fileSystemNode;
 
     private int line;
 
@@ -18,7 +18,7 @@ public class DirectoryView extends View{
      */
     public DirectoryView(int height, int width, Point leftUpperCorner, String path, LayoutManager manager) {
         super(height, width, leftUpperCorner);
-        this.directory = new Directory(path);
+        this.fileSystemNode = new Directory(path);
         this.line = 1;
         this.manager = manager;
     }
@@ -32,17 +32,17 @@ public class DirectoryView extends View{
      */
     public DirectoryView(int height, int width, Point leftUpperCorner, LayoutManager manager) {
         super(height, width, leftUpperCorner);
-        this.directory = null;
+        this.fileSystemNode = null;
         this.line = 1;
         this.manager = manager;
     }
 
-    public Directory getDirectory() {
-        return directory;
+    public FileSystemNode getFileSystemNode() {
+        return fileSystemNode;
     }
 
     public void setLine(int newLine) {
-        if (newLine > 0 && newLine <= getDirectory().getEntries().length) {
+        if (newLine > 0 && newLine <= getFileSystemNode().getEntries().length) {
             this.line = newLine;
         }
     }
@@ -72,13 +72,13 @@ public class DirectoryView extends View{
 
     @Override
     public void addNewLineBreak(String newLine) throws FileNotFoundException {
-        DirEntry entry = getDirectory().getEntry(getLine());
+        FileSystemEntry entry = getFileSystemNode().getEntry(getLine());
         FileBuffer buffer = null;
         if (entry != null) {
             String path = entry.getPathString();
             buffer = openFile(path, newLine);
         }
-        View newView = getDirectory().openEntry(getManager(), getLine(), buffer, newLine);
+        View newView = getFileSystemNode().openEntry(getManager(), getLine(), buffer, newLine);
         getManager().replace(this, newView);
     }
 
@@ -99,7 +99,7 @@ public class DirectoryView extends View{
 
     @Override
     String[] makeShow() {
-        String[] content = getDirectory().makeContent();
+        String[] content = getFileSystemNode().makeContent();
         String[] result = new String[getHeigth() - 1];
         for (int i = 0; i < content.length && i < result.length; i++) {
             result[i] = content[i];
@@ -110,7 +110,7 @@ public class DirectoryView extends View{
     @Override
     String makeHorizontalScrollBar() {
         StringBuilder result = new StringBuilder();
-        result.append(getDirectory().getPathString());
+        result.append(getFileSystemNode().getPathString());
         result.append(" ");
         while (result.length() < getWidth()) {
             result.append("#");

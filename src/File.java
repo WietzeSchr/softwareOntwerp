@@ -4,7 +4,7 @@ import java.util.ArrayList;
 /************
  *  FILE    *
  ************/
-public class File extends DirEntry
+public class File extends FileSystemLeaf
 {
 
     /* **************

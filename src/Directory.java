@@ -1,55 +1,20 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Directory extends DirEntry {
-
-    private final Directory[] subDirectories;
-
-    private final File[] files;
+public class Directory extends FileSystemNode {
 
     public Directory(String absPath) {
         super(absPath);
-        this.subDirectories = readSubDir();
-        this.files = readFiles();
     }
 
     public Directory(String absPath, Directory parent) {
         super(absPath, parent);
-        this.subDirectories = readSubDir(parent);
-        this.files = readFiles();
     }
 
-    private Directory[] getSubDirectories() {
-        return subDirectories;
-    }
-
-    private File[] getFiles() {
-        return files;
-    }
-
-    public DirEntry[] getEntries() {
-        ArrayList<DirEntry> result = new ArrayList<>();
-        Collections.addAll(result, getSubDirectories());
-        Collections.addAll(result, getFiles());
-        return result.toArray(new DirEntry[0]);
-    }
-
-    public File[] readFiles() {
-        String absDirPath = getPathString();
-        List<File> resultList = new ArrayList<>();
-        java.io.File[] flist = new java.io.File(absDirPath).listFiles();
-        for (int i = 0; i < flist.length; i++) {
-            if (flist[i].isFile()) {
-                resultList.add(new File(flist[i].getAbsolutePath(), this));
-            }
-        }
-        return resultList.toArray(new File[0]);
-    }
-
-    public Directory[] readSubDir() {
+    @Override
+    FileSystemNode[] readSubNodes() {
         String absDirPath = getPathString();
         List<Directory> resultList = new ArrayList<>();
         java.io.File[] files = new java.io.File(absDirPath).listFiles();
@@ -64,9 +29,10 @@ public class Directory extends DirEntry {
         return resultList.toArray(new Directory[0]);
     }
 
-    public Directory[] readSubDir(Directory parent) {
+    @Override
+    FileSystemNode[] readSubNodes(FileSystemNode parent) {
         String absDirPath = getPathString();
-        List<Directory> resultList = new ArrayList<>();
+        List<FileSystemNode> resultList = new ArrayList<>();
         java.io.File[] files = new java.io.File(absDirPath).listFiles();
         if (getParentPath() != null) {
             resultList.add(parent);
@@ -76,19 +42,29 @@ public class Directory extends DirEntry {
                 resultList.add(new Directory(files[i].getAbsolutePath() + "/", this));
             }
         }
-        return resultList.toArray(new Directory[0]);
+        return resultList.toArray(new FileSystemNode[0]);
     }
 
+    @Override
+    FileSystemLeaf[] readLeaves() {
+        String absDirPath = getPathString();
+        List<File> resultList = new ArrayList<>();
+        java.io.File[] flist = new java.io.File(absDirPath).listFiles();
+        for (int i = 0; i < flist.length; i++) {
+            if (flist[i].isFile()) {
+                resultList.add(new File(flist[i].getAbsolutePath(), this));
+            }
+        }
+        return resultList.toArray(new File[0]);
+    }
+
+    @Override
     public View openEntry(LayoutManager manager, int line, FileBuffer buffer, String newLine) throws FileNotFoundException {
-        DirEntry entry = getEntry(line);
+        FileSystemEntry entry = getEntry(line);
         if (entry == null) {
             return new DirectoryView(5,5, new Point(1,1), getParentPath(), manager);
         }
         return entry.open(manager, buffer, newLine);
-    }
-
-    public DirEntry getEntry(int line) {
-        return getEntries()[line - 1];
     }
 
     @Override
@@ -96,9 +72,10 @@ public class Directory extends DirEntry {
         return new DirectoryView(5,5, new Point(1,1), getPathString(), manager);
     }
 
+    @Override
     public String[] makeContent() {
         ArrayList<String> result = new ArrayList<>();
-        DirEntry[] entries = getEntries();
+        FileSystemEntry[] entries = getEntries();
         for (int i = 0; i < entries.length; i++) {
             if (i == 0 && entries[i] == null || i == 0 && getParent() != null) {
                 result.add("..");
@@ -110,6 +87,7 @@ public class Directory extends DirEntry {
         return result.toArray(new String[0]);
     }
 
+    @Override
     public String toString() {
         return getName() + "/";
     }
