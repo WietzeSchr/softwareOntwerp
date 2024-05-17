@@ -285,6 +285,13 @@ public abstract class View extends Layout {
         setLeftUpperCorner(leftUpperCorner);
     }
 
+    public void updateSize(View otherView) {
+        setHeigth(otherView.getHeigth());
+        setWidth(otherView.getWidth());
+        setLeftUpperCorner(otherView.getLeftUpperCorner());
+        setPosition(otherView.getPosition());
+    }
+
     /**
      * This method returns the cursor of the view
      * @return  | Point, the point where the cursor is in the view
