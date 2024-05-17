@@ -3,20 +3,15 @@ import java.io.FileNotFoundException;
 public class JsonObject extends FileSystemNode {
 
     public JsonObject(String name) {
-        super(name);
+        super(name, '.');
     }
 
     public JsonObject(String name, FileSystemNode parent) {
-        super(name, parent);
+        super(name, '.', parent);
     }
 
     @Override
     public View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException {
-        return null;
-    }
-
-    @Override
-    public String toString() {
         return null;
     }
 
@@ -43,5 +38,13 @@ public class JsonObject extends FileSystemNode {
     @Override
     protected String[] makeContent() {
         return new String[0];
+    }
+
+    @Override
+    public String toString() {
+        if (getParent() == null) {
+            return "JSON-root ";
+        }
+        else return getPathString();
     }
 }

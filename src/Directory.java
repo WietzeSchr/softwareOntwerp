@@ -6,11 +6,11 @@ import java.util.Objects;
 public class Directory extends FileSystemNode {
 
     public Directory(String absPath) {
-        super(absPath);
+        super(absPath, '/');
     }
 
     public Directory(String absPath, Directory parent) {
-        super(absPath, parent);
+        super(absPath, '/', parent);
     }
 
     @Override

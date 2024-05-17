@@ -8,14 +8,14 @@ public abstract class FileSystemNode extends FileSystemEntry {
 
     private final FileSystemLeaf[] leaves;
 
-    public FileSystemNode(String absPath) {
-        super(absPath);
+    public FileSystemNode(String absPath, char delimiter) {
+        super(absPath, delimiter);
         this.subNodes = readSubNodes();
         this.leaves = readLeaves();
     }
 
-    public FileSystemNode(String absPath, FileSystemNode parent) {
-        super(absPath, parent);
+    public FileSystemNode(String absPath, char delimiter, FileSystemNode parent) {
+        super(absPath, delimiter, parent);
         this.subNodes = readSubNodes(parent);
         this.leaves = readLeaves();
     }

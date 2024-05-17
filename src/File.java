@@ -18,11 +18,11 @@ public class File extends FileSystemLeaf
      * @param path | The path of the file
     */
     public File(String path) {
-        super(path);
+        super(path, '/');
     }
 
     public File(String path, Directory parent) {
-        super(path, parent);
+        super(path, '/', parent);
     }
 
     /* **************
