@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+
 public abstract class DirEntry {
 
     private final Path absPath;
@@ -36,6 +38,8 @@ public abstract class DirEntry {
     public String getName() {
         return getPath().getName();
     }
+
+    public abstract View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException;
 
     @Override
     public abstract String toString();

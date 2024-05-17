@@ -1,10 +1,9 @@
-import javax.swing.text.FieldView;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class DirectoryView extends View{
 
-    private Directory directory;
+    private final Directory directory;
 
     private int line;
 
@@ -36,10 +35,6 @@ public class DirectoryView extends View{
         this.directory = null;
         this.line = 1;
         this.manager = manager;
-    }
-
-    public void setDirectory(Directory newDirectory) {
-        this.directory = newDirectory;
     }
 
     public Directory getDirectory() {
@@ -77,16 +72,14 @@ public class DirectoryView extends View{
 
     @Override
     public void addNewLineBreak(String newLine) throws FileNotFoundException {
-        String str = makeShow()[getLine() - 1];
-        if (str.equals("..") || str.charAt(str.length() - 1) == '/') {
-            Directory newDir = getDirectory().openDir(getLine() - 1);
-            setLine(1);
-            setDirectory(newDir);
+        DirEntry entry = getDirectory().getEntry(getLine());
+        FileBuffer buffer = null;
+        if (entry != null) {
+            String path = entry.getPathString();
+            buffer = openFile(path, newLine);
         }
-        else {
-            FileBuffer buffer = openFile(str, newLine);
-            getManager().replace(this, new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), buffer));
-        }
+        View newView = getDirectory().openEntry(getManager(), getLine(), buffer, newLine);
+        getManager().replace(this, newView);
     }
 
     @Override
@@ -139,13 +132,16 @@ public class DirectoryView extends View{
         return getLeftUpperCorner().add(new Point(getLine() - 1, 0));
     }
 
-    public FileBuffer openFile(String name, String newLine) throws FileNotFoundException {
-        File file = getDirectory().getFile(name);
-        FileBuffer result = findBuffer(name);
+    public FileBuffer openFile(String path, String newLine) {
+        FileBuffer result = findBuffer(path);
         if (result != null) {
             return result;
         }
-        return new FileBuffer(file.getPathString(), newLine);
+        try {
+            return new FileBuffer(path, newLine);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
     }
 
     public FileBuffer findBuffer(String name) {

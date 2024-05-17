@@ -21,6 +21,10 @@ public class File extends DirEntry
         super(path);
     }
 
+    public File(String path, Directory parent) {
+        super(path, parent);
+    }
+
     /* **************
      *  LOAD FILE   *
      ****************/
@@ -75,6 +79,13 @@ public class File extends DirEntry
             }
         }
         file.close();
+    }
+
+    public View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException {
+        if (buffer == null) {
+            return new FileBufferView(5,5,new Point(1,1), getPathString(), newLine);
+        }
+        return new FileBufferView(5,5, new Point(1,1), buffer);
     }
 
     /* ******************

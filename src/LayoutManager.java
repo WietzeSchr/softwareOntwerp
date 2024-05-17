@@ -339,7 +339,7 @@ public class LayoutManager {
         return getLayout().getNextDeadline(getFocus());
     }
     void replace(View oldView, View newView) {
-        newView.setPosition(oldView.getPosition());
+        newView.updateSize(oldView);
         if (oldView != newView) {
             if (oldView.getParent() != null) {
                 oldView.getParent().replace(oldView, newView);
