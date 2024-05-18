@@ -303,7 +303,12 @@ public class LayoutManager {
      * @return  | int, the index of next focus
      */
     private int nextFocus() {
-        return getLayout().getNextFocus(getFocus());
+        int nextFocus = getLayout().getNextFocus(getFocus());
+        if (nextFocus == -1) {
+            System.out.println('\u0007');
+            return getFocus();
+        }
+        return nextFocus;
     }
 
     /**

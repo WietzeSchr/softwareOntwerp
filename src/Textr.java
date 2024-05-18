@@ -184,7 +184,7 @@ public class Textr
             else if (c == 13) {             //  ENTER
                 addNewLineBreak();
             }
-            else if (c == 15) {
+            else if (c == 15) {             //  Ctrl + O
                 openDirectoryView();
             }
             else if (c == 21) {             //  Ctrl + U
