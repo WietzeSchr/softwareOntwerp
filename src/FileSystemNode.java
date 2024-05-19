@@ -1,45 +1,41 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public abstract class FileSystemNode extends FileSystemEntry {
 
-    private final FileSystemNode[] subNodes;
+    private FileSystemEntry[] subNodes;
 
-    private final FileSystemLeaf[] leaves;
-
-    public FileSystemNode(String absPath, String delimiter) {
-        super(absPath, delimiter);
-        this.subNodes = readSubNodes();
-        this.leaves = readLeaves();
+    public FileSystemNode(Path absPath) {
+        super(absPath);
+        this.subNodes = readNode();
     }
 
-    public FileSystemNode(String absPath, String delimiter, FileSystemNode parent) {
-        super(absPath, delimiter, parent);
-        this.subNodes = readSubNodes(parent);
-        this.leaves = readLeaves();
+    public FileSystemNode(Path absPath, FileSystemNode parent) {
+        super(absPath);
+        this.subNodes = readNode();
     }
 
-    private FileSystemNode[] getSubNodes() {
-        return subNodes;
-    }
-
-    private FileSystemLeaf[] getLeaves() {
-        return leaves;
+    public FileSystemNode(Path absPath, FileSystemEntry[] entries) {
+        super(absPath);
+        for (int i = 0; i < entries.length; i++) {
+            if (entries[i] != null) {
+                entries[i].setParent(this);
+            }
+        }
+        this.subNodes = entries;
     }
 
     public FileSystemEntry[] getEntries() {
-        ArrayList<FileSystemEntry> result = new ArrayList<>();
-        Collections.addAll(result, getSubNodes());
-        Collections.addAll(result, getLeaves());
-        return result.toArray(new FileSystemEntry[0]);
+        return subNodes;
     }
 
-    abstract FileSystemNode[] readSubNodes();
+    void setSubNodes(FileSystemEntry[] newEntries) {
+        this.subNodes = newEntries;
+    }
 
-    abstract FileSystemNode[] readSubNodes(FileSystemNode parent);
-
-    abstract FileSystemLeaf[] readLeaves();
+    abstract FileSystemEntry[] readNode();
 
     protected abstract View openEntry(LayoutManager manager, int line, FileBuffer buffer, String newLine) throws FileNotFoundException;
 
@@ -47,5 +43,22 @@ public abstract class FileSystemNode extends FileSystemEntry {
         return getEntries()[line - 1];
     }
 
-    protected abstract String[] makeContent();
+    public String[] makeContent() {
+        ArrayList<String> result = new ArrayList<>();
+        FileSystemEntry[] entries = getEntries();
+        for (int i = 0; i < entries.length; i++) {
+            if (i == 0 && entries[i] == null || i == 0 && getParent() != null) {
+                result.add("..");
+            }
+            else {
+                result.add(entries[i].toString());
+            }
+        }
+        return result.toArray(new String[0]);
+    }
+
+    @Override
+    public View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException {
+        return new DirectoryView(5, 5, new Point(1,1), this, manager);
+    }
 }

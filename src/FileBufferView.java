@@ -681,6 +681,24 @@ public class FileBufferView extends View {
         return getPath().getParentPath();
     }
 
+    public View[] parseJson(LayoutManager manager) {
+        String[] content = getContent();
+        StringBuilder jsonString = new StringBuilder();
+        for (int i = 0; i < content.length; i++) {
+            jsonString.append(content[i]);
+            if (i != content.length - 1) {
+                jsonString.append("\n");
+            }
+        }
+        //try {
+            JsonObject json = SimpleJsonParser.parseJsonObject(jsonString.toString());
+            return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), json, manager)};
+        //}
+        //catch (SimpleJsonParserException exception) {
+          //  setInsertionPoint(new Point(exception.location.line() + 1, exception.location.column() + 1));
+        //}
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/

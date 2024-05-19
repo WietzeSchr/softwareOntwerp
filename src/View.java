@@ -217,11 +217,11 @@ public abstract class View extends Layout {
      */
     public void tick() throws IOException {};
 
-    public View openDirectoryView() {
-        return this;
+    public View[] getDirectoryView(LayoutManager manager) {
+        return new View[] {};
     }
 
-    public View[] getDirectoryView(LayoutManager manager) {
+    public View[] parseJson(LayoutManager manager) {
         return new View[] {};
     }
 

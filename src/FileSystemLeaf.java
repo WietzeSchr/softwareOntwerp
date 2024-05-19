@@ -1,10 +1,10 @@
 public abstract class FileSystemLeaf extends FileSystemEntry{
 
-    public FileSystemLeaf(String path, String delimiter) {
-        super(path, delimiter);
+    public FileSystemLeaf(Path path) {
+        super(path);
     }
 
-    public FileSystemLeaf(String path, String delimiter, FileSystemNode parent) {
-        super(path, delimiter, parent);
+    public FileSystemLeaf(Path path, FileSystemNode parent) {
+        super(path, parent);
     }
 }

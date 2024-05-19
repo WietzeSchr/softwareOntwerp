@@ -436,13 +436,8 @@ public abstract class Layout {
         getFocusedView(focus).tick();
     }
 
-    public Layout openDirectoryView(int focus, LayoutManager manager) {
-        int heigth = getHeigth();
-        int width = getWidth();
-        View[] newViews = getFocusedView(focus).getDirectoryView(manager);
-        Layout result = openViews(focus, getFocusedView(focus).getParent(), newViews);
-        result.updateSize(heigth, width);
-        return result;
+    public View[] openDirectoryView(int focus, LayoutManager manager) {
+        return getFocusedView(focus).getDirectoryView(manager);
     }
 
     /* ******************

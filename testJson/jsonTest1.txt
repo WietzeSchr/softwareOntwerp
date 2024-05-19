@@ -1,0 +1,9 @@
+{
+  "Documents": {
+    "SWOP": {
+      "assignment_it2.txt": "This is the assignment for iteration 2.",
+      "assignment_it3.txt": "This is the assignment for iteration 3."
+    },
+    "json_in_string.json": "{\r\n  \"foo\": \"bar\"\r\n}"
+  }
+}
