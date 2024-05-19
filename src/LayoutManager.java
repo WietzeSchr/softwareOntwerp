@@ -25,7 +25,9 @@ public class LayoutManager {
      */
     void setLayout(Layout newLayout) {
         this.layout = newLayout;
-        initViewPositions();
+        if(this.layout != null) {
+            initViewPositions();
+        }
     }
 
     /**
