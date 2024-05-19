@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-public class Path {
+public abstract class Path {
 
     private String absolutePath;
 
@@ -69,7 +69,6 @@ class FilePath extends Path{
 
     public FilePath(String path) {
         super(path, "/");
-        System.out.println("path: " + path);
         setPath(Path.normalize("/", new java.io.File(path).getAbsolutePath()));
     }
 }

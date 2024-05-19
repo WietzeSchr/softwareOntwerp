@@ -690,13 +690,14 @@ public class FileBufferView extends View {
                 jsonString.append("\n");
             }
         }
-        //try {
+        try {
             JsonObject json = SimpleJsonParser.parseJsonObject(jsonString.toString());
             return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), json, manager)};
-        //}
-        //catch (SimpleJsonParserException exception) {
-          //  setInsertionPoint(new Point(exception.location.line() + 1, exception.location.column() + 1));
-        //}
+        }
+        catch (SimpleJsonParserException exception) {
+            setInsertionPoint(new Point(exception.location.line() + 1, exception.location.column() + 1));
+        }
+        return new View[] {};
     }
 
     /* ******************

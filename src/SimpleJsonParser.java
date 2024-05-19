@@ -7,43 +7,6 @@ import java.util.LinkedHashMap;
  */
 record TextLocation(int line, int column) {}
 
-class SimpleJsonProperty {
-    SimpleJsonObject object;
-    String name;
-    SimpleJsonValue value;
-    SimpleJsonProperty(String name, SimpleJsonValue value) {
-        this.name = name;
-        this.value = value;
-        value.property = this;
-    }
-}
-
-sealed abstract class SimpleJsonValue permits SimpleJsonString, SimpleJsonObject {
-    /**
-     * The property for which this is the value, or null if this is a toplevel value.
-     */
-    SimpleJsonProperty property;
-}
-
-final class SimpleJsonString extends SimpleJsonValue {
-    TextLocation start;
-    int length;
-    String value;
-    SimpleJsonString(TextLocation start, int length, String value) {
-        this.start = start;
-        this.length = length;
-        this.value = value;
-    }
-}
-
-final class SimpleJsonObject extends SimpleJsonValue {
-    LinkedHashMap<String, SimpleJsonProperty> properties;
-    SimpleJsonObject(LinkedHashMap<String, SimpleJsonProperty> properties) {
-        this.properties = properties;
-        this.properties.values().forEach(p -> p.object = this);
-    }
-}
-
 class SimpleJsonParserException extends RuntimeException {
     TextLocation location;
     String innerMessage;
