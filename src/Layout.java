@@ -140,13 +140,14 @@ public abstract class Layout {
     }
 
     /**
-     * This method returns the position of the next focused view
+     * This method returns the position of the next focused view and when the current focused view is the last view then it returns -1
+     * because there is no next view
      * @param focus | The index of the current focussed view
      * @return      | int, the index of the next focussed view
      */
     public int getNextFocus(int focus) {
         if (focus == countViews()) {
-            return 1;
+            return -1;
         }
         return focus + 1;
     }

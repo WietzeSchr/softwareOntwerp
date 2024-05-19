@@ -145,18 +145,27 @@ public abstract class CompositeLayout extends Layout {
         int width = getWidth();
         Layout result;
         View focusView = getFocusedView(focus);
-        View nextView = getFocusedView(getNextFocus(focus));
-        if (focusView.getParent() == nextView.getParent()) {
-            if (focusView.getParent().countSubLayouts() == 2) {
-                result = rotateSiblingsFlip(dir, focus, getNextFocus(focus), focusView.getParent());
+        int nextFocus = getNextFocus(focus);
+        if (nextFocus == -1){
+           //ring the terminal bell
+            System.out.println('\u0007');
+            return this;
+        }
+            
+        else{
+            View nextView = getFocusedView(nextFocus);
+            if (focusView.getParent() == nextView.getParent()) {
+                if (focusView.getParent().countSubLayouts() == 2) {
+                    result = rotateSiblingsFlip(dir, focus, getNextFocus(focus), focusView.getParent());
+                } else {
+                    result = rotateSiblings(dir, focus, getNextFocus(focus), focusView.getParent());
+                }
             } else {
-                result = rotateSiblings(dir, focus, getNextFocus(focus), focusView.getParent());
-            }
-        } else {
-            if (nextView.getParent().countSubLayouts() == 2) {
-                result = rotateNonSiblingsPromote(dir, focus, nextView, focusView.getParent(), nextView.getParent());
-            } else {
-                result = rotateNonSiblings(dir, focus, nextView, focusView.getParent(), nextView.getParent());
+                if (nextView.getParent().countSubLayouts() == 2) {
+                    result = rotateNonSiblingsPromote(dir, focus, nextView, focusView.getParent(), nextView.getParent());
+                } else {
+                    result = rotateNonSiblings(dir, focus, nextView, focusView.getParent(), nextView.getParent());
+                }
             }
         }
         result.updateSize(heigth, width, new Point(1, 1));
