@@ -49,3 +49,8 @@
 * [x] Grid word niet altijd goed aangepast
 * [ ] NullpointerException bij closeView in treeLayout
 * [ ] NullPointerException bij rotateNonSiblings/rotateNonSiblingsPromote met focus laatste view en nextview eerste view
+
+### TODO
+
+* [ ] Open JsonValue as fileBuffer
+* [ ] Move undo redo to FileBuffer level
