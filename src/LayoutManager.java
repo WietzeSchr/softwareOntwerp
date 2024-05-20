@@ -1,5 +1,5 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 public class LayoutManager {
     private Layout layout;
@@ -10,6 +10,7 @@ public class LayoutManager {
         this.layout = layout;
         this.focus = focus;
         this.newLine = newLine;
+        initViewPositions();
     }
 
     /* **********************
@@ -23,6 +24,9 @@ public class LayoutManager {
      */
     void setLayout(Layout newLayout) {
         this.layout = newLayout;
+        if(this.layout != null) {
+            initViewPositions();
+        }
     }
 
     /**
@@ -74,6 +78,14 @@ public class LayoutManager {
         return getLayout().getFocusedView(getFocus());
     }
 
+    Point getCursor() {
+        return getFocusedView().getCursor();
+    }
+
+    long getTick() {
+        return getFocusedView().getTick();
+    }
+
     /* ******************
      *  INSPECT CONTENT *
      * ******************/
@@ -116,8 +128,9 @@ public class LayoutManager {
      * @return    | void
      * Visible for testing
      */
-    void addNewLineBreak() {
-        getLayout().addNewLineBreak(getFocus());
+    void addNewLineBreak() throws FileNotFoundException {
+        View focussedView = getFocusedView();
+        focussedView.addNewLineBreak(getNewLine());
     }
 
     /**
@@ -262,11 +275,23 @@ public class LayoutManager {
         getLayout().tick(getFocus());
     }
 
+
     /* *****************
      * OPEN NEW WINDOW *
      * *****************/
     void openWindow(){
         new SwingWindow(getLayout().getWidth(), getLayout().getHeigth());
+    }
+
+
+    void openDirectoryView() {
+        View[] newViews = getLayout().openDirectoryView(getFocus(), this);
+        openViews(newViews);
+    }
+
+    void parseJson() {
+        View[] newViews = getFocusedView().parseJson(this);
+        openViews(newViews);
     }
 
 
@@ -290,12 +315,21 @@ public class LayoutManager {
      *  HELP FUNCTIONS  *
      * ******************/
 
+    private void openViews(View[] newViews) {
+        setLayout(getLayout().openViews(getFocus(), getFocusedView().getParent(), newViews));
+    }
+
     /**
      * This method gives the next focus
      * @return  | int, the index of next focus
      */
     private int nextFocus() {
-        return getLayout().getNextFocus(getFocus());
+        int nextFocus = getLayout().getNextFocus(getFocus());
+        if (nextFocus == -1) {
+            System.out.println('\u0007');
+            return getFocus();
+        }
+        return nextFocus;
     }
 
     /**
@@ -312,13 +346,14 @@ public class LayoutManager {
      * @return  | void
      * Visible for testing
      */
-    void initViewPositions() {getLayout().initViewPosition(1);
+    void initViewPositions() {
+        getLayout().initViewPosition(1);
     }
 
 
     /* ************
-     * HELP
-     */
+     *   HELP     *
+     * ************/
     /**
      * This method returns the next deadline. If the focused view is a FileBufferView the nextDeadline is the current
      * time. If the focused view is a GameView the nextDeadline is the time of the last tick + the time in between ticks
@@ -329,5 +364,14 @@ public class LayoutManager {
     long getNextDeadline() {
         return getLayout().getNextDeadline(getFocus());
     }
-
+    void replace(View oldView, View newView) {
+        newView.updateSize(oldView);
+        if (oldView != newView) {
+            if (oldView.getParent() != null) {
+                oldView.getParent().replace(oldView, newView);
+            } else {
+                setLayout(newView);
+            }
+        }
+    }
 }

@@ -139,13 +139,14 @@ public abstract class Layout {
     }
 
     /**
-     * This method returns the position of the next focused view
+     * This method returns the position of the next focused view and when the current focused view is the last view then it returns -1
+     * because there is no next view
      * @param focus | The index of the current focussed view
      * @return      | int, the index of the next focussed view
      */
     public int getNextFocus(int focus) {
         if (focus == countViews()) {
-            return 1;
+            return -1;
         }
         return focus + 1;
     }
@@ -165,18 +166,6 @@ public abstract class Layout {
     /* **********************
      *  EDIT BUFFER CONTENT *
      ************************/
-
-    /**
-     * If the focused view is a FileBufferView, this method inserts a new line break at the FileBufferViews insertion
-     * point and possible update all views on the same buffer. If the focused view is a gameView this method starts
-     * a new game, if the game was game over
-     * @param focus | The index of the focussed view
-     * @return      | void
-     */
-    public void addNewLineBreak(int focus) {
-        View focussed = getFocusedView(focus);
-        focussed.addNewLineBreak();
-    }
 
     /** 
      * This method adds a new character at the insertion point of the focused view if it is a FileBufferView. If the
@@ -447,6 +436,10 @@ public abstract class Layout {
         getFocusedView(focus).tick();
     }
 
+    public View[] openDirectoryView(int focus, LayoutManager manager) {
+        return getFocusedView(focus).getDirectoryView(manager);
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
@@ -490,6 +483,10 @@ public abstract class Layout {
          return getFocusedView(focus).getNextDeadline();
     }
 
+    public void updateSize(int heigth, int width) {
+        updateSize(heigth, width, new Point(1,1));
+    }
+
     /**
      * This method updates the size of the layout, possibly it's subLayouts
      * @pre  | heigth > 0
@@ -502,6 +499,15 @@ public abstract class Layout {
      * @param leftUpperCorner | The new left upper corner of the layout
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
+
+    public Layout getRoot() {
+        if (getParent() != null) {
+            return getParent().getRoot();
+        }
+        return this;
+    }
+
+    public abstract Buffer getBufferByName(String name);
 
     /**
      * Checks if the structure of the Layouts match

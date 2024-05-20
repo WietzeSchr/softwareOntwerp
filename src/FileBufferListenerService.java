@@ -7,13 +7,26 @@ public class FileBufferListenerService {
     private final ArrayList<DeletionListener> deletionListeners = new ArrayList<>();
 
     private final ArrayList<SaveListener> saveListeners = new ArrayList<>();
-    
+
+    public ArrayList<InsertionListener> getInsertionListeners() {
+        return new ArrayList<>(insertionListeners);
+    }
+
+    public ArrayList<DeletionListener> getDeletionListeners() {
+        return new ArrayList<>(deletionListeners);
+    }
+
+    public ArrayList<SaveListener> getSaveListeners() {
+        return new ArrayList<>(saveListeners);
+    }
+
     public void addInsertionListener(InsertionListener listener) {
         insertionListeners.add(listener);
     }
     
     public void removeInsertionListener(FileBufferView view) {
-        for (InsertionListener listener : insertionListeners) {
+        ArrayList<InsertionListener> insertListeners = getInsertionListeners();
+        for (InsertionListener listener : insertListeners) {
             if (listener.getView() == view) {
                 insertionListeners.remove(listener);
             }
@@ -25,7 +38,8 @@ public class FileBufferListenerService {
     }
     
     public void removeDeletionListener(FileBufferView view) {
-        for (DeletionListener listener : deletionListeners) {
+        ArrayList<DeletionListener> deleteListeners = getDeletionListeners();
+        for (DeletionListener listener : deleteListeners) {
             if (listener.getView() == view) {
                 deletionListeners.remove(listener);
             }
@@ -37,7 +51,8 @@ public class FileBufferListenerService {
     }
 
     public void removeSaveListener(FileBufferView view) {
-        for (SaveListener listener : saveListeners) {
+        ArrayList<SaveListener> sListeners = getSaveListeners();
+        for (SaveListener listener : sListeners) {
             if (listener.getView() == view) {
                 saveListeners.remove(listener);
             }

@@ -3,8 +3,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
-                public class FileBufferView extends View
-{
+public class FileBufferView extends View {
     /* *******************
      *   ABSTRACT EDIT   *
      * *******************/
@@ -173,7 +172,7 @@ import java.util.concurrent.TimeoutException;
          * @return: boolean, true if the undo was successful, false otherwise
          */
         public boolean undo() {
-            fileBuffer.deleteChar(getInsertionPointAfter());
+            buffer.deleteChar(getInsertionPointAfter());
             insertionPoint = getInsertionPoint();
             return true;
         }
@@ -184,10 +183,10 @@ import java.util.concurrent.TimeoutException;
          */
         public boolean redo() {
             if (getChange() == 13) {
-                fileBuffer.insertLineBreak(getInsertionPoint());
+                buffer.insertLineBreak(getInsertionPoint());
             }
             else {
-                fileBuffer.addNewChar(getChange(), getInsertionPoint());
+                buffer.addNewChar(getChange(), getInsertionPoint());
             }
             insertionPoint = getInsertionPointAfter();
             return true;
@@ -212,10 +211,10 @@ import java.util.concurrent.TimeoutException;
          */
         public boolean undo() {
             if (getChange() == 13) {
-                fileBuffer.insertLineBreak(getInsertionPointAfter());
+                buffer.insertLineBreak(getInsertionPointAfter());
             }
             else {
-                fileBuffer.addNewChar(getChange(), getInsertionPointAfter());
+                buffer.addNewChar(getChange(), getInsertionPointAfter());
             }
             insertionPoint = getInsertionPoint();
             return true;
@@ -226,7 +225,7 @@ import java.util.concurrent.TimeoutException;
          * @return: boolean, true if the redo was successful, false otherwise
          */
         public boolean redo() {
-            fileBuffer.deleteChar(getInsertionPoint());
+            buffer.deleteChar(getInsertionPoint());
             insertionPoint = getInsertionPointAfter();
             return true;
         }
@@ -243,7 +242,7 @@ import java.util.concurrent.TimeoutException;
 
     private Point insertionPoint;
 
-    private FileBuffer fileBuffer;
+    private Buffer buffer;
 
     private Edit lastEdit;
 
@@ -257,26 +256,26 @@ import java.util.concurrent.TimeoutException;
      */
     public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) throws FileNotFoundException {
         super(heigth, witdh, leftUpperCorner);
-        this.fileBuffer = new FileBuffer(filepath, newLine);
+        this.buffer = new FileBuffer(filepath, newLine);
         this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
-        fileBuffer.subscribeView(this);
+        buffer.subscribeView(this);
     }
 
     /** This method sets the verticalScrollState of the FileBufferView
      * @post getVerticalScrollState() == newVerticalScrollState
      * @return: void
      */
-    public FileBufferView(int heigth, int width, Point leftUpperCorner, FileBuffer fileBuffer) {
+    public FileBufferView(int heigth, int width, Point leftUpperCorner, Buffer buffer) {
         super(heigth, width, leftUpperCorner);
-        this.fileBuffer = fileBuffer;
+        this.buffer = buffer;
         this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
-        fileBuffer.subscribeView(this);
+        buffer.subscribeView(this);
     }
 
     /* **********************
@@ -313,16 +312,16 @@ import java.util.concurrent.TimeoutException;
      * @post getFile() == newFile
      * @return: void
      */
-    public void setBuffer(FileBuffer newFileBuffer) {
-        this.fileBuffer = newFileBuffer;
+    public void setBuffer(Buffer newBuffer) {
+        this.buffer = newBuffer;
     }       // Deze kan handig zijn in toekomst als we de wijzigingen ongedaan moeten maken en de file opnieuw zouden
                 // moeten inladen.
 
     /** This method returns the file of the FileBufferView
      * @return: File
      */
-    public FileBuffer getBuffer() {
-        return fileBuffer;
+    public Buffer getBuffer() {
+        return buffer;
     }
 
     /** This method sets the position of the FileBufferView to parameter newPosition
@@ -360,6 +359,14 @@ import java.util.concurrent.TimeoutException;
         return lastEdit;
     }
 
+    Path getPath() {
+        return getBuffer().getFile().getPath();
+    }
+
+    String getPathString() {
+        return getPath().toString();
+    }
+
     /* **********************
      *  DERIVED ATTRIBUTES  *
      * **********************/
@@ -392,17 +399,8 @@ import java.util.concurrent.TimeoutException;
         return getBuffer().countCharacters();
     }
 
-    /** This method returns the path of the file
-     * @return: String
-     */
-    public String getPath() {
-        return getBuffer().getPath();
-    }
-
     public String getFileName() {
-        String[] filepath = getPath().split("/");
-        filepath = filepath[filepath.length - 1].split("\\\\");
-        return filepath[filepath.length - 1];
+        return getPath().getName();
     }
 
     /** This method returns the position of the cursor
@@ -467,9 +465,9 @@ import java.util.concurrent.TimeoutException;
     /** 
      * This method adds a new line break to the buffer 
      * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: boolean
+     * @return: View
      */
-    public void addNewLineBreak() {
+    public void addNewLineBreak(String newLine) {
         Point insert = getInsertionPoint();
         getBuffer().insertLineBreak(insert);
         setInsertionPoint(new Point(insert.getX()+1, 1));
@@ -547,13 +545,13 @@ import java.util.concurrent.TimeoutException;
                     }
                 }
                 if (c == 121 || c == 89) {
-                    fileBuffer.unSubscribeView(this);
+                    buffer.unSubscribeView(this);
                     return null;
                 }
                 return this;
             }
             else {
-                fileBuffer.unSubscribeView(this);
+                buffer.unSubscribeView(this);
                 return null;
             }
         }
@@ -589,8 +587,7 @@ import java.util.concurrent.TimeoutException;
 
     /**
      * This method undoes the last edit and uses therefor the undo method of the lastEdit
-     * It also sets the lastEdit to the previous edit 
-     * @return  | boolean, true if the undo was successful, false otherwise
+     * It also sets the lastEdit to the previous edit
      */
     public void undo() {
         if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
@@ -603,8 +600,7 @@ import java.util.concurrent.TimeoutException;
 
     /**
      * This method redoes the last edit and uses therefor the redo method of the lastEdit
-     * It also sets the lastEdit to the next edit 
-     * @return  | boolean, true if the redo was successful, false otherwise
+     * It also sets the lastEdit to the next edit
      */
     public void redo() {
         getLastEdit().getNext().redo();
@@ -674,6 +670,34 @@ import java.util.concurrent.TimeoutException;
         if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
             move(Direction.WEST);
         }
+    }
+
+    public View[] getDirectoryView(LayoutManager manager) {
+        String path = getParentPath();
+        return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), path, manager)};
+    }
+
+    public String getParentPath() {
+        return getPath().getParentPath();
+    }
+
+    public View[] parseJson(LayoutManager manager) {
+        String[] content = getContent();
+        StringBuilder jsonString = new StringBuilder();
+        for (int i = 0; i < content.length; i++) {
+            jsonString.append(content[i]);
+            if (i != content.length - 1) {
+                jsonString.append("\n");
+            }
+        }
+        try {
+            JsonObject json = SimpleJsonParser.parseJsonObject(jsonString.toString());
+            return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), json, manager)};
+        }
+        catch (SimpleJsonParserException exception) {
+            setInsertionPoint(new Point(exception.location.line() + 1, exception.location.column() + 1));
+        }
+        return new View[] {};
     }
 
     /* ******************
@@ -822,6 +846,14 @@ import java.util.concurrent.TimeoutException;
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
+    }
+
+    @Override
+    public Buffer getBufferByName(String name) {
+        if (getFileName().equals(name)) {
+            return getBuffer();
+        }
+        return null;
     }
 
     @Override
