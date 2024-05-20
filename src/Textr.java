@@ -1,52 +1,9 @@
+import io.github.btj.termios.Terminal;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-class TerminalParser {
-    int buffer;
-    boolean bufferFull;
-    TerminalHandler terminalHandler = new TerminalHandler();
-    int peekByte() throws IOException {
-        if (! bufferFull) {
-            buffer = terminalHandler.readByte();
-            bufferFull = true;
-        }
-        return  buffer;
-    }
-
-    void eatByte() throws IOException {
-        peekByte();
-        bufferFull = false;
-    }
-
-    void expect(int n) throws IOException {
-        if (peekByte() != n) {
-            throw new RuntimeException("Unexpected byte");
-        }
-        eatByte();
-    }
-
-    int expectNumber() throws IOException {
-        int c = peekByte();
-        if (c < '0' || c > '9') {
-            throw  new RuntimeException("Digit expected but got" + c);
-        }
-        int result = c - '0';
-        eatByte();
-        for (;;) {
-            c = peekByte();
-            if (c < '0' || c > '9')
-            {
-                break;
-            }
-            else {
-                result *= 10;
-                result += c -'0';
-            }
-            eatByte();
-        }
-        return result;
-    }
-}
 
 /* ******************
  *      TEXTR       *
@@ -54,9 +11,23 @@ class TerminalParser {
 
 public class Textr
 {
-    private LayoutManager layoutManager;
+    static TerminalHandler terminalHandler = new TerminalHandler();
 
-    TerminalHandler terminalHandler = new TerminalHandler();
+    interface FallibleRunnable {
+        void run() throws Throwable;
+    }
+
+    static void handleFailure(FallibleRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Throwable t) {
+            terminalHandler.close();
+            t.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    private LayoutManager layoutManager;
 
     /* ******************
      *  CONSTRUCTORS    *
@@ -91,7 +62,7 @@ public class Textr
         updateSize(size.getX(), size.getY());
         initViewPositions();
         show();
-        run();
+        runApp();
     }
 
     /** 
@@ -159,81 +130,84 @@ public class Textr
      * for handling user input. The loop stops when all files are closed (layout == null)
      * @return  | void
      */
-    private void run() throws IOException {
-        while (getLayout() != null) {
-            int c = 0;
-            try {
-                c = terminalHandler.readByte(getNextDeadline());
-            } catch (TimeoutException e) {
-                tick();
-                if (getFocusedView().getTick() != 0) show();
-            }
+    public void runApp() {
+        terminalHandler.init();
+        class App {
 
-            if (c == 27) {                          //  ARROWS
-                int c1 = terminalHandler.readByte();
-                if (c1 == 91) {
-                    int c2 = terminalHandler.readByte();
-                    if (c2 == 65) {
-                        arrowPressed(Direction.NORD);  //UP
-                    } else if (c2 == 66) {
-                        arrowPressed(Direction.SOUTH);   //DOWN
-                    } else if (c2 == 67) {
-                        arrowPressed(Direction.EAST);   //RIGHT
-                    } else if (c2 == 68) {
-                        arrowPressed(Direction.WEST);  //LEFT
+            App() {
+                javax.swing.Timer timer = new javax.swing.Timer(100, e -> handleFailure(() -> show()));
+                //timer.start();
+
+                JFrame dummyFrame = new JFrame();
+                dummyFrame.pack();
+                terminalHandler.setInputListener(new Runnable() {
+                    public void run(){
+                        java.awt.EventQueue.invokeLater(() -> handleFailure(() -> {
+                            int c = terminalHandler.readByte(getNextDeadline());
+                            tick();
+                            if (getFocusedView().getTick() != 0) show();
+
+                            if (c == 27) {                          //  ARROWS
+                                int c1 = terminalHandler.readByte();
+                                if (c1 == 91) {
+                                    int c2 = terminalHandler.readByte();
+                                    if (c2 == 65) {
+                                        arrowPressed(Direction.NORD);  //UP
+                                    } else if (c2 == 66) {
+                                        arrowPressed(Direction.SOUTH);   //DOWN
+                                    } else if (c2 == 67) {
+                                        arrowPressed(Direction.EAST);   //RIGHT
+                                    } else if (c2 == 68) {
+                                        arrowPressed(Direction.WEST);  //LEFT
+                                    }
+                                }
+                            }
+                            else if (c == 59) {
+                                int c1 = terminalHandler.readByte();
+                                if (c1 == 50) {
+                                    int c2 = 0;
+                                    c2 = terminalHandler.readByte();
+                                    if (c2 == 83) {         // Shift + F4
+                                        closeView();
+                                    }
+                                }
+                            } else if (c == 4) {
+                                duplicateView();            //  Ctrl + D
+                            } else if (c == 7) {
+                                openGameView();             //  Ctrl + G
+                                changeFocusNext();
+                            } else if (c == 13) {             //  ENTER
+                                addNewLineBreak();
+                            } else if (c == 21) {             //  Ctrl + U
+                                redo();
+                            } else if (c == -1 || c == 26) {   //  Ctrl + Z
+                                undo();
+                            } else if (c == 127) {
+                                deleteChar();               //  BACKSPACE
+                            } else if (c == 14) {             //  Ctrl + N
+                                changeFocusNext();
+                            } else if (c == 16) {             //  Ctrl + P
+                                changeFocusPrevious();
+                            } else if (c == 18) {             //  Ctrl + R
+                                rotateView(1);
+                            } else if (c == 20) {             //  Ctrl + T
+                                rotateView(-1);
+                            } else if (c == 19) {             //  Ctrl + S
+                                saveBuffer();
+                            } else if (c == 23) {             //  Ctrl + W
+                                openWindow();
+                            } else if (c >= 32 && c <= 126) { //  Legal Chars
+                                addNewChar((char) c);
+                            }
+                            if (getFocusedView().getTick() == 0 && c != 0) show();
+                            else if (getFocusedView().getTick() != 0) show();
+                            terminalHandler.setInputListener(this);
+                        }));
                     }
-                }
-            }                               // Shift + F4
-            else if (c == 59) {
-                int c1 = terminalHandler.readByte();
-                if (c1 == 50) {
-                    int c2 = terminalHandler.readByte();
-                    if (c2 == 83) {
-                        closeView();
-                    }
-                }
+                });
             }
-            else if (c == 4) {
-                duplicateView();            //  Ctrl + D
-            }
-            else if (c == 7) {
-                openGameView();             //  Ctrl + G
-                changeFocusNext();
-            }
-            else if (c == 13) {             //  ENTER
-                addNewLineBreak();
-            }
-            else if (c == 21) {             //  Ctrl + U
-                redo();
-            }
-            else if (c == -1) {             //  Ctrl + Z
-                undo();
-            }
-            else if (c == 127) {
-                deleteChar();               //  BACKSPACE
-            }
-            else if (c == 14) {             //  Ctrl + N
-                changeFocusNext();
-            }
-            else if (c == 16) {             //  Ctrl + P
-                changeFocusPrevious();
-            }
-            else if (c == 18) {             //  Ctrl + R
-                rotateView(1);
-            }
-            else if (c == 20) {             //  Ctrl + T
-                rotateView(-1);
-            }
-            else if (c == 19) {             //  Ctrl + S
-                saveBuffer();
-            }
-            else if (c >= 32 && c <= 126) { //  Legal Chars
-                addNewChar((char) c);
-            }
-            if (getLayout() == null) break;
-            if (getFocusedView().getTick() == 0 && c != 0) show();
-            else if (getFocusedView().getTick() != 0) show();
         }
+        new App();
     }
 
     /* **********************
@@ -436,6 +410,13 @@ public class Textr
         getLayoutManager().tick();
     }
 
+    /* *****************
+     * OPEN NEW WINDOW *
+     * *****************/
+    void openWindow(){
+        getLayoutManager().openWindow();
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
@@ -497,15 +478,6 @@ public class Textr
      * @return  | Point, the size of the terminalHandler
      */
     private Point getSize() throws IOException {
-        terminalHandler.reportTextAreaSize();
-        TerminalParser parser = new TerminalParser();
-        for (int i = 0; i < 4; i++) {
-            parser.eatByte();
-        }
-        int heigth = parser.expectNumber();
-        parser.expect(';');
-        int width = parser.expectNumber();
-        parser.expect('t');
-        return new Point(heigth, width);
+        return terminalHandler.getArea();
     }
 }

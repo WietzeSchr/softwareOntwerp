@@ -262,6 +262,14 @@ public class LayoutManager {
         getLayout().tick(getFocus());
     }
 
+    /* *****************
+     * OPEN NEW WINDOW *
+     * *****************/
+    void openWindow(){
+        new SwingWindow(getLayout().getWidth(), getLayout().getHeigth());
+    }
+
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/
