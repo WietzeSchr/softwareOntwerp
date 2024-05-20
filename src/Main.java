@@ -6,8 +6,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         TerminalHandler terminalHandler = new TerminalHandler();
-        terminalHandler.enterRawInputMode();
-        terminalHandler.clearScreen();
+        terminalHandler.init();
         String newLine = "";
         if(args.length < 1) {
             throw new RuntimeException("please give one or more filepaths to open");
@@ -23,8 +22,7 @@ public class Main {
             newLine = System.lineSeparator();
         }
         new Textr(newLine, args);
-        terminalHandler.clearScreen();
-        terminalHandler.leaveRawInputMode();
+        terminalHandler.close();
     }
 }
 

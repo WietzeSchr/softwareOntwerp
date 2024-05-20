@@ -275,6 +275,15 @@ public class LayoutManager {
         getLayout().tick(getFocus());
     }
 
+
+    /* *****************
+     * OPEN NEW WINDOW *
+     * *****************/
+    void openWindow(){
+        new SwingWindow(getLayout().getWidth(), getLayout().getHeigth());
+    }
+
+
     void openDirectoryView() {
         View[] newViews = getLayout().openDirectoryView(getFocus(), this);
         openViews(newViews);
@@ -284,6 +293,7 @@ public class LayoutManager {
         View[] newViews = getFocusedView().parseJson(this);
         openViews(newViews);
     }
+
 
     /* ******************
      *  SHOW FUNCTIONS  *
