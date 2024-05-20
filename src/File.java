@@ -92,6 +92,11 @@ public class File extends FileSystemLeaf
      *  HELP FUNCTIONS  *
      ********************/
 
+    @Override
+    public void generate(SimpleJsonGenerator generator) {
+        generator.generateFile(this);
+    }
+
     /** 
      * This method returns true if the given parameter c is a line separator
      * @return  | boolean

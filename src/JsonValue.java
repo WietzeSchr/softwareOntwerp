@@ -48,6 +48,12 @@ public class JsonValue extends FileSystemLeaf {
             }
         }
         setValue(text.toString());
+        getRoot().saveToBuffer();
+    }
+
+    @Override
+    public void generate(SimpleJsonGenerator generator) {
+        generator.generateJsonValue(this);
     }
 
     @Override

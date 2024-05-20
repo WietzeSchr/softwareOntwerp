@@ -74,6 +74,17 @@ public class Directory extends FileSystemNode {
     }
 
     @Override
+    public void generate(SimpleJsonGenerator generator) {
+        generator.generateDir(this);
+    }
+
+    @Override
+    protected void saveToBuffer() {}
+
+    @Override
+    protected void close() {}
+
+    @Override
     public String toString() {
         return getName() + "/";
     }
