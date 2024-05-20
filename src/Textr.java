@@ -130,7 +130,7 @@ public class Textr
                         java.awt.EventQueue.invokeLater(() -> handleFailure(() -> {
                             int c = terminalHandler.readByte(getNextDeadline());
                             tick();
-                            if (getFocusedView().getTick() != 0) show();
+                            if (layoutManager.getFocusedView().getTick() != 0) show();
 
                             if (c == 27) {                          //  ARROWS
                                 int c1 = terminalHandler.readByte();
@@ -184,8 +184,8 @@ public class Textr
                             } else if (c >= 32 && c <= 126) { //  Legal Chars
                                 addNewChar((char) c);
                             }
-                            if (getFocusedView().getTick() == 0 && c != 0) show();
-                            else if (getFocusedView().getTick() != 0) show();
+                            if (layoutManager.getFocusedView().getTick() == 0 && c != 0) show();
+                            else if (layoutManager.getFocusedView().getTick() != 0) show();
                             terminalHandler.setInputListener(this);
                         }));
                     }
@@ -394,8 +394,9 @@ public class Textr
     /* *****************
      * OPEN NEW WINDOW *
      * *****************/
-    void openWindow(){
+    void openWindow() {
         getLayoutManager().openWindow();
+    }
 
     void openDirectoryView() {
         getLayoutManager().openDirectoryView();
