@@ -81,7 +81,7 @@ public class File extends FileSystemLeaf
         file.close();
     }
 
-    public View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException {
+    public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
         if (buffer == null) {
             return new FileBufferView(5,5,new Point(1,1), getPathString(), newLine);
         }

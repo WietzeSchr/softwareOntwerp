@@ -32,7 +32,7 @@ public class JsonObject extends FileSystemNode {
     }
 
     @Override
-    protected View openEntry(LayoutManager manager, int line, FileBuffer buffer, String newLine) throws FileNotFoundException {
+    protected View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException {
         FileSystemEntry entry = getEntry(line);
         return entry.open(manager, buffer, newLine);
     }

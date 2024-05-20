@@ -65,7 +65,7 @@ public class Directory extends FileSystemNode {
     }
 
     @Override
-    public View openEntry(LayoutManager manager, int line, FileBuffer buffer, String newLine) throws FileNotFoundException {
+    public View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException {
         FileSystemEntry entry = getEntry(line);
         if (entry == null) {
             return new DirectoryView(5,5, new Point(1,1), getParentPath(), manager);

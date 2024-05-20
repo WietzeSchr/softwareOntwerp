@@ -1,5 +1,4 @@
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -508,7 +507,7 @@ public abstract class Layout {
         return this;
     }
 
-    public abstract FileBuffer getBufferByName(String name);
+    public abstract Buffer getBufferByName(String name);
 
     /**
      * Checks if the structure of the Layouts match

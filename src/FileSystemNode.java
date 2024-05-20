@@ -37,7 +37,7 @@ public abstract class FileSystemNode extends FileSystemEntry {
 
     abstract FileSystemEntry[] readNode();
 
-    protected abstract View openEntry(LayoutManager manager, int line, FileBuffer buffer, String newLine) throws FileNotFoundException;
+    protected abstract View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException;
 
     protected FileSystemEntry getEntry(int line) {
         return getEntries()[line - 1];
@@ -58,7 +58,7 @@ public abstract class FileSystemNode extends FileSystemEntry {
     }
 
     @Override
-    public View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException {
+    public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
         return new DirectoryView(5, 5, new Point(1,1), this, manager);
     }
 }

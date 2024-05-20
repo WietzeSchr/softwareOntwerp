@@ -321,7 +321,7 @@ public abstract class View extends Layout {
     }
 
     @Override
-    public FileBuffer getBufferByName(String name) {
+    public Buffer getBufferByName(String name) {
         return null;
     }
 

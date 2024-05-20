@@ -34,9 +34,28 @@ public class JsonValue extends FileSystemLeaf {
         this.value = newValue;
     }
 
+    public String[] load(String newLine) {
+        return new String[] {getValue()};
+    }
+
     @Override
-    public View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException {
-        return null;
+    public void save(String newLine, String[] content) {
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < content.length; i++) {
+            text.append(content[i]);
+            if (i != content.length - 1) {
+                text.append(newLine);
+            }
+        }
+        setValue(text.toString());
+    }
+
+    @Override
+    public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
+        if (buffer == null) {
+            return new FileBufferView(5,5,new Point(1,1), new JsonBuffer(this, newLine));
+        }
+        return new FileBufferView(5,5,new Point(1,1), buffer);
     }
 
     @Override

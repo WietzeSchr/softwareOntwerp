@@ -43,7 +43,7 @@ public abstract class FileSystemEntry {
         return getPath().getName();
     }
 
-    public abstract View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException;
+    public abstract View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException;
 
     public abstract String toString();
 }

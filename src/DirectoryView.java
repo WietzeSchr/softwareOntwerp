@@ -73,7 +73,7 @@ public class DirectoryView extends View{
     @Override
     public void addNewLineBreak(String newLine) throws FileNotFoundException {
         FileSystemEntry entry = getFileSystemNode().getEntry(getLine());
-        FileBuffer buffer = null;
+        Buffer buffer = null;
         if (entry != null) {
             String path = entry.getPathString();
             buffer = openFile(path, newLine);
@@ -132,8 +132,8 @@ public class DirectoryView extends View{
         return getLeftUpperCorner().add(new Point(getLine() - 1, 0));
     }
 
-    public FileBuffer openFile(String path, String newLine) {
-        FileBuffer result = findBuffer(path);
+    public Buffer openFile(String path, String newLine) {
+        Buffer result = findBuffer(path);
         if (result != null) {
             return result;
         }
@@ -144,7 +144,7 @@ public class DirectoryView extends View{
         }
     }
 
-    public FileBuffer findBuffer(String name) {
+    public Buffer findBuffer(String name) {
         Layout root = getRoot();
         return root.getBufferByName(name);
     }
