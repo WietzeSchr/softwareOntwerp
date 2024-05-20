@@ -181,6 +181,9 @@ public class Textr
                 openGameView();             //  Ctrl + G
                 changeFocusNext();
             }
+            else if (c == 10) {
+                parseJson();
+            }
             else if (c == 13) {             //  ENTER
                 addNewLineBreak();
             }
@@ -417,6 +420,10 @@ public class Textr
 
     void openDirectoryView() {
         getLayoutManager().openDirectoryView();
+    }
+
+    void parseJson() {
+        getLayoutManager().parseJson();
     }
 
     /* ******************

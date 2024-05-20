@@ -172,7 +172,7 @@ public class FileBufferView extends View {
          * @return: boolean, true if the undo was successful, false otherwise
          */
         public boolean undo() {
-            fileBuffer.deleteChar(getInsertionPointAfter());
+            buffer.deleteChar(getInsertionPointAfter());
             insertionPoint = getInsertionPoint();
             return true;
         }
@@ -183,10 +183,10 @@ public class FileBufferView extends View {
          */
         public boolean redo() {
             if (getChange() == 13) {
-                fileBuffer.insertLineBreak(getInsertionPoint());
+                buffer.insertLineBreak(getInsertionPoint());
             }
             else {
-                fileBuffer.addNewChar(getChange(), getInsertionPoint());
+                buffer.addNewChar(getChange(), getInsertionPoint());
             }
             insertionPoint = getInsertionPointAfter();
             return true;
@@ -211,10 +211,10 @@ public class FileBufferView extends View {
          */
         public boolean undo() {
             if (getChange() == 13) {
-                fileBuffer.insertLineBreak(getInsertionPointAfter());
+                buffer.insertLineBreak(getInsertionPointAfter());
             }
             else {
-                fileBuffer.addNewChar(getChange(), getInsertionPointAfter());
+                buffer.addNewChar(getChange(), getInsertionPointAfter());
             }
             insertionPoint = getInsertionPoint();
             return true;
@@ -225,7 +225,7 @@ public class FileBufferView extends View {
          * @return: boolean, true if the redo was successful, false otherwise
          */
         public boolean redo() {
-            fileBuffer.deleteChar(getInsertionPoint());
+            buffer.deleteChar(getInsertionPoint());
             insertionPoint = getInsertionPointAfter();
             return true;
         }
@@ -242,7 +242,7 @@ public class FileBufferView extends View {
 
     private Point insertionPoint;
 
-    private FileBuffer fileBuffer;
+    private Buffer buffer;
 
     private Edit lastEdit;
 
@@ -256,26 +256,26 @@ public class FileBufferView extends View {
      */
     public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) throws FileNotFoundException {
         super(heigth, witdh, leftUpperCorner);
-        this.fileBuffer = new FileBuffer(filepath, newLine);
+        this.buffer = new FileBuffer(filepath, newLine);
         this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
-        fileBuffer.subscribeView(this);
+        buffer.subscribeView(this);
     }
 
     /** This method sets the verticalScrollState of the FileBufferView
      * @post getVerticalScrollState() == newVerticalScrollState
      * @return: void
      */
-    public FileBufferView(int heigth, int width, Point leftUpperCorner, FileBuffer fileBuffer) {
+    public FileBufferView(int heigth, int width, Point leftUpperCorner, Buffer buffer) {
         super(heigth, width, leftUpperCorner);
-        this.fileBuffer = fileBuffer;
+        this.buffer = buffer;
         this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
-        fileBuffer.subscribeView(this);
+        buffer.subscribeView(this);
     }
 
     /* **********************
@@ -312,16 +312,16 @@ public class FileBufferView extends View {
      * @post getFile() == newFile
      * @return: void
      */
-    public void setBuffer(FileBuffer newFileBuffer) {
-        this.fileBuffer = newFileBuffer;
+    public void setBuffer(Buffer newBuffer) {
+        this.buffer = newBuffer;
     }       // Deze kan handig zijn in toekomst als we de wijzigingen ongedaan moeten maken en de file opnieuw zouden
                 // moeten inladen.
 
     /** This method returns the file of the FileBufferView
      * @return: File
      */
-    public FileBuffer getBuffer() {
-        return fileBuffer;
+    public Buffer getBuffer() {
+        return buffer;
     }
 
     /** This method sets the position of the FileBufferView to parameter newPosition
@@ -545,13 +545,13 @@ public class FileBufferView extends View {
                     }
                 }
                 if (c == 121 || c == 89) {
-                    fileBuffer.unSubscribeView(this);
+                    buffer.unSubscribeView(this);
                     return null;
                 }
                 return this;
             }
             else {
-                fileBuffer.unSubscribeView(this);
+                buffer.unSubscribeView(this);
                 return null;
             }
         }
@@ -679,6 +679,25 @@ public class FileBufferView extends View {
 
     public String getParentPath() {
         return getPath().getParentPath();
+    }
+
+    public View[] parseJson(LayoutManager manager) {
+        String[] content = getContent();
+        StringBuilder jsonString = new StringBuilder();
+        for (int i = 0; i < content.length; i++) {
+            jsonString.append(content[i]);
+            if (i != content.length - 1) {
+                jsonString.append("\n");
+            }
+        }
+        try {
+            JsonObject json = SimpleJsonParser.parseJsonObject(jsonString.toString());
+            return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), json, manager)};
+        }
+        catch (SimpleJsonParserException exception) {
+            setInsertionPoint(new Point(exception.location.line() + 1, exception.location.column() + 1));
+        }
+        return new View[] {};
     }
 
     /* ******************
@@ -830,7 +849,7 @@ public class FileBufferView extends View {
     }
 
     @Override
-    public FileBuffer getBufferByName(String name) {
+    public Buffer getBufferByName(String name) {
         if (getFileName().equals(name)) {
             return getBuffer();
         }

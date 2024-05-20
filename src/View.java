@@ -217,11 +217,11 @@ public abstract class View extends Layout {
      */
     public void tick() throws IOException {};
 
-    public View openDirectoryView() {
-        return this;
+    public View[] getDirectoryView(LayoutManager manager) {
+        return new View[] {};
     }
 
-    public View[] getDirectoryView(LayoutManager manager) {
+    public View[] parseJson(LayoutManager manager) {
         return new View[] {};
     }
 
@@ -321,7 +321,7 @@ public abstract class View extends Layout {
     }
 
     @Override
-    public FileBuffer getBufferByName(String name) {
+    public Buffer getBufferByName(String name) {
         return null;
     }
 

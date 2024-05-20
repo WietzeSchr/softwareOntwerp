@@ -286,8 +286,8 @@ public abstract class CompositeLayout extends Layout {
     }
 
     @Override
-    public FileBuffer getBufferByName(String name) {
-        FileBuffer result = null;
+    public Buffer getBufferByName(String name) {
+        Buffer result = null;
         for (Layout subLayout : getSubLayouts()) {
             result = subLayout.getBufferByName(name);
             if (result != null) break;

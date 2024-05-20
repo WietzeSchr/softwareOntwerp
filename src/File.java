@@ -18,11 +18,11 @@ public class File extends FileSystemLeaf
      * @param path | The path of the file
     */
     public File(String path) {
-        super(path, "/");
+        super(new FilePath(path));
     }
 
     public File(String path, Directory parent) {
-        super(path, "/", parent);
+        super(new FilePath(path), parent);
     }
 
     /* **************
@@ -81,7 +81,7 @@ public class File extends FileSystemLeaf
         file.close();
     }
 
-    public View open(LayoutManager manager, FileBuffer buffer, String newLine) throws FileNotFoundException {
+    public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
         if (buffer == null) {
             return new FileBufferView(5,5,new Point(1,1), getPathString(), newLine);
         }

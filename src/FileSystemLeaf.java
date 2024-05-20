@@ -1,10 +1,17 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public abstract class FileSystemLeaf extends FileSystemEntry{
 
-    public FileSystemLeaf(String path, String delimiter) {
-        super(path, delimiter);
+    public FileSystemLeaf(Path path) {
+        super(path);
     }
 
-    public FileSystemLeaf(String path, String delimiter, FileSystemNode parent) {
-        super(path, delimiter, parent);
+    public FileSystemLeaf(Path path, FileSystemNode parent) {
+        super(path, parent);
     }
+
+    public abstract String[] load(String newLine) throws FileNotFoundException;
+
+    public abstract void save(String newLine, String[] content) throws IOException;
 }

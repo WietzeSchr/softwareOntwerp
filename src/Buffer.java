@@ -1,149 +1,71 @@
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/* *************
- *  FILEBUFFER *
- ***************/
-public class FileBuffer {
+public abstract class Buffer {
+
     private String[] content;
 
-    private File file;
+    private FileSystemLeaf file;
 
     private boolean dirty;
 
     private final FileBufferListenerService listenerService = new FileBufferListenerService();
 
-    /* ***************
-     *  CONSTRUCTORS *
-     *****************/
-
-    /**
-     * This constructor creates a new FileBuffer object with the given path and newLine
-     * @param path    | The path of the file
-     * @param newLine | The new line separator
-     * @post  | getPath() == path
-     * @post  | getContent() == getFile().load(newLine)
-     * @post  | getDirty() == false
-     */
-    public FileBuffer(String path, String newLine) throws FileNotFoundException {
-        this.file = new File(path);
-        this.content = getFile().load(newLine);
+    public Buffer(FileSystemLeaf file, String newLine) throws FileNotFoundException {
+        this.file = file;
         this.dirty = false;
+        this.content = file.load(newLine);
     }
 
-    /**
-     * This constructor creates a new FileBuffer object with the given content and path
-     * @param content  | The content of the file
-     * @param path     | The path of the file
-     * @post | getPath() == path
-     * @post | getContent() == content
-     * @post | getDirty() == false
-     */
-    public FileBuffer(String[] content, String path) {
-        this.file = new File(path);
+    public Buffer(FileSystemLeaf file, String[] content) {
+        this.file = file;
+        this.dirty = false;
         this.content = content;
-        this.dirty = false;
     }
 
-    /* **********************
-     *  GETTERS AND SETTERS *
-     ************************/
-    /**
-     * This method sets the file of the buffer to the given parameter newFile
-     * @post  | getFile() == newFile
-     * @param newFile | the new file
-     * @return        | void
-     */
-    public void setFile(File newFile) {
-        this.file = newFile;
-    }
-        //  Kan handig zijn voor saven naar een andere file als waar van gelezen is (save as)
-
-    /** 
-     * This method returns the file of the buffer
-     * @return  | File, file of the buffer
-     */
-    public File getFile() {
-        return file;
-    }
-
-    /** 
-     * This method returns the path of the file of the buffer
-     * @return  | String, path of the file
-     */
-    public String getPath() {
-        return getFile().getPathString();
-    }
-
-    /** 
-     * This method returns true if the buffer is dirty and returns false if the buffer is not dirty
-     * @return  | boolean, true if the buffer is dirty, false if the buffer is not dirty
-     */
-    public boolean getDirty() {
-        return dirty;
-    }
-
-    /** 
-     * This method sets the buffer boolean value from parameter dirty
-     * @post  | getDirty() == dirty
-     * @param dirty | The new value of dirty, true if the buffer is dirty, false if the buffer is not dirty
-     * @return  | void
-     */
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
-
-    /** 
-     * This method returns the content of the buffer
-     * @return  | String[], content of the buffer
-     */
     public String[] getContent() {
         return content;
     }
 
-    /** 
-     * This method sets the content of the buffer to the given parameter newContent
-     * @post    | getContent() == newContent
-     * @return  | void
-     */
     public void setContent(String[] newContent) {
         this.content = newContent;
     }
 
-    /* *********************
-     *  DERIVED ATTRIBUTES *
-     ***********************/
+    public FileSystemLeaf getFile() {
+        return file;
+    }
 
-    /** 
-     * This method returns the number of rows 
-     * @return  | int, number of rows
-     */
+    public void setFile(FileSystemLeaf newFile) {
+        this.file = newFile;
+    }
+
+    public boolean getDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
     public int getRowCount() {
         return getContent().length;
     }
 
-     /** 
-      * This method returns the number of columns, this is the length of the longest row
-      * @return  | int, number of columns
-      */
     public int getColumnCount() {
-        String[] cont = getContent();
+        String[] content = getContent();
         int result = 1;
         for (int i = 0; i < getRowCount(); i++) {
-            if (cont[i] != null) {
-                if (cont[i].length() > result) {
-                    result = cont[i].length();
+            if (content[i] != null) {
+                if (content[i].length() > result) {
+                    result = content[i].length();
                 }
             }
         }
         return result;
     }
- 
-    /** 
-     * This method returns the number of characters in the buffer
-     * @return  | int, number of characters in the buffer
-     */
+
     public int countCharacters() {
         int result = 0;
         for (String row : getContent()) {
@@ -192,7 +114,7 @@ public class FileBuffer {
      *  EDIT BUFFER CONTENT *
      ************************/
 
-    /** 
+    /**
      * This method inserts a line break at the insertion point and sets the buffer to dirty
      * @post    | getDirty() == true
      * @return  | void
@@ -212,7 +134,7 @@ public class FileBuffer {
     }
 
 
-    /** 
+    /**
      * This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
      * @post | getDirty() == true
      * @param c      | The character to add
@@ -258,7 +180,7 @@ public class FileBuffer {
         fireNewChar(insert);
     }
 
-    /** 
+    /**
      * This method deletes a character from the buffer and sets the buffer to dirty and moves the insertion point
      * @post  | getDirty() == true
      * @param insert | the insertion point
@@ -306,27 +228,17 @@ public class FileBuffer {
         setDirty(true);
     }
 
-    /* ******************
-     *    SAVE BUFFER   *
-     * ******************/
-
-    /**
-     * This method saves the buffer to the file with the given newLine and sets the buffer to not dirty
-     * @post | getDirty() == false
-     * @param newLine | The new line separator to save the file with
-     * @return        | void
-     */
     public void saveBuffer(String newLine) throws IOException {
         getFile().save(newLine, getContent());
         setDirty(false);
         fireSaved();
-    }
+    };
 
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
 
-    /** 
+    /**
      * This method sets the insertion point of the buffer to the given parameter insertionPoint
      * @post    | getInsertionPoint() == insertionPoint
      * @return  | void
@@ -343,5 +255,45 @@ public class FileBuffer {
             insertionPoint = new Point(insertionPoint.getX(), currRowLength+1);
         }
         return insertionPoint;
+    }
+}
+
+/* *************
+ *  FILEBUFFER *
+ ***************/
+class FileBuffer extends Buffer {
+    /* ***************
+     *  CONSTRUCTORS *
+     *****************/
+
+    /**
+     * This constructor creates a new FileBuffer object with the given path and newLine
+     * @param path    | The path of the file
+     * @param newLine | The new line separator
+     * @post  | getPath() == path
+     * @post  | getContent() == getFile().load(newLine)
+     * @post  | getDirty() == false
+     */
+    public FileBuffer(String path, String newLine) throws FileNotFoundException {
+        super(new File(path), newLine);
+    }
+
+    /**
+     * This constructor creates a new FileBuffer object with the given content and path
+     * @param content  | The content of the file
+     * @param path     | The path of the file
+     * @post | getPath() == path
+     * @post | getContent() == content
+     * @post | getDirty() == false
+     */
+    public FileBuffer(String[] content, String path) {
+        super(new File(path), content);
+    }
+}
+
+class JsonBuffer extends Buffer{
+
+    public JsonBuffer(JsonValue value, String newLine) throws FileNotFoundException {
+        super(value, newLine);
     }
 }

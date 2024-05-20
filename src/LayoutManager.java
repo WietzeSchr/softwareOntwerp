@@ -1,6 +1,5 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 public class LayoutManager {
     private Layout layout;
@@ -277,7 +276,13 @@ public class LayoutManager {
     }
 
     void openDirectoryView() {
-        setLayout(getLayout().openDirectoryView(getFocus(), this));
+        View[] newViews = getLayout().openDirectoryView(getFocus(), this);
+        openViews(newViews);
+    }
+
+    void parseJson() {
+        View[] newViews = getFocusedView().parseJson(this);
+        openViews(newViews);
     }
 
     /* ******************
@@ -299,6 +304,10 @@ public class LayoutManager {
     /* ******************
      *  HELP FUNCTIONS  *
      * ******************/
+
+    private void openViews(View[] newViews) {
+        setLayout(getLayout().openViews(getFocus(), getFocusedView().getParent(), newViews));
+    }
 
     /**
      * This method gives the next focus

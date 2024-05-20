@@ -1,5 +1,4 @@
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -437,13 +436,8 @@ public abstract class Layout {
         getFocusedView(focus).tick();
     }
 
-    public Layout openDirectoryView(int focus, LayoutManager manager) {
-        int heigth = getHeigth();
-        int width = getWidth();
-        View[] newViews = getFocusedView(focus).getDirectoryView(manager);
-        Layout result = openViews(focus, getFocusedView(focus).getParent(), newViews);
-        result.updateSize(heigth, width);
-        return result;
+    public View[] openDirectoryView(int focus, LayoutManager manager) {
+        return getFocusedView(focus).getDirectoryView(manager);
     }
 
     /* ******************
@@ -513,7 +507,7 @@ public abstract class Layout {
         return this;
     }
 
-    public abstract FileBuffer getBufferByName(String name);
+    public abstract Buffer getBufferByName(String name);
 
     /**
      * Checks if the structure of the Layouts match
