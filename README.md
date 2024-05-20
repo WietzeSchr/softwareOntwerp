@@ -53,6 +53,6 @@
 ### TODO
 
 * [ ] Open JsonValue as fileBuffer
-      - [ ] Lock the corresponding buffer when json value is opened
-      - [ ] Save to corresponding Json object and buffer
+    - [ ] Lock the corresponding buffer when json value is opened
+    - [ ] Save to corresponding Json object and buffer
 * [ ] Move undo redo to FileBuffer level
