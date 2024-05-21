@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class JsonValue extends FileSystemLeaf {
 
@@ -35,7 +36,28 @@ public class JsonValue extends FileSystemLeaf {
     }
 
     public String[] load(String newLine) {
-        return new String[] {getValue()};
+        ArrayList<String> result = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        char[] value = getValue().toCharArray();
+        for (int i = 0; i  < value.length; i++) {
+            if (value[i] == '\n') {
+                result.add(line.toString());
+                line = new StringBuilder();
+            }
+            else if (value[i] == '\r') {
+                result.add(line.toString());
+                i++;
+                line = new StringBuilder();
+            }
+            else if (value[i] == '\"') {
+                line.append('"');
+            }
+            else {
+                line.append(value[i]);
+            }
+        }
+        if (line.length() > 0) result.add(line.toString());
+        return result.toArray(new String[0]);
     }
 
     @Override
@@ -59,7 +81,8 @@ public class JsonValue extends FileSystemLeaf {
     @Override
     public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
         if (buffer == null) {
-            return new FileBufferView(5,5,new Point(1,1), new JsonBuffer(this, newLine));
+            View result = new FileBufferView(5,5,new Point(1,1), new JsonBuffer(this, newLine));
+            return result;
         }
         return new FileBufferView(5,5,new Point(1,1), buffer);
     }

@@ -401,8 +401,7 @@ public class TextrTest {
         Textr test1 = new Textr("\n", fbv1);
         test1.getLayoutManager().initViewPositions();
         test1.parseJson();
-        test1.changeFocusNext();
         test1.closeView();
-        test1.addNewChar('c');
+        test1.addNewLineBreak();
     }
 }
