@@ -13,6 +13,8 @@ public abstract class Buffer {
 
     private final FileBufferListenerService listenerService = new FileBufferListenerService();
 
+    private final JsonEditLock lock = new JsonEditLock();
+
     public Buffer(FileSystemLeaf file, String newLine) throws FileNotFoundException {
         this.file = file;
         this.dirty = false;
@@ -47,6 +49,10 @@ public abstract class Buffer {
 
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
+    }
+
+    private JsonEditLock getLock() {
+        return lock;
     }
 
     public int getRowCount() {
@@ -114,12 +120,39 @@ public abstract class Buffer {
      *  EDIT BUFFER CONTENT *
      ************************/
 
+
+    protected void acquireLock() {
+        getLock().acquireNewLock();
+    }
+
+    protected void releaseLock() {
+        getLock().releaseLock();
+    }
+
+    public boolean isNotLocked() {
+        return !getLock().isLocked();
+    }
+
     /**
      * This method inserts a line break at the insertion point and sets the buffer to dirty
      * @post    | getDirty() == true
      * @return  | void
      */
     public void insertLineBreak(Point insert){
+
+        if (isNotLocked()) {
+            int row = insert.getX() - 1;
+            int col = insert.getY() - 1;
+            ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
+            String currentRow = getContent()[row];
+            String firstPart = currentRow.substring(0, col);
+            String secondPart = currentRow.substring(col);
+            cont.set(row, firstPart);
+            cont.add(row + 1, secondPart);
+            setContent(cont.toArray(new String[0]));
+            setDirty(true);
+            fireNewLineBreak(insert);
+        }
         int row = insert.getX()-1;
         int col = insert.getY()-1;
         ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
@@ -142,6 +175,31 @@ public abstract class Buffer {
      * @return       | void
      */
     public void addNewChar(char c, Point insert) {  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
+        if (isNotLocked()) {
+            String[] content = getContent();
+            if (content.length == 0) {
+                content = new String[1];
+                content[0] = String.valueOf(c);
+            } else if (insert.getX() > getRowCount()) {
+                content = new String[getRowCount() + 1];
+                for (int i = 0; i < getRowCount(); i++) {
+                    content[i] = getContent()[i];
+                }
+                content[getRowCount()] = String.valueOf(c);
+            } else {
+                String row = content[insert.getX() - 1];
+                if (row == null) {
+                    row = String.valueOf(c);
+                    content[insert.getX() - 1] = row;
+                } else {
+                    StringBuilder eRow = new StringBuilder();
+                    for (int i = 0; i < row.length(); i++) {
+                        if (i == insert.getY() - 1) {
+                            eRow.append(c);
+                        }
+                        eRow.append(row.toCharArray()[i]);
+                    }
+                    if (insert.getY() > row.length()) {
         String[] content = getContent();
         if (content.length == 0)
         {
@@ -167,13 +225,12 @@ public abstract class Buffer {
                     if (i == insert.getY() - 1) {
                         eRow.append(c);
                     }
-                    eRow.append(row.toCharArray()[i]);
+                    content[insert.getX() - 1] = eRow.toString();
                 }
-                if (insert.getY() > row.length()) {
-                    eRow.append(c);
-                }
-                content[insert.getX() - 1] = eRow.toString();
             }
+            setContent(content);
+            setDirty(true);
+            fireNewChar(insert);
         }
         setContent(content);
         setDirty(true);
@@ -187,52 +244,55 @@ public abstract class Buffer {
      * @return       | void
      */
     public void deleteChar(Point insert) {
-        String[] content = getContent();
-        String[] newContent;
-        if (insert.getY() == 1)  {
-            if(insert.getX() == 1) return;
-            newContent = new String[content.length - 1];
-            int j = 0;
-            for (int i = 0; i < content.length; i++) {
-                if (i != insert.getX() - 1) {
-                    newContent[j] = content[i];
-                    j++;
-                }
-                else {
-                    String secondPart = String.copyValueOf(content[i].toCharArray());
-                    String firstPart = String.copyValueOf(content[i - 1].toCharArray());
-                    newContent[i - 1] = firstPart + secondPart;
-                }
-            }
-            fireDelLineBreak(insert);
-        }
-        else {
-            newContent = new String[content.length];
-            for (int i = 0; i < content.length; i++) {
-                if (i != insert.getX() - 1) {
-                    newContent[i] = String.copyValueOf(content[i].toCharArray());
-                }
-                else {
-                    StringBuilder newRow = new StringBuilder();
-                    for (int j = 0; j < content[i].length(); j++) {
-                        if (j != insert.getY() - 2) {
-                            newRow.append(content[i].toCharArray()[j]);
-                        }
+        if (isNotLocked()) {
+            String[] content = getContent();
+            String[] newContent;
+            if (insert.getY() == 1) {
+                if (insert.getX() == 1) return;
+                newContent = new String[content.length - 1];
+                int j = 0;
+                for (int i = 0; i < content.length; i++) {
+                    if (i != insert.getX() - 1) {
+                        newContent[j] = content[i];
+                        j++;
+                    } else {
+                        String secondPart = String.copyValueOf(content[i].toCharArray());
+                        String firstPart = String.copyValueOf(content[i - 1].toCharArray());
+                        newContent[i - 1] = firstPart + secondPart;
                     }
-                    newContent[i] = newRow.toString();
                 }
+                fireDelLineBreak(insert);
+            } else {
+                newContent = new String[content.length];
+                for (int i = 0; i < content.length; i++) {
+                    if (i != insert.getX() - 1) {
+                        newContent[i] = String.copyValueOf(content[i].toCharArray());
+                    } else {
+                        StringBuilder newRow = new StringBuilder();
+                        for (int j = 0; j < content[i].length(); j++) {
+                            if (j != insert.getY() - 2) {
+                                newRow.append(content[i].toCharArray()[j]);
+                            }
+                        }
+                        newContent[i] = newRow.toString();
+                    }
+                }
+                fireDelChar(insert);
             }
+            setContent(newContent);
+            setDirty(true);
             fireDelChar(insert);
+
         }
-        setContent(newContent);
-        setDirty(true);
     }
 
     public void saveBuffer(String newLine) throws IOException {
         getFile().save(newLine, getContent());
         setDirty(false);
         fireSaved();
-    };
+    }
+
+    public abstract void close();
 
     /* ******************
      *  HELP FUNCTIONS  *
@@ -289,11 +349,19 @@ class FileBuffer extends Buffer {
     public FileBuffer(String[] content, String path) {
         super(new File(path), content);
     }
+
+    @Override
+    public void close() {}
 }
 
 class JsonBuffer extends Buffer{
 
     public JsonBuffer(JsonValue value, String newLine) throws FileNotFoundException {
         super(value, newLine);
+    }
+
+    @Override
+    public void close() {
+        getFile().close();
     }
 }

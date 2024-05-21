@@ -56,11 +56,6 @@ public class DirectoryView extends View{
     }
 
     @Override
-    public Layout closeView(int focus, CompositeLayout parent) throws IOException {
-        return null;
-    }
-
-    @Override
     public void move(Direction dir) {
         if (dir == Direction.SOUTH) {
             setLine(getLine() + 1);
@@ -80,6 +75,15 @@ public class DirectoryView extends View{
         }
         View newView = getFileSystemNode().openEntry(getManager(), getLine(), buffer, newLine);
         getManager().replace(this, newView);
+    }
+
+    @Override
+    public View closeView(int focus, CompositeLayout parent) {
+        if (getPosition() == focus) {
+            getFileSystemNode().getRoot().close();
+            return null;
+        }
+        return this;
     }
 
     @Override

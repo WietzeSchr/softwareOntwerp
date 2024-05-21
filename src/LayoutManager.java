@@ -367,7 +367,7 @@ public class LayoutManager {
     void replace(View oldView, View newView) {
         newView.updateSize(oldView);
         if (oldView != newView) {
-            if (oldView.getParent() != null) {
+            if (getLayout().countViews() > 1) {
                 oldView.getParent().replace(oldView, newView);
             } else {
                 setLayout(newView);

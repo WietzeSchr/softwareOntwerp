@@ -223,9 +223,10 @@ class SimpleJsonParser {
         return new JsonObject(path, properties.toArray(new FileSystemEntry[0]));
     }
 
-    static JsonObject parseJsonObject(String text) {
+    static JsonObject parseJsonObject(String text, Buffer buffer) {
         SimpleJsonParser parser = new SimpleJsonParser(text);
         JsonObject result = parser.parseSimpleJsonObject("/root");
+        result.setBuffer(buffer);
         if (parser.peek() != -1)
             throw new SimpleJsonParserException(parser.location(), "End of text expected");
         return result;
@@ -233,28 +234,26 @@ class SimpleJsonParser {
 
 }
 
-/*
+
 class SimpleJsonGenerator {
+
+    ArrayList<String> lines = new ArrayList<>();
+
     StringBuilder builder = new StringBuilder();
     int objectNestingDepth;
-    String lineSeparator;
-
-    SimpleJsonGenerator(String lineSeparator) {
-        this.lineSeparator = lineSeparator;
-    }
 
     void generateLineBreak() {
-        builder.append(lineSeparator);
-        int n = 2 * objectNestingDepth;
-        for (int i = 0; i < n; i++)
-            builder.append(' ');
+        lines.add(builder.toString());
+        builder = new StringBuilder();
+        generateIndentation();
     }
 
-    void generate(SimpleJsonValue value) {
-        switch (value) {
-            case SimpleJsonString s -> generate(s);
-            case SimpleJsonObject o -> generate(o);
-        }
+    void generateIndentation() {
+        builder.append(" ".repeat(Math.max(0, objectNestingDepth * 2)));
+    }
+
+    void generate(FileSystemEntry value) {
+        value.generate(this);
     }
 
     void generate(String text) {
@@ -277,39 +276,51 @@ class SimpleJsonGenerator {
         builder.append('"');
     }
 
-    void generate(SimpleJsonString string) {
-        generate(string.value);
+    void generateJsonValue(JsonValue string) {
+        generate(string.getValue());
     }
 
-    void generate(SimpleJsonObject object) {
+    void generateJsonObject(JsonObject object) {
         builder.append('{');
         objectNestingDepth++;
         generateLineBreak();
         int i = 0;
-        for (SimpleJsonProperty property : object.properties.values()) {
-            generate(property.name);
-            builder.append(": ");
-            generate(property.value);
-            i++;
-            if (i < object.properties.size()) {
-                builder.append(',');
-                generateLineBreak();
+        for (FileSystemEntry property : object.getEntries()) {
+            if (property != object.getParent()) {
+                String name = property.getName().split("/")[0];
+                generate(name);
+                builder.append(": ");
+                generate(property);
+                if (i < object.getEntries().length - 1) {
+                    builder.append(',');
+                    generateLineBreak();
+                }
             }
+            i++;
         }
         objectNestingDepth--;
         generateLineBreak();
         builder.append('}');
     }
 
-    static String generate(String lineSeparator, SimpleJsonValue value) {
-        SimpleJsonGenerator generator = new SimpleJsonGenerator(lineSeparator);
+    void generateFile(File file) {
+        throw new RuntimeException("File can't be generated as json");
+    }
+
+    void generateDir(Directory dir) {
+        throw new RuntimeException("Directory can't be generated as json");
+    }
+
+    static String[] generateJson(FileSystemEntry value) {
+        SimpleJsonGenerator generator = new SimpleJsonGenerator();
         generator.generate(value);
-        return generator.builder.toString();
+        generator.lines.add(generator.builder.toString());
+        return generator.lines.toArray(new String[0]);
     }
 
     static String generateStringLiteral(String content) {
-        SimpleJsonGenerator generator = new SimpleJsonGenerator(null);
+        SimpleJsonGenerator generator = new SimpleJsonGenerator();
         generator.generate(content);
         return generator.builder.toString();
     }
-}*/
+}

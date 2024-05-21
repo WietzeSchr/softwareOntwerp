@@ -546,12 +546,14 @@ public class FileBufferView extends View {
                 }
                 if (c == 121 || c == 89) {
                     buffer.unSubscribeView(this);
+                    getBuffer().close();
                     return null;
                 }
                 return this;
             }
             else {
                 buffer.unSubscribeView(this);
+                getBuffer().close();
                 return null;
             }
         }
@@ -691,7 +693,8 @@ public class FileBufferView extends View {
             }
         }
         try {
-            JsonObject json = SimpleJsonParser.parseJsonObject(jsonString.toString());
+            JsonObject json = SimpleJsonParser.parseJsonObject(jsonString.toString(), getBuffer());
+            getBuffer().acquireLock();
             return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), json, manager)};
         }
         catch (SimpleJsonParserException exception) {
