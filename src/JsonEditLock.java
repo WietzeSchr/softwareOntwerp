@@ -3,7 +3,7 @@ public class JsonEditLock {
     private int jsonViewCount;
 
     public JsonEditLock() {
-        this.jsonViewCount = 1;
+        this.jsonViewCount = 0;
     }
 
     private int getJsonViewCount() {

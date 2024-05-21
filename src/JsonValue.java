@@ -65,6 +65,11 @@ public class JsonValue extends FileSystemLeaf {
     }
 
     @Override
+    protected void close() {
+        getRoot().close();
+    }
+
+    @Override
     public String toString() {
         return getName();
     }

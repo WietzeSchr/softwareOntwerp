@@ -553,6 +553,7 @@ public class FileBufferView extends View {
             }
             else {
                 buffer.unSubscribeView(this);
+                getBuffer().close();
                 return null;
             }
         }

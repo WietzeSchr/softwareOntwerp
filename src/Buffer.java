@@ -128,8 +128,8 @@ public abstract class Buffer {
         getLock().releaseLock();
     }
 
-    public boolean isLocked() {
-        return getLock().isLocked();
+    public boolean isNotLocked() {
+        return !getLock().isLocked();
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class Buffer {
      * @return  | void
      */
     public void insertLineBreak(Point insert){
-        //if (! isLocked()) {
+        if (isNotLocked()) {
             int row = insert.getX() - 1;
             int col = insert.getY() - 1;
             ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
@@ -150,7 +150,7 @@ public abstract class Buffer {
             setContent(cont.toArray(new String[0]));
             setDirty(true);
             fireNewLineBreak(insert);
-        //}
+        }
     }
 
 
@@ -162,7 +162,7 @@ public abstract class Buffer {
      * @return       | void
      */
     public void addNewChar(char c, Point insert) {  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
-        //if (! isLocked()) {
+        if (isNotLocked()) {
             String[] content = getContent();
             if (content.length == 0) {
                 content = new String[1];
@@ -195,7 +195,7 @@ public abstract class Buffer {
             setContent(content);
             setDirty(true);
             fireNewChar(insert);
-        //}
+        }
     }
 
     /**
@@ -205,7 +205,7 @@ public abstract class Buffer {
      * @return       | void
      */
     public void deleteChar(Point insert) {
-        //if (! isLocked()) {
+        if (isNotLocked()) {
             String[] content = getContent();
             String[] newContent;
             if (insert.getY() == 1) {
@@ -242,7 +242,7 @@ public abstract class Buffer {
             }
             setContent(newContent);
             setDirty(true);
-        //}
+        }
     }
 
     public void saveBuffer(String newLine) throws IOException {
@@ -321,6 +321,6 @@ class JsonBuffer extends Buffer{
 
     @Override
     public void close() {
-        releaseLock();
+        getFile().close();
     }
 }

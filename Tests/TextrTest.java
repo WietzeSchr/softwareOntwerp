@@ -394,4 +394,15 @@ public class TextrTest {
         FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
         test1.getLayoutManager().replace(fbv1, fbv2);
     }
+
+    @Test
+    void testJsonLocks() throws IOException {
+        FileBufferView fbv1 = new FileBufferView(5,5, new Point(1,1), "/home/wietze/IdeaProjects/softwareOntwerp/testJson/jsonTest1.txt", "\n");
+        Textr test1 = new Textr("\n", fbv1);
+        test1.getLayoutManager().initViewPositions();
+        test1.parseJson();
+        test1.changeFocusNext();
+        test1.closeView();
+        test1.addNewChar('c');
+    }
 }

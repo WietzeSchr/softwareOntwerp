@@ -15,6 +15,8 @@ public abstract class FileSystemLeaf extends FileSystemEntry{
 
     public abstract void save(String newLine, String[] content) throws IOException;
 
+    protected void close() {};
+
     public FileSystemNode getRoot() {
         return getParent().getRoot();
     }
