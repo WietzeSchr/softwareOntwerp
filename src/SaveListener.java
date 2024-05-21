@@ -11,6 +11,6 @@ public class SaveListener implements FileBufferListenerInterface {
     }
 
     public void update(char c, Point insert) {
-        getView().updateViewSaved();
+        //getView().updateViewSaved();
     }
 }
