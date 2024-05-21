@@ -95,15 +95,6 @@ public class GameView extends View{
         }
     }
 
-    /* ******************
-     *   CLOSE BUFFER   *
-     * ******************/
-
-    @Override
-    public Layout closeView(int focus, CompositeLayout parent) {
-        return null;
-    }
-
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/
