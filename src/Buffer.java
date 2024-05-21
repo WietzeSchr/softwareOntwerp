@@ -120,6 +120,7 @@ public abstract class Buffer {
      *  EDIT BUFFER CONTENT *
      ************************/
 
+
     protected void acquireLock() {
         getLock().acquireNewLock();
     }
@@ -138,6 +139,7 @@ public abstract class Buffer {
      * @return  | void
      */
     public void insertLineBreak(Point insert){
+
         if (isNotLocked()) {
             int row = insert.getX() - 1;
             int col = insert.getY() - 1;
@@ -151,6 +153,17 @@ public abstract class Buffer {
             setDirty(true);
             fireNewLineBreak(insert);
         }
+        int row = insert.getX()-1;
+        int col = insert.getY()-1;
+        ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
+        String currentRow = getContent()[row];
+        String firstPart = currentRow.substring(0, col);
+        String secondPart = currentRow.substring(col);
+        cont.set(row, firstPart);
+        cont.add(row + 1, secondPart);
+        setContent(cont.toArray(new String[0]));
+        setDirty(true);
+        fireNewLineBreak(insert);
     }
 
 
@@ -187,6 +200,29 @@ public abstract class Buffer {
                         eRow.append(row.toCharArray()[i]);
                     }
                     if (insert.getY() > row.length()) {
+        String[] content = getContent();
+        if (content.length == 0)
+        {
+            content = new String[1];
+            content[0] = String.valueOf(c);
+        }
+        else if (insert.getX() > getRowCount()) {
+            content = new String[getRowCount() + 1];
+            for (int i = 0; i < getRowCount(); i++) {
+                content[i] = getContent()[i];
+            }
+            content[getRowCount()] = String.valueOf(c);
+        }
+        else {
+            String row = content[insert.getX() - 1];
+            if (row == null) {
+                row = String.valueOf(c);
+                content[insert.getX() - 1] = row;
+            }
+            else {
+                StringBuilder eRow = new StringBuilder();
+                for (int i = 0; i < row.length(); i++) {
+                    if (i == insert.getY() - 1) {
                         eRow.append(c);
                     }
                     content[insert.getX() - 1] = eRow.toString();
@@ -196,6 +232,9 @@ public abstract class Buffer {
             setDirty(true);
             fireNewChar(insert);
         }
+        setContent(content);
+        setDirty(true);
+        fireNewChar(insert);
     }
 
     /**
@@ -242,6 +281,8 @@ public abstract class Buffer {
             }
             setContent(newContent);
             setDirty(true);
+            fireDelChar(insert);
+
         }
     }
 
