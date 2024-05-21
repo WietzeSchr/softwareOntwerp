@@ -218,7 +218,7 @@ public class FileBufferView extends View {
 
     /** 
      * This method deletes the character before the insertionPoint.
-     * @return  | boolean
+     * @return  | void
      */
     public void deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {

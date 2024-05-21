@@ -173,7 +173,7 @@ public abstract class Buffer {
          * @return: boolean, true if the undo was successful, false otherwise
          */
         public boolean undo() {
-            deleteChar(getChange(), getInsertionPoint(), getInsertionPointAfter());
+            deleteChar(getInsertionPointAfter());
             //insertionPoint = getInsertionPoint();
             return true;
         }
@@ -184,10 +184,10 @@ public abstract class Buffer {
          */
         public boolean redo() {
             if (getChange() == 13) {
-                insertLineBreak(getInsertionPoint(), getInsertionPointAfter());
+                insertLineBreak(getInsertionPoint());
             }
             else {
-                addNewChar(getChange(), getInsertionPoint());
+                addChar(getChange(), getInsertionPoint());
             }
             //insertionPoint = getInsertionPointAfter();
             return true;
@@ -212,10 +212,10 @@ public abstract class Buffer {
          */
         public boolean undo() {
             if (getChange() == 13) {
-                insertLineBreak(getInsertionPoint(), getInsertionPointAfter());
+                insertLineBreak(getInsertionPointAfter());
             }
             else {
-                addNewChar(getChange(), getInsertionPointAfter());
+                addChar(getChange(), getInsertionPointAfter());
             }
             //insertionPoint = getInsertionPoint();
             return true;
@@ -226,11 +226,11 @@ public abstract class Buffer {
          * @return: boolean, true if the redo was successful, false otherwise
          */
         public boolean redo() {
-            deleteChar(getChange(), getInsertionPoint(), getInsertionPointAfter());
+            deleteChar(getInsertionPoint());
             //insertionPoint = getInsertionPointAfter();
             return true;
         }
-    }
+    }   
 
     private String[] content;
 
@@ -353,13 +353,23 @@ public abstract class Buffer {
      *  EDIT BUFFER CONTENT *
      ************************/
 
+    
+    public void insertLineBreak(Point insert, Point insertionPointAfter){
+        NonEmptyEdit nextEdit = new Insertion((char) 13, insert, insertionPointAfter);
+        nextEdit.setPrevious(getLastEdit());
+        getLastEdit().setNext(nextEdit);
+        setLastEdit(nextEdit);
+        insertLineBreak(insert);
+
+    }
+
     /**
      * This method inserts a line break at the insertion point and sets the buffer to dirty
      * It also makes a new Edit object and set this new Edit as the lastEdit
      * @post    | getDirty() == true
      * @return  | void
      */
-    public void insertLineBreak(Point insert, Point insertionPointAfter){
+    public void insertLineBreak(Point insert) {
         int row = insert.getX()-1;
         int col = insert.getY()-1;
         ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
@@ -368,16 +378,19 @@ public abstract class Buffer {
         String secondPart = currentRow.substring(col);
         cont.set(row, firstPart);
         cont.add(row + 1, secondPart);
-
+        
         setContent(cont.toArray(new String[0]));
         setDirty(true);
-        NonEmptyEdit nextEdit = new Insertion((char) 13, insert, insertionPointAfter);
+        fireNewLineBreak(insert);;
+    }
+
+    public void addNewChar(char c, Point insert) {
+        Edit nextEdit = new Insertion(c, insert, insert);
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
-        fireNewLineBreak(insert);
-    }
-
+        addChar(c, insert);
+     }
 
     /**
      * This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
@@ -387,7 +400,7 @@ public abstract class Buffer {
      * @param insert | The insertion point
      * @return       | void
      */
-    public void addNewChar(char c, Point insert) {  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
+    public void addChar(char c, Point insert) {  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
         String[] content = getContent();
         if (content.length == 0)
         {
@@ -423,11 +436,17 @@ public abstract class Buffer {
         }
         setContent(content);
         setDirty(true);
-        Edit nextEdit = new Insertion(c, insert, insert);
+        fireNewChar(insert);
+    }
+
+
+    public void deleteChar(char c, Point insert, Point insertionPointAfter) {
+        Edit nextEdit = new Deletion(c, insert, insertionPointAfter);
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
         setLastEdit(nextEdit);
-        fireNewChar(insert);
+        deleteChar(insert);
+
     }
 
     /**
@@ -437,7 +456,7 @@ public abstract class Buffer {
      * @param insert | the insertion point
      * @return       | void
      */
-    public void deleteChar(char c, Point insert, Point insertionPointAfter) {
+    public void deleteChar(Point insert) {
         String[] content = getContent();
         String[] newContent;
         if (insert.getY() == 1)  {
@@ -473,14 +492,9 @@ public abstract class Buffer {
                     newContent[i] = newRow.toString();
                 }
             }
-            fireDelChar(insert);
         }
         setContent(newContent);
         setDirty(true);
-        Edit nextEdit = new Deletion(c, insert, insertionPointAfter);
-        nextEdit.setPrevious(getLastEdit());
-        getLastEdit().setNext(nextEdit);
-        setLastEdit(nextEdit);
     }
 
     /**
