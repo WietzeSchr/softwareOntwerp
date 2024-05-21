@@ -1,12 +1,10 @@
 
-import io.github.btj.termios.Terminal;
 
 import javax.swing.*;
 
 import java.io.FileNotFoundException;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 
 /* ******************
@@ -161,6 +159,8 @@ public class Textr
                             } else if (c == 7) {
                                 openGameView();             //  Ctrl + G
                                 changeFocusNext();
+                            } else if (c == 10) {
+                                parseJson();
                             } else if (c == 13) {             //  ENTER
                                 addNewLineBreak();
                             } else if (c == 21) {             //  Ctrl + U

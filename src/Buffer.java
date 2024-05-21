@@ -372,7 +372,7 @@ public abstract class Buffer {
         return !getLock().isLocked();
     }
 
-    public void insertLineBreak(Point insert, Point newInsert){
+    public void insertLineBreak(Point insert, Point newInsert) {
         NonEmptyEdit nextEdit = new Insertion((char) 13, insert, newInsert);
         nextEdit.setPrevious(getLastEdit());
         getLastEdit().setNext(nextEdit);
@@ -385,12 +385,12 @@ public abstract class Buffer {
      * @post    | getDirty() == true
      * @return  | void
      */
-    public void insertLineBreak(Point insert){
+    public void insertLineBreak(Point insert) {
 
         if (isNotLocked()) {
             int row = insert.getX() - 1;
             int col = insert.getY() - 1;
-            ArrayList<String> cont = new ArrayList<String>(Arrays.asList(getContent()));
+            ArrayList<String> cont = new ArrayList<>(Arrays.asList(getContent()));
             String currentRow = getContent()[row];
             String firstPart = currentRow.substring(0, col);
             String secondPart = currentRow.substring(col);
@@ -506,11 +506,11 @@ public abstract class Buffer {
                             if (j != insert.getY() - 2) {
                                 newRow.append(content[i].toCharArray()[j]);
                             }
-                            else
-                            {
+                            else {
                                 c = content[i].toCharArray()[j];
                             }
                         }
+                        newContent[i] = newRow.toString();
                     }
                 }
                 fireDelChar(insert);
@@ -613,6 +613,7 @@ public abstract class Buffer {
  *  FILEBUFFER *
  ***************/
 class FileBuffer extends Buffer {
+
     /* ***************
      *  CONSTRUCTORS *
      *****************/
