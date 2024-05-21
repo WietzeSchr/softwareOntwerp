@@ -4,232 +4,6 @@ import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
 public class FileBufferView extends View {
-    /* *******************
-     *   ABSTRACT EDIT   *
-     * *******************/
-     abstract class Edit {
-
-        private Edit next;
-
-        private Edit previous;
-
-        /**
-         * This constructor creates a new Edit object
-         * @post getNext() == this
-         * @post getPrevious() == this
-         */
-        public Edit() {
-            this.next = this;
-            this.previous = this;
-        }
-
-        /**
-         * This method returns the next Edit object
-         * @return: Edit
-         */
-        public Edit getNext() {
-            return next;
-        }
-
-        /**
-         * This method sets the next Edit object
-         * @param newNext the new next Edit object
-         * @post getNext() == newNext
-         * @return: void
-         */
-        public void setNext(Edit newNext) {
-            this.next = newNext;
-        }
-
-        /**
-         * This method returns the previous Edit object
-         * @return: Edit
-         */
-        public Edit getPrevious() {
-            return previous;
-        }
-
-        /**
-         * This method sets the previous Edit object
-         * @param newPrevious the new previous Edit object
-         * @post getPrevious() == newPrevious
-         * @return: void
-         */
-        public void setPrevious(Edit newPrevious) {
-            this.previous = newPrevious;
-        }
-
-        public abstract boolean undo();
-
-        public abstract boolean redo();
-
-        public abstract boolean isFirst();
-    }
-
-    /* ****************
-     *   EMPTY EDIT   *
-     * ****************/
-    /**
-     * This class represents an empty Edit object, so an Edit object when there are no changes
-     */
-      class EmptyEdit extends Edit {
-        public EmptyEdit() {
-            super();
-        }
-
-        @Override
-        public boolean undo() {
-            return false;
-        }
-
-        @Override
-        public boolean redo() {
-            return false;
-        }
-
-        @Override
-        public boolean isFirst() {
-            return getPrevious() == this;
-        }
-    }
-
-    /* *******************
-     *   NON-EMPTY EDIT  *
-     * *******************/
-    abstract class NonEmptyEdit extends Edit {
-
-        private final char change;
-
-        private final Point insertionPoint;
-
-        private final Point insertionPointAfter;
-
-        /**
-         * This constructor creates a new NonEmptyEdit object with the given parameters c, insert and insertAfter
-         * @param c the character that is changed
-         * @param insert the insertion point before the change
-         * @param insertAfter the insertion point after the change
-         * @post getChange() == c
-         * @post getInsertionPoint() == insert
-         * @post getInsertionPointAfter() == insertAfter
-         */
-        public NonEmptyEdit(char c, Point insert, Point insertAfter) {
-            super();
-            this.change = c;
-            this.insertionPoint = insert;
-            this.insertionPointAfter = insertAfter;
-            setPrevious(new EmptyEdit());
-            setNext(new EmptyEdit());
-            getNext().setPrevious(this);
-            getPrevious().setNext(this);
-        }
-
-        /**
-         * This method returns the character that is changed
-         * @return: char
-         */
-        public char getChange() {
-            return change;
-        }
-
-        /**
-         * This method returns the insertion point before the change
-         * @return: Point
-         */
-        public Point getInsertionPoint() {
-            return insertionPoint;
-        }
-
-        /**
-         * This method returns the insertion point after the change
-         * @return: Point
-         */
-        public Point getInsertionPointAfter() {
-            return insertionPointAfter;
-        }
-
-        @Override
-        public boolean isFirst() {
-            return false;
-        }
-    }
-
-    /* *******************
-     *   INSERTION EDIT  *
-     * *******************/
-    class Insertion extends NonEmptyEdit {
-
-        /**
-         * This constructor creates a new Insertion object with the given parameters c, insert and insertAfter
-         * when the change is a line break or adding a character
-         */
-        public Insertion(char c, Point insert, Point insertAfter) {
-            super(c, insert, insertAfter);
-        }
-
-        /**
-         * This method undoes the insertion and deletes the character at the insertion point or the line break
-         * @return: boolean, true if the undo was successful, false otherwise
-         */
-        public boolean undo() {
-            buffer.deleteChar(getInsertionPointAfter());
-            insertionPoint = getInsertionPoint();
-            return true;
-        }
-
-        /**
-         * This method redoes the insertion and adds the character at the insertion point or adds the line break back
-         * @return: boolean, true if the redo was successful, false otherwise
-         */
-        public boolean redo() {
-            if (getChange() == 13) {
-                buffer.insertLineBreak(getInsertionPoint());
-            }
-            else {
-                buffer.addNewChar(getChange(), getInsertionPoint());
-            }
-            insertionPoint = getInsertionPointAfter();
-            return true;
-        }
-    }
-
-    /* *******************
-     *   DELETION EDIT   *
-     * *******************/
-    class Deletion extends NonEmptyEdit {
-        /**
-         * This constructor creates a new Deletion object with the given parameters c, insert and insertAfter
-         * when the change is deleting a line break or deleting a character
-         */
-        public Deletion(char c, Point insert, Point insertAfter) {
-            super(c, insert, insertAfter);
-        }
-
-        /**
-         * This method undoes the deletion and adds the character at the insertion point or adds the line break back
-         * @return: boolean, true if the undo was successful, false otherwise
-         */
-        public boolean undo() {
-            if (getChange() == 13) {
-                buffer.insertLineBreak(getInsertionPointAfter());
-            }
-            else {
-                buffer.addNewChar(getChange(), getInsertionPointAfter());
-            }
-            insertionPoint = getInsertionPoint();
-            return true;
-        }
-
-        /**
-         * This method redoes the deletion and deletes the character at the insertion point or the line break
-         * @return: boolean, true if the redo was successful, false otherwise
-         */
-        public boolean redo() {
-            buffer.deleteChar(getInsertionPoint());
-            insertionPoint = getInsertionPointAfter();
-            return true;
-        }
-    }
 
     /* ******************
      *  FILEBUFFERVIEW  *
@@ -244,8 +18,6 @@ public class FileBufferView extends View {
 
     private Buffer buffer;
 
-    private Edit lastEdit;
-
     /* ******************
      *  CONSTRUCTORS    *
      * ******************/
@@ -257,7 +29,6 @@ public class FileBufferView extends View {
     public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) throws FileNotFoundException {
         super(heigth, witdh, leftUpperCorner);
         this.buffer = new FileBuffer(filepath, newLine);
-        this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
@@ -271,7 +42,6 @@ public class FileBufferView extends View {
     public FileBufferView(int heigth, int width, Point leftUpperCorner, Buffer buffer) {
         super(heigth, width, leftUpperCorner);
         this.buffer = buffer;
-        this.lastEdit = new EmptyEdit();
         this.verticalScrollState = 1;
         this.horizontalScrollState = 1;
         this.insertionPoint = new Point(1,1);
@@ -351,14 +121,6 @@ public class FileBufferView extends View {
         return this.position;
     }
 
-    public void setLastEdit(Edit newLastEdit) {
-        this.lastEdit = newLastEdit;
-    }
-
-    public Edit getLastEdit() {
-        return lastEdit;
-    }
-
     Path getPath() {
         return getBuffer().getFile().getPath();
     }
@@ -413,36 +175,7 @@ public class FileBufferView extends View {
         return leftUp.add(insert).minus(new Point(getVerticalScrollState(), getHorizontalScrollState()));
     }
 
-    /* ******************
-     *   TEST LASTEDIT  *
-     * ******************/
-
-    boolean lastEditIsEmptyEdit() {
-        return getLastEdit().getClass() == EmptyEdit.class;
-    }
-
-    boolean lastEditEquals(char c, boolean deletion, Point insert, Point insertAfter) {
-        if (getLastEdit().getClass() == EmptyEdit.class) {
-            return false;
-        }
-        NonEmptyEdit lastEdit = (NonEmptyEdit) getLastEdit();
-        if (lastEdit.getChange() != c) {
-            return false;
-        }
-        if (deletion && lastEdit.getClass() == Insertion.class) {
-            return false;
-        }
-        if (! deletion && lastEdit.getClass() == Deletion.class) {
-            return false;
-        }
-        if (! lastEdit.getInsertionPoint().equals(insert)) {
-            return false;
-        }
-        if (! lastEdit.getInsertionPointAfter().equals(insertAfter)) {
-            return false;
-        }
-        return true;
-    }
+    
 
     /* ******************
      *  INSPECT CONTENT *
@@ -464,38 +197,28 @@ public class FileBufferView extends View {
 
     /** 
      * This method adds a new line break to the buffer 
-     * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: View
+     * @return: void
      */
     public void addNewLineBreak(String newLine) {
         Point insert = getInsertionPoint();
-        getBuffer().insertLineBreak(insert);
-        setInsertionPoint(new Point(insert.getX()+1, 1));
-        NonEmptyEdit nextEdit = new Insertion((char) 13, insert, getInsertionPoint());
-        nextEdit.setPrevious(getLastEdit());
-        getLastEdit().setNext(nextEdit);
-        setLastEdit(nextEdit);
+        Point newInsert = new Point(insert.getX()+1, 1);
+        getBuffer().insertLineBreak(insert, newInsert);
+        setInsertionPoint(newInsert);
     }
 
     /**
      *  This method adds a new character to the fileBuffer at insertion point
-     *  It also makes a new Edit object and set this new Edit as the lastEdit
      * @param c | The character to add
-     * @return  | boolean
+     * @return  | void
      */
     public void addNewChar(char c) {
         Point insert = getInsertionPoint();
         getBuffer().addNewChar(c, insert);
-        Edit nextEdit = new Insertion(c, insert, getInsertionPoint());
-        nextEdit.setPrevious(getLastEdit());
-        getLastEdit().setNext(nextEdit);
-        setLastEdit(nextEdit);
     }
 
     /** 
      * This method deletes the character before the insertionPoint.
-     * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return  | boolean
+     * @return  | void
      */
     public void deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
@@ -509,12 +232,8 @@ public class FileBufferView extends View {
                 c = getContent()[insert.getX() - 1].charAt(insert.getY() - 2);
                 newInsert = new Point(insert.getX(), insert.getY() - 1);
             }
-            getBuffer().deleteChar(insert);
+            getBuffer().deleteChar(c, insert, newInsert);
             setInsertionPoint(newInsert);
-            Edit nextEdit = new Deletion(c, insert, getInsertionPoint());
-            nextEdit.setPrevious(getLastEdit());
-            getLastEdit().setNext(nextEdit);
-            setLastEdit(nextEdit);
         }
     }
 
@@ -577,10 +296,6 @@ public class FileBufferView extends View {
         getBuffer().saveBuffer(newLine);
     }
 
-    private void clearEdits() {
-        setLastEdit(new EmptyEdit());
-    }
-
     /* ******************
      *   UNDO / REDO    *
      * ******************/
@@ -590,12 +305,7 @@ public class FileBufferView extends View {
      * It also sets the lastEdit to the previous edit
      */
     public void undo() {
-        if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
-        getLastEdit().undo();
-        setLastEdit(getLastEdit().getPrevious());
-        if (getLastEdit().isFirst()) {
-            getBuffer().setDirty(false);
-        }
+        getBuffer().undo();
     }
 
     /**
@@ -603,8 +313,7 @@ public class FileBufferView extends View {
      * It also sets the lastEdit to the next edit
      */
     public void redo() {
-        getLastEdit().getNext().redo();
-        setLastEdit(getLastEdit().getNext());
+        getBuffer().redo();
     }
 
     /* ****************
@@ -637,7 +346,7 @@ public class FileBufferView extends View {
     }
 
     public void updateViewSaved() {
-        clearEdits();
+        getBuffer().clearEdits();
     }
 
     public void updateViewNewLineBreak(Point insert) {
