@@ -4,8 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/* ***********************
+ *    DIRECTORY CLASS    *
+ * ***********************/
 public class Directory extends FileSystemNode {
 
+    /* ***************
+     *  CONSTRUCTORS *
+     *****************/
     public Directory(String absPath) {
         super(new FilePath(absPath));
     }
@@ -37,21 +43,6 @@ public class Directory extends FileSystemNode {
         return resultList.toArray(new Directory[0]);
     }
 
-    FileSystemNode[] readSubNodes(FileSystemNode parent) {
-        String absDirPath = getPathString();
-        List<FileSystemNode> resultList = new ArrayList<>();
-        java.io.File[] files = new java.io.File(absDirPath).listFiles();
-        if (getParentPath() != null) {
-            resultList.add(parent);
-        }
-        for (int i = 0; i < Objects.requireNonNull(files).length; i++) {
-            if (files[i].isDirectory()) {
-                resultList.add(new Directory(files[i].getAbsolutePath() + "/", this));
-            }
-        }
-        return resultList.toArray(new FileSystemNode[0]);
-    }
-
     FileSystemLeaf[] readLeaves() {
         String absDirPath = getPathString();
         List<File> resultList = new ArrayList<>();
@@ -63,6 +54,10 @@ public class Directory extends FileSystemNode {
         }
         return resultList.toArray(new File[0]);
     }
+
+    /* **************
+     *  OPEN ENTRY  *
+     * **************/
 
     @Override
     public View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException {
@@ -81,8 +76,16 @@ public class Directory extends FileSystemNode {
     @Override
     protected void saveToBuffer() {}
 
+    /* ******************
+     *    CLOSE ENTRY   *
+     * ******************/
+
     @Override
     protected void close() {}
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
 
     @Override
     public String toString() {

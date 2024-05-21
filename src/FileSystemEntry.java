@@ -1,11 +1,17 @@
 import java.io.FileNotFoundException;
 
+/* *************************
+ * FILESYSTEM ENTRY CLASS  *
+ * *************************/
 public abstract class FileSystemEntry {
 
     private final Path absPath;
 
     private FileSystemNode parent = null;
 
+    /* ***************
+     *  CONSTRUCTORS *
+     *****************/
     public FileSystemEntry(Path path) {
         this.absPath = path;
     }
@@ -14,6 +20,10 @@ public abstract class FileSystemEntry {
         this.absPath = path;
         this.parent = parent;
     }
+
+    /* **********************
+     *  GETTERS AND SETTERS *
+     * **********************/
 
     public Path getPath() {
         return absPath;
@@ -31,6 +41,10 @@ public abstract class FileSystemEntry {
         this.parent = newParent;
     }
 
+    /* **********************
+     *  DERIVED ATTRIBUTES  *
+     * **********************/
+
     public String getPathString() {
         return getPath().getPath();
     }
@@ -43,9 +57,21 @@ public abstract class FileSystemEntry {
         return getPath().getName();
     }
 
+    /* **************
+     *  OPEN ENTRY  *
+     * **************/
+
     public abstract View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException;
 
+    /* ******************
+     *  JSON GENERATOR  *
+     * ******************/
+
     public abstract void generate(SimpleJsonGenerator generator);
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
 
     public abstract String toString();
 }

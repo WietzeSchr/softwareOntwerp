@@ -1,12 +1,18 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+/* *************************
+ *    JSON VALUE CLASS     *
+ * *************************/
 public class JsonValue extends FileSystemLeaf {
 
     private Point location;
 
     private String value;
 
+    /* ***************
+     *  CONSTRUCTORS *
+     *****************/
     public JsonValue(String name, String value, Point location) {
         super(new JsonPath(name));
         this.location = location;
@@ -18,6 +24,10 @@ public class JsonValue extends FileSystemLeaf {
         this.location = location;
         this.value = value;
     }
+
+    /* **********************
+     *  GETTERS AND SETTERS *
+     * **********************/
 
     public Point getLocation() {
         return location;
@@ -35,6 +45,9 @@ public class JsonValue extends FileSystemLeaf {
         this.value = newValue;
     }
 
+    /* **************
+     *  LOAD VALUE  *
+     ****************/
     public String[] load(String newLine) {
         ArrayList<String> result = new ArrayList<>();
         StringBuilder line = new StringBuilder();
@@ -60,6 +73,10 @@ public class JsonValue extends FileSystemLeaf {
         return result.toArray(new String[0]);
     }
 
+    /* **************
+     *  SAVE BUFFER *
+     ****************/
+
     @Override
     public void save(String newLine, String[] content) {
         StringBuilder text = new StringBuilder();
@@ -74,9 +91,30 @@ public class JsonValue extends FileSystemLeaf {
     }
 
     @Override
+    public void save(String newLine, String[] content, Buffer.SaveEdit edit) {
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < content.length; i++) {
+            text.append(content[i]);
+            if (i != content.length - 1) {
+                text.append(newLine);
+            }
+        }
+        setValue(text.toString());
+        getRoot().saveToBuffer(edit);
+    }
+
+    /* ******************
+     *  JSON GENERATOR  *
+     * ******************/
+
+    @Override
     public void generate(SimpleJsonGenerator generator) {
         generator.generateJsonValue(this);
     }
+
+    /* **************
+     *  OPEN ENTRY  *
+     * **************/
 
     @Override
     public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
@@ -87,10 +125,18 @@ public class JsonValue extends FileSystemLeaf {
         return new FileBufferView(5,5,new Point(1,1), buffer);
     }
 
+    /* ******************
+     *    CLOSE ENTRY   *
+     * ******************/
+
     @Override
     protected void close() {
         getRoot().close();
     }
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
 
     @Override
     public String toString() {

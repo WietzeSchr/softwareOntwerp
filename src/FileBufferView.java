@@ -3,17 +3,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
+/* ******************
+ *  FILEBUFFERVIEW  *
+ ********************/
 public class FileBufferView extends View {
-    
 
-    /* ******************
-     *  FILEBUFFERVIEW  *
-     ********************/
     private int verticalScrollState;
 
     private int horizontalScrollState;
-
-    private int position;
 
     private Point insertionPoint;
 
@@ -110,19 +107,6 @@ public class FileBufferView extends View {
             this.insertionPoint = insert;
         }
     }
-
-    public void setPosition(int newPosition) {
-        this.position = newPosition;
-    }
-
-    /** This method returns the position of the FileBufferView
-     * @return: int
-     */
-    public int getPosition() {
-        return this.position;
-    }
-
-
 
     Path getPath() {
         return getBuffer().getFile().getPath();
@@ -573,5 +557,4 @@ public class FileBufferView extends View {
     public long getTick() {
         return 0;
     }
-
 }

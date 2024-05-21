@@ -3,7 +3,172 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/* *************
+ *  FILEBUFFER *
+ ***************/
+class FileBuffer extends Buffer {
+
+    /* ***************
+     *  CONSTRUCTORS *
+     *****************/
+
+    /**
+     * This constructor creates a new FileBuffer object with the given path and newLine
+     *
+     * @param path    | The path of the file
+     * @param newLine | The new line separator
+     * @post | getPath() == path
+     * @post | getContent() == getFile().load(newLine)
+     * @post | getDirty() == false
+     */
+    public FileBuffer(String path, String newLine) throws FileNotFoundException {
+        super(new File(path), newLine);
+    }
+
+    /**
+     * This constructor creates a new FileBuffer object with the given content and path
+     *
+     * @param content | The content of the file
+     * @param path    | The path of the file
+     * @post | getPath() == path
+     * @post | getContent() == content
+     * @post | getDirty() == false
+     */
+    public FileBuffer(String[] content, String path) {
+        super(new File(path), content);
+    }
+
+    @Override
+    public void close() {
+    }
+}
+
+class JsonBuffer extends Buffer {
+
+    public JsonBuffer(JsonValue value, String newLine) throws FileNotFoundException {
+        super(value, newLine);
+    }
+
+    public Edit[] getCurrentEdits() {
+        Edit lastEdit = getLastEdit();
+        Edit firstEdit = getLastEdit();
+        while (! firstEdit.isFirst()) {
+            firstEdit = firstEdit.getPrevious();
+        }
+        ArrayList<Edit> edits = new ArrayList<>();
+        while (firstEdit != lastEdit) {
+            firstEdit = firstEdit.getNext();
+            edits.add(firstEdit);
+        }
+        return edits.toArray(new Edit[0]);
+    }
+
+    @Override
+    public void saveBuffer(String newLine) throws IOException {
+        Edit[] edits = getCurrentEdits();
+        getFile().save(newLine, getContent(), new SaveEdit(edits));
+        setDirty(false);
+    }
+
+    @Override
+    public void close() {
+        getFile().close();
+    }
+}
+
 public abstract class Buffer {
+
+    private String[] content;
+
+    private FileSystemLeaf file;
+
+    private boolean dirty;
+
+    private final FileBufferListenerService listenerService = new FileBufferListenerService();
+
+    private Edit lastEdit;
+
+    private final JsonEditLock lock = new JsonEditLock();
+
+    public Buffer(FileSystemLeaf file, String newLine) throws FileNotFoundException {
+        this.file = file;
+        this.dirty = false;
+        this.content = file.load(newLine);
+        this.lastEdit = new EmptyEdit();
+    }
+
+    public Buffer(FileSystemLeaf file, String[] content) {
+        this.file = file;
+        this.dirty = false;
+        this.content = content;
+        this.lastEdit = new EmptyEdit();
+    }
+
+    public String[] getContent() {
+        return content;
+    }
+
+    public void setContent(String[] newContent) {
+        this.content = newContent;
+    }
+
+    public FileSystemLeaf getFile() {
+        return file;
+    }
+
+    public void setFile(FileSystemLeaf newFile) {
+        this.file = newFile;
+    }
+
+    public boolean getDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
+    private JsonEditLock getLock() {
+        return lock;
+    }
+
+    public int getRowCount() {
+        return getContent().length;
+    }
+
+    public int getColumnCount() {
+        String[] content = getContent();
+        int result = 1;
+        for (int i = 0; i < getRowCount(); i++) {
+            if (content[i] != null) {
+                if (content[i].length() > result) {
+                    result = content[i].length();
+                }
+            }
+        }
+        return result;
+    }
+
+    public int countCharacters() {
+        int result = 0;
+        for (String row : getContent()) {
+            result += row.length();
+        }
+        return result;
+    }
+
+    public void setLastEdit(Edit newLastEdit) {
+        this.lastEdit = newLastEdit;
+    }
+
+    public Edit getLastEdit() {
+        return lastEdit;
+    }
+
+    protected void clearEdits() {
+        setLastEdit(new EmptyEdit());
+    }
+
     /**
      * This method inserts a line break at the insertion point and sets the buffer to dirty
      *
@@ -30,6 +195,14 @@ public abstract class Buffer {
     /* ****************
      *   EMPTY EDIT   *
      * ****************/
+
+    public void addNewChar(char c, Point insert, Point newInsert) {
+        Edit nextEdit = new Insertion(c, insert, newInsert);
+        nextEdit.setPrevious(getLastEdit());
+        getLastEdit().setNext(nextEdit);
+        setLastEdit(nextEdit);
+        addNewChar(c, insert);
+    }
 
     /**
      * This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
@@ -142,130 +315,16 @@ public abstract class Buffer {
         return c;
     }
 
-    boolean lastEditEquals(char c, boolean deletion, Point insert, Point insertAfter) {
-        if (getLastEdit().getClass() == EmptyEdit.class) {
-            return false;
-        }
-        NonEmptyEdit lastEdit = (NonEmptyEdit) getLastEdit();
-        if (lastEdit.getChange() != c) {
-            return false;
-        }
-        if (deletion && lastEdit.getClass() == Insertion.class) {
-            return false;
-        }
-        if (!deletion && lastEdit.getClass() == Deletion.class) {
-            return false;
-        }
-        if (!lastEdit.getInsertionPoint().equals(insert)) {
-            return false;
-        }
-        return lastEdit.getInsertionPointAfter().equals(insertAfter);
-    }
-
-    private String[] content;
-
-    private FileSystemLeaf file;
-
-    private boolean dirty;
-
-    private final FileBufferListenerService listenerService = new FileBufferListenerService();
-
-    private Edit lastEdit;
-
-    private final JsonEditLock lock = new JsonEditLock();
-
-    public Buffer(FileSystemLeaf file, String newLine) throws FileNotFoundException {
-        this.file = file;
-        this.dirty = false;
-        this.content = file.load(newLine);
-        this.lastEdit = new EmptyEdit();
-    }
-
-    public Buffer(FileSystemLeaf file, String[] content) {
-        this.file = file;
-        this.dirty = false;
-        this.content = content;
-        this.lastEdit = new EmptyEdit();
-    }
-
-    public String[] getContent() {
-        return content;
-    }
-
-    public void setContent(String[] newContent) {
-        this.content = newContent;
-    }
-
-    public FileSystemLeaf getFile() {
-        return file;
-    }
-
-    public void setFile(FileSystemLeaf newFile) {
-        this.file = newFile;
-    }
-
-    public boolean getDirty() {
-        return dirty;
-    }
-
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
-
-    private JsonEditLock getLock() {
-        return lock;
-    }
-
-    public int getRowCount() {
-        return getContent().length;
-    }
-
-    public int getColumnCount() {
-        String[] content = getContent();
-        int result = 1;
-        for (int i = 0; i < getRowCount(); i++) {
-            if (content[i] != null) {
-                if (content[i].length() > result) {
-                    result = content[i].length();
-                }
-            }
-        }
-        return result;
-    }
-
-    public int countCharacters() {
-        int result = 0;
-        for (String row : getContent()) {
-            result += row.length();
-        }
-        return result;
-    }
-
-    public void setLastEdit(Edit newLastEdit) {
-        this.lastEdit = newLastEdit;
-    }
-
-    public Edit getLastEdit() {
-        return lastEdit;
-    }
-
-    private void clearEdits() {
-        setLastEdit(new EmptyEdit());
-    }
     /* ***************
      *   OBSERVER    *
      * ***************/
 
     public void subscribeView(FileBufferView view) {
-        listenerService.addInsertionListener(new InsertionListener(view));
-        listenerService.addDeletionListener(new DeletionListener(view));
-        listenerService.addSaveListener(new SaveListener(view));
+        listenerService.subscribeView(view);
     }
 
     public void unSubscribeView(FileBufferView view) {
-        listenerService.removeInsertionListener(view);
-        listenerService.removeDeletionListener(view);
-        listenerService.removeSaveListener(view);
+        listenerService.unSubscribeView(view);
     }
 
     private void fireNewChar(Point insert) {
@@ -282,10 +341,6 @@ public abstract class Buffer {
 
     private void fireDelLineBreak(Point insert) {
         listenerService.fireDelLineBreak(insert);
-    }
-
-    private void fireSaved() {
-        listenerService.fireSaved();
     }
 
     /* **********************
@@ -333,12 +388,10 @@ public abstract class Buffer {
         return insertionPoint;
     }
 
-    public void addNewChar(char c, Point insert, Point newInsert) {
-        Edit nextEdit = new Insertion(c, insert, newInsert);
-        nextEdit.setPrevious(getLastEdit());
-        getLastEdit().setNext(nextEdit);
-        setLastEdit(nextEdit);
-        addNewChar(c, insert);
+    public void addEdit(Edit newEdit) {
+        getLastEdit().setNext(newEdit);
+        newEdit.setPrevious(getLastEdit());
+        setLastEdit(newEdit);
     }
 
     /* *******************
@@ -432,6 +485,36 @@ public abstract class Buffer {
         }
     }
 
+    class SaveEdit extends Edit {
+
+        Edit[] edits;
+        public SaveEdit(Edit[] edits) {
+            super();
+            this.edits = edits;
+        }
+
+        @Override
+        public boolean undo() {
+            for (int i = edits.length - 1; i >= 0; i--) {
+                edits[i].undo();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean redo() {
+            for (int i = 0; i < edits.length; i++) {
+                edits[i].redo();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean isFirst() {
+            return false;
+        }
+    }
+
     /* *******************
      *   NON-EMPTY EDIT  *
      * *******************/
@@ -501,7 +584,6 @@ public abstract class Buffer {
         clearEdits();
         getFile().save(newLine, getContent());
         setDirty(false);
-        fireSaved();
     }
     /* ******************
      *   TEST LASTEDIT  *
@@ -619,57 +701,5 @@ public abstract class Buffer {
     public void redo() {
         getLastEdit().getNext().redo();
         setLastEdit(getLastEdit().getNext());
-    }
-}
-
-/* *************
- *  FILEBUFFER *
- ***************/
-class FileBuffer extends Buffer {
-
-    /* ***************
-     *  CONSTRUCTORS *
-     *****************/
-
-    /**
-     * This constructor creates a new FileBuffer object with the given path and newLine
-     *
-     * @param path    | The path of the file
-     * @param newLine | The new line separator
-     * @post | getPath() == path
-     * @post | getContent() == getFile().load(newLine)
-     * @post | getDirty() == false
-     */
-    public FileBuffer(String path, String newLine) throws FileNotFoundException {
-        super(new File(path), newLine);
-    }
-
-    /**
-     * This constructor creates a new FileBuffer object with the given content and path
-     *
-     * @param content | The content of the file
-     * @param path    | The path of the file
-     * @post | getPath() == path
-     * @post | getContent() == content
-     * @post | getDirty() == false
-     */
-    public FileBuffer(String[] content, String path) {
-        super(new File(path), content);
-    }
-
-    @Override
-    public void close() {
-    }
-}
-
-class JsonBuffer extends Buffer {
-
-    public JsonBuffer(JsonValue value, String newLine) throws FileNotFoundException {
-        super(value, newLine);
-    }
-
-    @Override
-    public void close() {
-        getFile().close();
     }
 }
