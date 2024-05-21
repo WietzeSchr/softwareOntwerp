@@ -238,7 +238,7 @@ public class FileBufferView extends View {
                 newInsert = new Point(insert.getX(), insert.getY() - 1);
             }
             getBuffer().deleteChar(insert, newInsert);
-            setInsertionPoint(newInsert);
+            //setInsertionPoint(newInsert);
 
         }
     }

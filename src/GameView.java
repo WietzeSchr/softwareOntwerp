@@ -1,6 +1,8 @@
-import java.io.IOException;
 import java.util.Arrays;
 
+/* ********************
+ *   GAMEVIEW CLASS   *
+ * ********************/
 public class GameView extends View{
     private Game game;
 
@@ -9,6 +11,7 @@ public class GameView extends View{
     /* ******************
      *  CONSTRUCTORS    *
      * ******************/
+
     /**
      * This constructor creates a new GameView with the given parameters height, width and leftUpperCorner
      * @post  | getHeigth() == height
