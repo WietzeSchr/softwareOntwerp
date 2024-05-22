@@ -557,4 +557,9 @@ public class FileBufferView extends View {
     public long getTick() {
         return 0;
     }
+
+    @Override
+    public Buffer getCurrentBuffer(){
+        return getBuffer();
+    }
 }

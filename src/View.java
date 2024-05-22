@@ -341,4 +341,8 @@ public abstract class View extends Layout {
     public int countViews() {
         return 1;
     }
+
+    public Buffer getCurrentBuffer(){
+        return null;
+    }
 }

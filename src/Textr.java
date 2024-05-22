@@ -13,8 +13,8 @@ import java.io.IOException;
 
 public class Textr implements InputListener, KeyBoardFocusListener
 {
-    TerminalHandler stdHandler = new TerminalHandler();
-    TerminalInterface inputHandler = stdHandler;
+    TerminalHandler stdHandler;
+    TerminalInterface inputHandler;
 
 
     interface FallibleRunnable {
@@ -31,8 +31,10 @@ public class Textr implements InputListener, KeyBoardFocusListener
         }
     }
 
-    private LayoutManager layoutManager;
+    private LayoutManager stdLayoutManager;
     private WindowManager windowManager;
+
+    private String newLine;
 
     /* ******************
      *  CONSTRUCTORS    *
@@ -48,7 +50,11 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * @post | getFocus() == 1
      */
     public Textr(String newLine, String[] filepaths) throws IOException {
+        stdHandler = new TerminalHandler();
+        inputHandler = stdHandler;
+
         Point size;
+        this.newLine = newLine;
         try {
             size = getSize();
         } catch (IOException e) {
@@ -59,12 +65,12 @@ public class Textr implements InputListener, KeyBoardFocusListener
             throw new RuntimeException("please give one or more filepaths to open");
         }
         else if (filepaths.length > 1) {
-            this.layoutManager = new LayoutManager(new StackedLayout(size.getX(), size.getY(), new Point(1,1), filepaths, newLine), 1, newLine);
+            this.stdLayoutManager = new LayoutManager(new StackedLayout(size.getX(), size.getY(), new Point(1,1), filepaths, newLine), 1, newLine);
         }
         else {
-            this.layoutManager = new LayoutManager(new FileBufferView(size.getX(), size.getY(), new Point(1, 1), filepaths[0], newLine), 1, newLine);
+            this.stdLayoutManager = new LayoutManager(new FileBufferView(size.getX(), size.getY(), new Point(1, 1), filepaths[0], newLine), 1, newLine);
         }
-        this.windowManager = new WindowManager(size.getY(), size.getX());
+        this.windowManager = new WindowManager(size.getY(), size.getX(), stdLayoutManager, stdHandler);
         inputHandler.init();
         show();
         runApp();
@@ -78,16 +84,24 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * @post | getLayout() = layout
      * @post | getNewLine() = newLine
      */
-    public Textr(String newLine, Layout layout ) {
-        this.layoutManager = new LayoutManager(layout, 1, newLine);
-        this.windowManager = new WindowManager(10, 10);
+    public Textr(String newLine, Layout layout) {
+        this.stdHandler = new TerminalHandler();
+        this.inputHandler = stdHandler;
+        this.stdLayoutManager = new LayoutManager(layout, 1, newLine);
+        this.windowManager = new WindowManager(10, 10, stdLayoutManager, stdHandler);
     }
 
     /* **********************
      *  GETTERS AND SETTERS *
      * **********************/
 
-    LayoutManager getLayoutManager() {return this.layoutManager;}
+    String getNewLine(){
+        return this.getNewLine();
+    }
+
+    LayoutManager getLayoutManager() {
+        return getWindowManager().getLayoutManager(getInputHandler());
+    }
 
     WindowManager getWindowManager() {return this.windowManager;}
 
@@ -144,7 +158,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
                         java.awt.EventQueue.invokeLater(() -> handleFailure(() -> {
                             int c = inputHandler.readByte(getNextDeadline());
                             tick();
-                            if (layoutManager.getFocusedView().getTick() != 0) show();
+                            if (getLayoutManager().getFocusedView().getTick() != 0) show();
 
                             // Arrows
                             if (c == 27) {
@@ -177,8 +191,8 @@ public class Textr implements InputListener, KeyBoardFocusListener
                             // Ctrl keybindings + legal chars
                             else {handleInput(c);}
 
-                            if (layoutManager.getFocusedView().getTick() == 0 && c != 0) show();
-                            else if (layoutManager.getFocusedView().getTick() != 0) show();
+                            if (getLayoutManager().getFocusedView().getTick() == 0 && c != 0) show();
+                            else if (getLayoutManager().getFocusedView().getTick() != 0) show();
                             inputHandler.setInputListener(this);
                         }));
                     }
@@ -487,7 +501,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * *****************/
 
     void openWindow() {
-        getWindowManager().openWindow(this);
+        getWindowManager().openWindow(this,  getLayoutManager(), getNewLine());
     }
 
     void openDirectoryView() {

@@ -1,7 +1,5 @@
-import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class LayoutManager {
     private Layout layout;
@@ -376,5 +374,9 @@ public class LayoutManager {
                 setLayout(newView);
             }
         }
+    }
+
+    public Buffer getCurrentBuffer() {
+        return getFocusedView().getCurrentBuffer();
     }
 }
