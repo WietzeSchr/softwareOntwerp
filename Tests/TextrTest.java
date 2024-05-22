@@ -396,7 +396,6 @@ public class TextrTest {
     }
 
     @Test
-
     void testOpenWindow() {
         FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
@@ -406,10 +405,12 @@ public class TextrTest {
         assertTrue(test1.inputHandler instanceof TerminalHandler);
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
         test1.openWindow();
-        SwingWindow w1 = test1.getLayoutManager().SwingWindows.get(0);
-        assertEquals(test1.inputHandler, w1);
-        test1.getLayoutManager().closeWindow(w1);
-        assertEquals(test1.inputHandler,th1);
+        assertEquals(test1.getWindowManager().getWindowCount(), 1);
+        SwingWindow w1 = test1.getWindowManager().swingWindows.get(0);
+        assertEquals(test1.getInputHandler(), w1);
+        test1.getWindowManager().closeWindow(w1);
+        assertEquals(test1.getWindowManager().getWindowCount(), 0);
+        assertEquals(test1.getInputHandler(),th1);
     }
 
 
@@ -418,7 +419,7 @@ public class TextrTest {
         Textr test1 = new Textr("\n", fbv1);
         test1.getLayoutManager().initViewPositions();
         test1.parseJson();
-        test1.closeView();
+        test1.closeView(test1.getInputHandler());
         test1.addNewLineBreak();
     }
 
