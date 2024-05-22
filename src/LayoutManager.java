@@ -1,10 +1,14 @@
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class LayoutManager {
     private Layout layout;
     private int focus;
     private String newLine;
+
+    ArrayList<SwingWindow> SwingWindows = new ArrayList<>();
 
     LayoutManager(Layout layout, int focus, String newLine){
         this.layout = layout;
@@ -166,8 +170,8 @@ public class LayoutManager {
      * @return:  | void
      * Visible for testing
      */
-    void closeView() throws IOException {
-        setLayout(getLayout().closeView(getFocus()));
+    void closeView(TerminalInterface printer) throws IOException {
+        setLayout(getLayout().closeView(getFocus(), printer));
         if (getLayout() != null) {
             setFocus(getLayout().getNewFocus(getFocus()));
         }
@@ -279,10 +283,16 @@ public class LayoutManager {
     /* *****************
      * OPEN NEW WINDOW *
      * *****************/
-    void openWindow(){
-        new SwingWindow(getLayout().getWidth(), getLayout().getHeigth());
+
+    void openWindow(Textr listener){
+        SwingWindow newWindow = new SwingWindow(getLayout().getWidth(), getLayout().getHeigth(), listener);
+        SwingWindows.add(newWindow);
     }
 
+    public void closeWindow(SwingWindow window) {
+        SwingWindows.remove(window);
+        window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+    }
 
     void openDirectoryView() {
         View[] newViews = getLayout().openDirectoryView(getFocus(), this);
@@ -303,12 +313,12 @@ public class LayoutManager {
      * This method shows the layout on the Terminal
      * @return: void
      */
-    void show() {
+    void show(TerminalInterface printer) {
         setFocus(getLayout().getNewFocus(getFocus()));
         View focused = getFocusedView();
         initViewPositions();
         setFocus(focused.getPosition());
-        getLayout().show();
+        getLayout().show(printer);
     }
 
     /* ******************

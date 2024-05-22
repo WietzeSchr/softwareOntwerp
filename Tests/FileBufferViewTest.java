@@ -133,7 +133,8 @@ class FileBufferViewTest {
         FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
         fbv1.setPosition(1);
-        assertNull(fbv1.closeView(1));
+        TerminalHandler th1 = new TerminalHandler();
+        assertNull(fbv1.closeView(1, th1));
         assertEquals(fbv1.closeView(2, null), fbv1);
     }
 

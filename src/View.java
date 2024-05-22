@@ -261,24 +261,24 @@ public abstract class View extends Layout {
      * This method shows the content of the FileBufferView and the updated scrollbars
      * @return  | void
      */
-    public void show() {
+    public void show(TerminalInterface printer) {
         String[] toShow = makeShow();
         String horizontalBar = makeHorizontalScrollBar();
         char[] verticalBar = makeVerticalScrollBar();
         //  Print BufferContent/Game
         for (int i = 0; i < toShow.length; i++) {
             if (toShow[i] != null) {
-                terminalHandler.printText(getLeftUpperCorner().getX() + i,
+                printer.printText(getLeftUpperCorner().getX() + i,
                         getLeftUpperCorner().getY(), toShow[i]);
             }
         }
         //  Print verticalSideBar
         for (int i = 0; i < verticalBar.length; i++) {
-            terminalHandler.printText(getLeftUpperCorner().getX() + i, getLeftUpperCorner().getY() + getWidth() - 1,
+            printer.printText(getLeftUpperCorner().getX() + i, getLeftUpperCorner().getY() + getWidth() - 1,
                     String.valueOf(verticalBar[i]));
         }
         //  Print horizontalSideBar
-        terminalHandler.printText(getLeftUpperCorner().getX() + getHeigth() - 1, getLeftUpperCorner().getY(), horizontalBar);
+        printer.printText(getLeftUpperCorner().getX() + getHeigth() - 1, getLeftUpperCorner().getY(), horizontalBar);
     }
 
     /* ******************
