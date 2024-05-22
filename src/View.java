@@ -264,6 +264,7 @@ public abstract class View extends Layout {
     public void show() {
         String[] toShow = makeShow();
         String horizontalBar = makeHorizontalScrollBar();
+        if (horizontalBar.length() > getWidth()) horizontalBar = horizontalBar.substring(0, getWidth());
         char[] verticalBar = makeVerticalScrollBar();
         //  Print BufferContent/Game
         for (int i = 0; i < toShow.length; i++) {

@@ -87,7 +87,7 @@ public abstract class FileSystemNode extends FileSystemEntry {
 
     protected abstract void saveToBuffer();
 
-    protected void saveToBuffer(Buffer.Edit[] edits) {
+    protected void saveToBuffer(String text, Buffer.Edit[] edits) {
         return;
     }
 

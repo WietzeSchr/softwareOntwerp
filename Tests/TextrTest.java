@@ -386,13 +386,11 @@ public class TextrTest {
     }
 
     @Test
-    void testOpenFile() {
-        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
-        FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
-        Textr test1 = new Textr("\n", fbv1);
-        FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
-        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
-        test1.getLayoutManager().replace(fbv1, fbv2);
+    void testOpenFile() throws FileNotFoundException {
+        FileBuffer f1 = new FileBuffer("testTxt/test2.txt", "\n");
+        FileBufferView fbv1 = new FileBufferView(5,5, new Point(1,1), f1);
+        LayoutManager manager = new LayoutManager(fbv1, 1, "\n");
+        manager.openDirectoryView();
     }
 
     @Test

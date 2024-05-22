@@ -546,8 +546,8 @@ public class FileBufferView extends View {
     }
 
     @Override
-    public Buffer getBufferByName(String name) {
-        if (getFileName().equals(name)) {
+    public Buffer getBufferByName(String path) {
+        if (getPathString().equals(path)) {
             return getBuffer();
         }
         return null;

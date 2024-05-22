@@ -499,7 +499,11 @@ public abstract class Buffer {
             return false;
         }
 
-        public Edit moveToStart(Point startLocation) {
+        public Edit mapToStart(String newLine, Point startLocation) {
+            return this;
+        }
+
+        public Edit mapToStringLocation(String newLine) {
             return this;
         }
     }
@@ -559,12 +563,15 @@ public abstract class Buffer {
             }
         }
 
-        public void mapToStartLocation(Point startLocation) {
-            Edit[] result = new Edit[getEdits().length];
+        @Override
+        public Edit mapToStart(String newLine, Point startLocation) {
+            String[] content = getContent();
+            Edit[] newEdits = new Edit[getEdits().length];
             for (int i = 0; i < getEdits().length; i++) {
-                result[i] = getEdits()[i].moveToStart(startLocation);
+                Edit edit = getEdits()[i].mapToStringLocation(newLine);
+                newEdits[i] = edit.mapToStart(newLine, startLocation);
             }
-            setEdits(result);
+            return new SaveEdit(newEdits);
         }
     }
 
@@ -636,9 +643,31 @@ public abstract class Buffer {
         }
 
         @Override
-        public Edit moveToStart(Point startLocation) {
+        public Edit mapToStart(String newLine, Point startLocation) {
             setInsertionPoint(getInsertionPoint().add(startLocation).minus(new Point(1,0)));
             setInsertionPointAfter(getInsertionPointAfter().add(startLocation).minus(new Point(1,0)));
+            return this;
+        }
+
+        @Override
+        public Edit mapToStringLocation(String newLine) {
+            String[] content = getContent();
+            int row1 = getInsertionPoint().getX() - 1;
+            int position1 = 0;
+            for (int i = 0; i < row1; i++) {
+                position1 += content[i].length();
+                position1 += newLine.length();
+            }
+            position1 += getInsertionPoint().getY();
+            int row2 = getInsertionPointAfter().getX() - 1;
+            int position2 = 0;
+            for (int i = 0; i < row1; i++) {
+                position2 = content[i].length();
+                position2 += newLine.length();
+            }
+            position2 += getInsertionPointAfter().getY();
+            setInsertionPoint(new Point(1, position1));
+            setInsertionPointAfter(new Point(1, position2));
             return this;
         }
 

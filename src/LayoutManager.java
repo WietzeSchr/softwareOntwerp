@@ -347,7 +347,7 @@ public class LayoutManager {
      * Visible for testing
      */
     void initViewPositions() {
-        getLayout().initViewPosition(1);
+        if (getLayout() != null) getLayout().initViewPosition(1);
     }
 
 
@@ -364,6 +364,11 @@ public class LayoutManager {
     long getNextDeadline() {
         return getLayout().getNextDeadline(getFocus());
     }
+
+    Buffer getBufferByName(String path) {
+        return getLayout().getBufferByName(path);
+    }
+
     void replace(View oldView, View newView) {
         newView.updateSize(oldView);
         if (oldView != newView) {

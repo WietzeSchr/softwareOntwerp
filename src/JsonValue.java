@@ -95,7 +95,7 @@ public class JsonValue extends FileSystemLeaf {
         StringBuilder text = new StringBuilder();
         Buffer.Edit[] mappedEdits = new Buffer.Edit[edits.length];
         for (int i = 0; i < mappedEdits.length; i++) {
-            mappedEdits[i] = edits[i].moveToStart(getLocation());
+            mappedEdits[i] = edits[i].mapToStart(newLine, getLocation());
         }
         for (int i = 0; i < content.length; i++) {
             text.append(content[i]);
@@ -104,7 +104,7 @@ public class JsonValue extends FileSystemLeaf {
             }
         }
         setValue(text.toString());
-        getRoot().saveToBuffer(mappedEdits);
+        getRoot().saveToBuffer(text.toString(), mappedEdits);
     }
 
     /* ******************

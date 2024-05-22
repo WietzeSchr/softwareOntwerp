@@ -159,9 +159,8 @@ public class DirectoryView extends View{
      *  HELP FUNCTIONS  *
      * ******************/
 
-    public Buffer findBuffer(String name) {
-        Layout root = getRoot();
-        return root.getBufferByName(name);
+    public Buffer findBuffer(String path) {
+        return getManager().getBufferByName(path);
     }
 
     @Override

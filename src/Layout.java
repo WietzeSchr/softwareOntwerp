@@ -500,13 +500,6 @@ public abstract class Layout {
      */
     public abstract void updateSize(int heigth, int width, Point leftUpperCorner);
 
-    public Layout getRoot() {
-        if (getParent() != null) {
-            return getParent().getRoot();
-        }
-        return this;
-    }
-
     public abstract Buffer getBufferByName(String name);
 
     /**

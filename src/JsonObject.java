@@ -82,7 +82,7 @@ public class JsonObject extends FileSystemNode {
     }
 
     @Override
-    protected void saveToBuffer(Buffer.Edit[] edits) {
+    protected void saveToBuffer(String text, Buffer.Edit[] edits) {
         String[] content = generateJson();
         getBuffer().setContent(content);
         getBuffer().setDirty(true);
