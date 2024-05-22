@@ -1,6 +1,8 @@
-import java.io.IOException;
 import java.util.Arrays;
 
+/* ********************
+ *   GAMEVIEW CLASS   *
+ * ********************/
 public class GameView extends View{
     private Game game;
 
@@ -9,6 +11,7 @@ public class GameView extends View{
     /* ******************
      *  CONSTRUCTORS    *
      * ******************/
+
     /**
      * This constructor creates a new GameView with the given parameters height, width and leftUpperCorner
      * @post  | getHeigth() == height
@@ -103,7 +106,6 @@ public class GameView extends View{
     public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) {
         return null;
     }
-
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/

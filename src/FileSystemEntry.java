@@ -45,5 +45,7 @@ public abstract class FileSystemEntry {
 
     public abstract View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException;
 
+    public abstract void generate(SimpleJsonGenerator generator);
+
     public abstract String toString();
 }

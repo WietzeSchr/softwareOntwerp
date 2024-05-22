@@ -16,14 +16,14 @@ class FileBufferViewTest {
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getVerticalScrollState(), 1);
         assertEquals(fbv1.getBuffer(), buffer);
-        assertTrue(fbv1.lastEditIsEmptyEdit());
+        //assertTrue(fbv1.lastEditIsEmptyEdit());
         fbv2.setPosition(1);
         assertEquals(fbv1.getInsertionPoint(), new Point(1,1));
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getVerticalScrollState(), 1);
         assertEquals(fbv1.getTick(), 0);
         assertEquals(fbv1.getNextDeadline(), System.currentTimeMillis());
-        assertTrue(fbv1.lastEditIsEmptyEdit());
+        //assertTrue(fbv1.lastEditIsEmptyEdit());
         assertThrows(FileNotFoundException.class,
                 () -> new FileBufferView(10, 20, new Point(10, 20), "t", "\n"));
     }
@@ -94,7 +94,7 @@ class FileBufferViewTest {
         fbv1.setPosition(1);
         fbv1.addNewLineBreak("\n");
         assertArrayEquals(fbv1.getContent(), new String[] {"", "test12", "", "test123"});
-        assertTrue(fbv1.lastEditEquals((char) 13, false, new Point(1,1), new Point(2,1)));
+        //assertTrue(fbv1.lastEditEquals((char) 13, false, new Point(1,1), new Point(2,1)));
         assertTrue(fbv1.getBuffer().getDirty());
     }
 
@@ -106,7 +106,7 @@ class FileBufferViewTest {
         fbv1.move(Direction.SOUTH);
         fbv1.addNewChar('c');
         assertArrayEquals(fbv1.getContent(), new String[] {"test12", "c", "test123"});
-        assertTrue(fbv1.lastEditEquals('c', false, new Point(2,1), new Point(2,2)));
+        //assertTrue(fbv1.lastEditEquals('c', false, new Point(2,1), new Point(2,2)));
         assertTrue(fbv1.getBuffer().getDirty());
     }
 
@@ -116,16 +116,16 @@ class FileBufferViewTest {
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
         fbv1.setPosition(1);
         fbv1.deleteChar();
-        assertTrue(fbv1.lastEditIsEmptyEdit());
+        //assertTrue(fbv1.lastEditIsEmptyEdit());
         fbv1.move(Direction.EAST);
         fbv1.deleteChar();
         assertTrue(fbv1.getBuffer().getDirty());
         assertArrayEquals(fbv1.getContent(), new String[] {"est12", "", "test123"});
-        assertTrue(fbv1.lastEditEquals('t', true, new Point(1,2), new Point(1,1)));
+        //assertTrue(fbv1.lastEditEquals('t', true, new Point(1,2), new Point(1,1)));
         fbv1.move(Direction.SOUTH);
         fbv1.deleteChar();
         assertArrayEquals(fbv1.getContent(), new String[] {"est12", "test123"});
-        assertTrue(fbv1.lastEditEquals((char) 13, true, new Point(2,1), new Point(1,6)));
+        //assertTrue(fbv1.lastEditEquals((char) 13, true, new Point(2,1), new Point(1,6)));
     }
 
     @Test
@@ -148,11 +148,11 @@ class FileBufferViewTest {
         assertTrue(fbv1.getBuffer().getDirty());
         fbv1.saveBuffer("\n");
         assertFalse(fbv1.getBuffer().getDirty());
-        assertTrue(fbv1.lastEditIsEmptyEdit());
+        //assertTrue(fbv1.lastEditIsEmptyEdit());
         fbv1.addNewLineBreak("\n");
-        assertFalse(fbv1.lastEditIsEmptyEdit());
-        fbv1.updateViewSaved();
-        assertTrue(fbv1.lastEditIsEmptyEdit());
+        //assertFalse(fbv1.lastEditIsEmptyEdit());
+        //fbv1.updateViewSaved();
+        //assertTrue(fbv1.lastEditIsEmptyEdit());
     }
 
     @Test

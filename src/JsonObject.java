@@ -4,11 +4,21 @@ import java.util.Collections;
 
 public class JsonObject extends FileSystemNode {
 
+    private Buffer buffer;
+
     public JsonObject(String name, FileSystemEntry[] subNodes) {
         super(new JsonPath(name), subNodes);
         for (int i = 0; i < subNodes.length; i++) {
             subNodes[i].addParent(this);
         }
+    }
+
+    private Buffer getBuffer() {
+        return buffer;
+    }
+
+    protected void setBuffer(Buffer buffer) {
+        this.buffer = buffer;
     }
 
     @Override
@@ -17,6 +27,11 @@ public class JsonObject extends FileSystemNode {
             addToEntries(parent);
         }
         setParent(parent);
+    }
+
+    @Override
+    public void generate(SimpleJsonGenerator generator) {
+        generator.generateJsonObject(this);
     }
 
     public void addToEntries(FileSystemEntry entry) {
@@ -35,6 +50,22 @@ public class JsonObject extends FileSystemNode {
     protected View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException {
         FileSystemEntry entry = getEntry(line);
         return entry.open(manager, buffer, newLine);
+    }
+
+    @Override
+    protected void saveToBuffer() {
+        String[] content = generateJson();
+        getBuffer().setContent(content);
+        getBuffer().setDirty(true);
+    }
+
+    @Override
+    public void close() {
+        getBuffer().releaseLock();
+    }
+
+    private String[] generateJson() {
+        return SimpleJsonGenerator.generateJson(this);
     }
 
     @Override

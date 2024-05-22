@@ -83,6 +83,15 @@ public class DirectoryView extends View{
     }
 
     @Override
+    public View closeView(int focus, CompositeLayout parent) {
+        if (getPosition() == focus) {
+            getFileSystemNode().getRoot().close();
+            return null;
+        }
+        return this;
+    }
+
+    @Override
     public View[] duplicate() {
         return new View[0];
     }

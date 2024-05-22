@@ -225,6 +225,13 @@ public abstract class View extends Layout {
         return new View[] {};
     }
 
+    public View closeView(int focus, CompositeLayout parent) throws IOException {
+        if (getPosition() == focus) {
+            return null;
+        }
+        return this;
+    }
+
     /* ******************
      *  SHOW FUNCTIONS  *
      * ******************/

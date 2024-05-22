@@ -61,4 +61,15 @@ public abstract class FileSystemNode extends FileSystemEntry {
     public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
         return new DirectoryView(5, 5, new Point(1,1), this, manager);
     }
+
+    protected abstract void saveToBuffer();
+
+    protected abstract void close();
+
+    public FileSystemNode getRoot() {
+        if (getParent() == null) {
+            return this;
+        }
+        return getParent().getRoot();
+    }
 }
