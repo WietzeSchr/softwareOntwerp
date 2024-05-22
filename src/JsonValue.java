@@ -91,8 +91,12 @@ public class JsonValue extends FileSystemLeaf {
     }
 
     @Override
-    public void save(String newLine, String[] content, Buffer.SaveEdit edit) {
+    public void save(String newLine, String[] content, Buffer.Edit[] edits) {
         StringBuilder text = new StringBuilder();
+        Buffer.Edit[] mappedEdits = new Buffer.Edit[edits.length];
+        for (int i = 0; i < mappedEdits.length; i++) {
+            mappedEdits[i] = edits[i].moveToStart(getLocation());
+        }
         for (int i = 0; i < content.length; i++) {
             text.append(content[i]);
             if (i != content.length - 1) {
@@ -100,7 +104,7 @@ public class JsonValue extends FileSystemLeaf {
             }
         }
         setValue(text.toString());
-        getRoot().saveToBuffer(edit);
+        getRoot().saveToBuffer(mappedEdits);
     }
 
     /* ******************

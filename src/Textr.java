@@ -163,6 +163,8 @@ public class Textr
                                 parseJson();
                             } else if (c == 13) {             //  ENTER
                                 addNewLineBreak();
+                            } else if (c == 17) {
+                                closeView();
                             } else if (c == 21) {             //  Ctrl + U
                                 redo();
                             } else if (c == -1 || c == 26) {   //  Ctrl + Z

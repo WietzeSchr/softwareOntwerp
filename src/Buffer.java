@@ -66,7 +66,7 @@ class JsonBuffer extends Buffer {
     @Override
     public void saveBuffer(String newLine) throws IOException {
         Edit[] edits = getCurrentEdits();
-        getFile().save(newLine, getContent(), new SaveEdit(edits));
+        getFile().save(newLine, getContent(), edits);
         setDirty(false);
     }
 
@@ -169,6 +169,18 @@ public abstract class Buffer {
         setLastEdit(new EmptyEdit());
     }
 
+    /* **********************
+     *  EDIT BUFFER CONTENT *
+     ************************/
+
+    public void insertLineBreak(Point insert, Point newInsert) {
+        NonEmptyEdit nextEdit = new Insertion((char) 13, insert, newInsert);
+        nextEdit.setPrevious(getLastEdit());
+        getLastEdit().setNext(nextEdit);
+        setLastEdit(nextEdit);
+        insertLineBreak(insert);
+    }
+
     /**
      * This method inserts a line break at the insertion point and sets the buffer to dirty
      *
@@ -191,10 +203,6 @@ public abstract class Buffer {
             fireNewLineBreak(insert);
         }
     }
-
-    /* ****************
-     *   EMPTY EDIT   *
-     * ****************/
 
     public void addNewChar(char c, Point insert, Point newInsert) {
         Edit nextEdit = new Insertion(c, insert, newInsert);
@@ -257,7 +265,6 @@ public abstract class Buffer {
             getLastEdit().setNext(nextEdit);
             setLastEdit(nextEdit);
         }
-
     }
 
     /**
@@ -343,9 +350,35 @@ public abstract class Buffer {
         listenerService.fireDelLineBreak(insert);
     }
 
-    /* **********************
-     *  EDIT BUFFER CONTENT *
-     ************************/
+    /* ******************
+     *   UNDO / REDO    *
+     * ******************/
+
+    /**
+     * This method undoes the last edit and uses therefor the undo method of the lastEdit
+     * It also sets the lastEdit to the previous edit
+     */
+    public void undo() {
+        if (isNotLocked()) {
+            if (getLastEdit().isLast()) setLastEdit(getLastEdit().getPrevious());
+            getLastEdit().undo();
+            setLastEdit(getLastEdit().getPrevious());
+            if (getLastEdit().isFirst()) {
+                setDirty(false);
+            }
+        }
+    }
+
+    /**
+     * This method redoes the last edit and uses therefor the redo method of the lastEdit
+     * It also sets the lastEdit to the next edit
+     */
+    public void redo() {
+        if (isNotLocked()) {
+            getLastEdit().getNext().redo();
+            setLastEdit(getLastEdit().getNext());
+        }
+    }
 
 
     protected void acquireLock() {
@@ -358,14 +391,6 @@ public abstract class Buffer {
 
     public boolean isNotLocked() {
         return !getLock().isLocked();
-    }
-
-    public void insertLineBreak(Point insert, Point newInsert) {
-        NonEmptyEdit nextEdit = new Insertion((char) 13, insert, newInsert);
-        nextEdit.setPrevious(getLastEdit());
-        getLastEdit().setNext(nextEdit);
-        setLastEdit(nextEdit);
-        insertLineBreak(insert);
     }
 
     /**
@@ -388,11 +413,15 @@ public abstract class Buffer {
         return insertionPoint;
     }
 
-    public void addEdit(Edit newEdit) {
+    public void addSaveEdit(Edit[] edits) {
+        SaveEdit newEdit = new SaveEdit(edits);
         getLastEdit().setNext(newEdit);
         newEdit.setPrevious(getLastEdit());
         setLastEdit(newEdit);
     }
+
+    public abstract void close();
+
 
     /* *******************
      *   ABSTRACT EDIT   *
@@ -454,11 +483,25 @@ public abstract class Buffer {
             this.previous = newPrevious;
         }
 
-        public abstract boolean undo();
+        public abstract void undo();
 
-        public abstract boolean redo();
+        public void undo(Buffer buffer) {}
 
-        public abstract boolean isFirst();
+        public abstract void redo();
+
+        public void redo(Buffer buffer) {}
+
+        public boolean isFirst() {
+            return false;
+        }
+
+        public boolean isLast() {
+            return false;
+        }
+
+        public Edit moveToStart(Point startLocation) {
+            return this;
+        }
     }
 
     /**
@@ -470,18 +513,19 @@ public abstract class Buffer {
         }
 
         @Override
-        public boolean undo() {
-            return false;
-        }
+        public void undo() {}
 
         @Override
-        public boolean redo() {
-            return false;
-        }
+        public void redo() {}
 
         @Override
         public boolean isFirst() {
             return getPrevious() == this;
+        }
+
+        @Override
+        public boolean isLast() {
+            return getNext() == this;
         }
     }
 
@@ -493,25 +537,34 @@ public abstract class Buffer {
             this.edits = edits;
         }
 
-        @Override
-        public boolean undo() {
-            for (int i = edits.length - 1; i >= 0; i--) {
-                edits[i].undo();
-            }
-            return true;
+        private void setEdits(Edit[] newEdits) {
+            this.edits = newEdits;
+        }
+
+        private Edit[] getEdits() {
+            return edits;
         }
 
         @Override
-        public boolean redo() {
-            for (int i = 0; i < edits.length; i++) {
-                edits[i].redo();
+        public void undo() {
+            for (int i = getEdits().length - 1; i >= 0; i--) {
+                getEdits()[i].undo(Buffer.this);
             }
-            return true;
         }
 
         @Override
-        public boolean isFirst() {
-            return false;
+        public void redo() {
+            for (int i = 0; i < getEdits().length; i++) {
+                getEdits()[i].redo(Buffer.this);
+            }
+        }
+
+        public void mapToStartLocation(Point startLocation) {
+            Edit[] result = new Edit[getEdits().length];
+            for (int i = 0; i < getEdits().length; i++) {
+                result[i] = getEdits()[i].moveToStart(startLocation);
+            }
+            setEdits(result);
         }
     }
 
@@ -522,9 +575,9 @@ public abstract class Buffer {
 
         private final char change;
 
-        private final Point insertionPoint;
+        private Point insertionPoint;
 
-        private final Point insertionPointAfter;
+        private Point insertionPointAfter;
 
         /**
          * This constructor creates a new NonEmptyEdit object with the given parameters c, insert and insertAfter
@@ -565,6 +618,14 @@ public abstract class Buffer {
             return insertionPoint;
         }
 
+        private void setInsertionPoint(Point newInsertionPoint) {
+            this.insertionPoint = newInsertionPoint;
+        }
+
+        private void setInsertionPointAfter(Point newInsertionPointAfter) {
+            this.insertionPointAfter = newInsertionPointAfter;
+        }
+
         /**
          * This method returns the insertion point after the change
          *
@@ -572,6 +633,13 @@ public abstract class Buffer {
          */
         public Point getInsertionPointAfter() {
             return insertionPointAfter;
+        }
+
+        @Override
+        public Edit moveToStart(Point startLocation) {
+            setInsertionPoint(getInsertionPoint().add(startLocation).minus(new Point(1,0)));
+            setInsertionPointAfter(getInsertionPointAfter().add(startLocation).minus(new Point(1,0)));
+            return this;
         }
 
         @Override
@@ -611,10 +679,12 @@ public abstract class Buffer {
          *
          * @return: boolean, true if the undo was successful, false otherwise
          */
-        public boolean undo() {
+        public void undo() {
             deleteChar(getInsertionPointAfter());
-            //insertionPoint = getInsertionPoint();
-            return true;
+        }
+
+        public void undo(Buffer buffer) {
+            buffer.deleteChar(getInsertionPointAfter());
         }
 
         /**
@@ -622,18 +692,23 @@ public abstract class Buffer {
          *
          * @return: boolean, true if the redo was successful, false otherwise
          */
-        public boolean redo() {
+        public void redo() {
             if (getChange() == 13) {
                 insertLineBreak(getInsertionPoint());
             } else {
                 addNewChar(getChange(), getInsertionPoint());
             }
-            //insertionPoint = getInsertionPointAfter();
-            return true;
+        }
+
+        public void redo(Buffer buffer) {
+            if (getChange() == 13) {
+                buffer.insertLineBreak(getInsertionPoint());
+            }
+            else {
+                buffer.addNewChar(getChange(), getInsertionPoint());
+            }
         }
     }
-
-    public abstract void close();
 
     /* ******************
      *  HELP FUNCTIONS  *
@@ -656,14 +731,25 @@ public abstract class Buffer {
          *
          * @return: boolean, true if the undo was successful, false otherwise
          */
-        public boolean undo() {
+        public void undo() {
             if (getChange() == 13) {
                 insertLineBreak(getInsertionPointAfter());
             } else {
                 addNewChar(getChange(), getInsertionPointAfter());
             }
-            //insertionPoint = getInsertionPoint();
-            return true;
+        }
+
+        /**
+         * This method undoes the deletion and adds the character at the insertion point or adds the line break back
+         *
+         * @return: boolean, true if the undo was successful, false otherwise
+         */
+        public void undo(Buffer buffer) {
+            if (getChange() == 13) {
+                buffer.insertLineBreak(getInsertionPointAfter());
+            } else {
+                buffer.addNewChar(getChange(), getInsertionPointAfter());
+            }
         }
 
         /**
@@ -671,35 +757,17 @@ public abstract class Buffer {
          *
          * @return: boolean, true if the redo was successful, false otherwise
          */
-        public boolean redo() {
+        public void redo() {
             deleteChar(getInsertionPoint());
-            //insertionPoint = getInsertionPointAfter();
-            return true;
         }
-    }
-    /* ******************
-     *   UNDO / REDO    *
-     * ******************/
 
-    /**
-     * This method undoes the last edit and uses therefor the undo method of the lastEdit
-     * It also sets the lastEdit to the previous edit
-     */
-    public void undo() {
-        if (getLastEdit().getClass().isInstance(new EmptyEdit())) setLastEdit(getLastEdit().getPrevious());
-        getLastEdit().undo();
-        setLastEdit(getLastEdit().getPrevious());
-        if (getLastEdit().isFirst()) {
-            setDirty(false);
+        /**
+         * This method redoes the deletion and deletes the character at the insertion point or the line break
+         *
+         * @return: boolean, true if the redo was successful, false otherwise
+         */
+        public void redo(Buffer buffer) {
+            buffer.deleteChar(getInsertionPoint());
         }
-    }
-
-    /**
-     * This method redoes the last edit and uses therefor the redo method of the lastEdit
-     * It also sets the lastEdit to the next edit
-     */
-    public void redo() {
-        getLastEdit().getNext().redo();
-        setLastEdit(getLastEdit().getNext());
     }
 }

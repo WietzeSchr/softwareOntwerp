@@ -21,7 +21,7 @@ public abstract class FileSystemLeaf extends FileSystemEntry{
 
     public abstract void save(String newLine, String[] content) throws IOException;
 
-    public void save(String newLine, String[] content, Buffer.SaveEdit edits) throws IOException {}
+    public void save(String newLine, String[] content, Buffer.Edit[] edits) throws IOException {}
 
     /* ******************
      *    CLOSE ENTRY   *

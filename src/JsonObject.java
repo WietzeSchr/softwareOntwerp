@@ -82,11 +82,11 @@ public class JsonObject extends FileSystemNode {
     }
 
     @Override
-    protected void saveToBuffer(Buffer.SaveEdit edit) {
+    protected void saveToBuffer(Buffer.Edit[] edits) {
         String[] content = generateJson();
         getBuffer().setContent(content);
         getBuffer().setDirty(true);
-        getBuffer().addEdit(edit);
+        getBuffer().addSaveEdit(edits);
     }
 
     /* ******************
