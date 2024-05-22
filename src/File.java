@@ -81,6 +81,10 @@ public class File extends FileSystemLeaf
         file.close();
     }
 
+    /* **************
+     *  OPEN ENTRY  *
+     * **************/
+
     public View open(LayoutManager manager, Buffer buffer, String newLine) throws FileNotFoundException {
         if (buffer == null) {
             return new FileBufferView(5,5,new Point(1,1), getPathString(), newLine);
@@ -89,13 +93,17 @@ public class File extends FileSystemLeaf
     }
 
     /* ******************
-     *  HELP FUNCTIONS  *
-     ********************/
+     *  JSON GENERATOR  *
+     * ******************/
 
     @Override
     public void generate(SimpleJsonGenerator generator) {
         generator.generateFile(this);
     }
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     ********************/
 
     /** 
      * This method returns true if the given parameter c is a line separator

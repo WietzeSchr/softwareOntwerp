@@ -214,8 +214,14 @@ public class Textr implements InputListener, KeyBoardFocusListener
                 openGameView();
                 changeFocusNext();
                 break;
+            case 10:            // Ctrl + J
+                parseJson();
+                break;
             case 14:            // Ctrl + N
                 changeFocusNext();
+                break;
+            case 15:            // Ctrl + O
+                openDirectoryView();
                 break;
             case 16:            // Ctrl + P
                 changeFocusPrevious();

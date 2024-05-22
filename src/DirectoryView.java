@@ -1,6 +1,8 @@
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
+/* *************************
+ *   DIRECTORY VIEW CLASS  *
+ * *************************/
 public class DirectoryView extends View{
 
     private final FileSystemNode fileSystemNode;
@@ -8,6 +10,10 @@ public class DirectoryView extends View{
     private int line;
 
     private final LayoutManager manager;
+
+    /* ***************
+     *  CONSTRUCTORS *
+     *****************/
 
     /**
      * This constructor creates a new View
@@ -37,6 +43,10 @@ public class DirectoryView extends View{
         this.manager = manager;
     }
 
+    /* **********************
+     *  GETTERS AND SETTERS *
+     * **********************/
+
     public FileSystemNode getFileSystemNode() {
         return fileSystemNode;
     }
@@ -55,6 +65,10 @@ public class DirectoryView extends View{
         return manager;
     }
 
+    /* ******************
+     *  INSPECT CONTENT *
+     * ******************/
+
     @Override
     public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
         return null;
@@ -70,6 +84,10 @@ public class DirectoryView extends View{
         }
     }
 
+    /* **************
+     *  OPEN ENTRY  *
+     * **************/
+
     @Override
     public void addNewLineBreak(String newLine) throws FileNotFoundException {
         FileSystemEntry entry = getFileSystemNode().getEntry(getLine());
@@ -82,6 +100,23 @@ public class DirectoryView extends View{
         getManager().replace(this, newView);
     }
 
+    public Buffer openFile(String path, String newLine) {
+        Buffer result = findBuffer(path);
+        if (result != null) {
+            return result;
+        }
+        try {
+            return new FileBuffer(path, newLine);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+    }
+
+
+    /* ******************
+     *   CLOSE VIEW     *
+     * ******************/
+
     @Override
     public View closeView(int focus, CompositeLayout parent) {
         if (getPosition() == focus) {
@@ -91,20 +126,9 @@ public class DirectoryView extends View{
         return this;
     }
 
-    @Override
-    public View[] duplicate() {
-        return new View[0];
-    }
-
-    @Override
-    public long getNextDeadline() {
-        return 0;
-    }
-
-    @Override
-    public long getTick() {
-        return 0;
-    }
+    /* ******************
+     *  SHOW FUNCTIONS  *
+     * ******************/
 
     @Override
     String[] makeShow() {
@@ -136,25 +160,31 @@ public class DirectoryView extends View{
         return result;
     }
 
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
+
+    public Buffer findBuffer(String path) {
+        return getManager().getBufferByName(path);
+    }
+
     @Override
     public Point getCursor() {
         return getLeftUpperCorner().add(new Point(getLine() - 1, 0));
     }
 
-    public Buffer openFile(String path, String newLine) {
-        Buffer result = findBuffer(path);
-        if (result != null) {
-            return result;
-        }
-        try {
-            return new FileBuffer(path, newLine);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
+    @Override
+    public View[] duplicate() {
+        return new View[0];
     }
 
-    public Buffer findBuffer(String name) {
-        Layout root = getRoot();
-        return root.getBufferByName(name);
+    @Override
+    public long getNextDeadline() {
+        return 0;
+    }
+
+    @Override
+    public long getTick() {
+        return 0;
     }
 }

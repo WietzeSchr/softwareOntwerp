@@ -6,8 +6,6 @@ public class FileBufferListenerService {
     
     private final ArrayList<DeletionListener> deletionListeners = new ArrayList<>();
 
-    private final ArrayList<SaveListener> saveListeners = new ArrayList<>();
-
     public ArrayList<InsertionListener> getInsertionListeners() {
         return new ArrayList<>(insertionListeners);
     }
@@ -16,15 +14,11 @@ public class FileBufferListenerService {
         return new ArrayList<>(deletionListeners);
     }
 
-    public ArrayList<SaveListener> getSaveListeners() {
-        return new ArrayList<>(saveListeners);
-    }
-
-    public void addInsertionListener(InsertionListener listener) {
+    private void addInsertionListener(InsertionListener listener) {
         insertionListeners.add(listener);
     }
     
-    public void removeInsertionListener(FileBufferView view) {
+    private void removeInsertionListener(FileBufferView view) {
         ArrayList<InsertionListener> insertListeners = getInsertionListeners();
         for (InsertionListener listener : insertListeners) {
             if (listener.getView() == view) {
@@ -33,11 +27,11 @@ public class FileBufferListenerService {
         }
     }
     
-    public void addDeletionListener(DeletionListener listener) {
+    private void addDeletionListener(DeletionListener listener) {
         deletionListeners.add(listener);
     }
     
-    public void removeDeletionListener(FileBufferView view) {
+    private void removeDeletionListener(FileBufferView view) {
         ArrayList<DeletionListener> deleteListeners = getDeletionListeners();
         for (DeletionListener listener : deleteListeners) {
             if (listener.getView() == view) {
@@ -46,46 +40,37 @@ public class FileBufferListenerService {
         }
     }
 
-    public void addSaveListener(SaveListener listener) {
-        saveListeners.add(listener);
+    void subscribeView(FileBufferView view) {
+        addInsertionListener(new InsertionListener(view));
+        addDeletionListener(new DeletionListener(view));
     }
 
-    public void removeSaveListener(FileBufferView view) {
-        ArrayList<SaveListener> sListeners = getSaveListeners();
-        for (SaveListener listener : sListeners) {
-            if (listener.getView() == view) {
-                saveListeners.remove(listener);
-            }
-        }
+    void unSubscribeView(FileBufferView view) {
+        removeInsertionListener(view);
+        removeDeletionListener(view);
     }
-    
-    public void fireNewChar(Point insert) {
+
+    void fireNewChar(Point insert) {
         for (InsertionListener listener : insertionListeners) {
             listener.update('x', insert);
         }
     }
     
-    public void fireNewLineBreak(Point insert) {
+    void fireNewLineBreak(Point insert) {
         for (InsertionListener listener : insertionListeners) {
             listener.update((char) 13, insert);
         }
     }
     
-    public void fireDelChar(Point insert) {
+    void fireDelChar(Point insert) {
         for (DeletionListener listener : deletionListeners) {
             listener.update('x', insert);
         }
     }
     
-    public void fireDelLineBreak(Point insert) {
+    void fireDelLineBreak(Point insert) {
         for (DeletionListener listener : deletionListeners) {
             listener.update((char) 13, insert);
-        }
-    }
-
-    public void fireSaved() {
-        for (SaveListener listener : saveListeners) {
-            listener.update((char) 17, null);
         }
     }
 }
