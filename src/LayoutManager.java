@@ -8,8 +8,6 @@ public class LayoutManager {
     private int focus;
     private String newLine;
 
-    ArrayList<SwingWindow> SwingWindows = new ArrayList<>();
-
     LayoutManager(Layout layout, int focus, String newLine){
         this.layout = layout;
         this.focus = focus;
@@ -283,16 +281,6 @@ public class LayoutManager {
     /* *****************
      * OPEN NEW WINDOW *
      * *****************/
-
-    void openWindow(Textr listener){
-        SwingWindow newWindow = new SwingWindow(getLayout().getWidth(), getLayout().getHeigth(), listener);
-        SwingWindows.add(newWindow);
-    }
-
-    public void closeWindow(SwingWindow window) {
-        SwingWindows.remove(window);
-        window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
-    }
 
     void openDirectoryView() {
         View[] newViews = getLayout().openDirectoryView(getFocus(), this);

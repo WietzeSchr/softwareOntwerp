@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
-public class SwingWindow extends JFrame implements WindowFocusListener, TerminalInterface {
+public class SwingWindow extends JFrame implements TerminalInterface {
 
     class TerminalPanel extends JPanel {
         char[][] buffer;
@@ -69,9 +69,9 @@ public class SwingWindow extends JFrame implements WindowFocusListener, Terminal
         }
     }
 
-    TerminalPanel terminalPanel;
+    private TerminalPanel terminalPanel;
 
-    SwingListenerService listenerService;
+    private SwingListenerService listenerService;
 
     int lastKey;
 
@@ -115,8 +115,20 @@ public class SwingWindow extends JFrame implements WindowFocusListener, Terminal
                 }
             }
         });
+        addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                listenerService.fireFocusEvent((SwingWindow)e.getSource());
+            }
 
-        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                listenerService.fireFocusEvent(null);
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 listenerService.fireFocusEvent(null);
             }
@@ -126,23 +138,14 @@ public class SwingWindow extends JFrame implements WindowFocusListener, Terminal
 
     }
 
+    public SwingListenerService getListenerService(){
+        return this.listenerService;
+    }
+
     void updateBuffer() {
         terminalPanel.repaint();
     }
 
-    /*****************
-     * WINDOW EVENTS *
-     *****************/
-
-    @Override
-    public void windowGainedFocus(WindowEvent e) {
-        listenerService.fireFocusEvent(this);
-    }
-
-    @Override
-    public void windowLostFocus(WindowEvent e) {
-        listenerService.fireFocusEvent(null);
-    }
 
     /**********************
      *  TerminalInterface *
@@ -192,6 +195,9 @@ public class SwingWindow extends JFrame implements WindowFocusListener, Terminal
 
     @Override
     public void setInputListener(Runnable runnable) {}
+
+    @Override
+    public void clearInputListener() {}
 
     @Override
     public int response(long deadline){

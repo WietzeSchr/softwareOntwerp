@@ -12,4 +12,7 @@ public interface TerminalInterface {
     public int response(long deadline) throws IOException, TimeoutException;
     public Point getArea() throws IOException;
     public void setInputListener(Runnable runnable);
+
+    public void clearInputListener();
+
 }

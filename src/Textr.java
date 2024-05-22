@@ -32,6 +32,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
     }
 
     private LayoutManager layoutManager;
+    private WindowManager windowManager;
 
     /* ******************
      *  CONSTRUCTORS    *
@@ -63,6 +64,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
         else {
             this.layoutManager = new LayoutManager(new FileBufferView(size.getX(), size.getY(), new Point(1, 1), filepaths[0], newLine), 1, newLine);
         }
+        this.windowManager = new WindowManager(size.getY(), size.getX());
         inputHandler.init();
         show();
         runApp();
@@ -78,6 +80,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
      */
     public Textr(String newLine, Layout layout ) {
         this.layoutManager = new LayoutManager(layout, 1, newLine);
+        this.windowManager = new WindowManager(10, 10);
     }
 
     /* **********************
@@ -85,6 +88,8 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * **********************/
 
     LayoutManager getLayoutManager() {return this.layoutManager;}
+
+    WindowManager getWindowManager() {return this.windowManager;}
 
     /** 
      * This method returns the layout
@@ -95,11 +100,13 @@ public class Textr implements InputListener, KeyBoardFocusListener
     }
 
     void setInputHandler(TerminalInterface handler){
+        inputHandler.clearInputListener();
         inputHandler = handler;
     }
 
     void resetInputHandler(){
-        setInputHandler(stdHandler);
+        this.inputHandler = stdHandler;
+        runApp();
     }
 
     TerminalInterface getInputHandler(){
@@ -131,8 +138,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
     public void runApp() {
         class App {
             App() {
-                JFrame dummyFrame = new JFrame();
-                dummyFrame.pack();
+                show();
                 inputHandler.setInputListener(new Runnable() {
                     public void run(){
                         java.awt.EventQueue.invokeLater(() -> handleFailure(() -> {
@@ -261,13 +267,18 @@ public class Textr implements InputListener, KeyBoardFocusListener
     }
 
     /**
-     * Listener
-     * @param focussed
+     * Listener for changes in Operating system focus
+     * @param focussed : the TerminalHandler Interface belonging to the window that has focus
+     *                   null = Terminal
      */
     @Override
     public void updateKeyboardFocus(TerminalInterface focussed) {
-        if(focussed==null)  {resetInputHandler();}
-        else                {setInputHandler(focussed);}
+        if(focussed==null)  {
+            resetInputHandler();
+        }
+        else {
+            setInputHandler(focussed);
+        }
     }
 
     /* **********************
@@ -470,7 +481,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * *****************/
 
     void openWindow() {
-        getLayoutManager().openWindow(this);
+        getWindowManager().openWindow(this);
     }
 
     void openDirectoryView() {

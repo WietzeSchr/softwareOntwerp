@@ -135,7 +135,7 @@ class FileBufferViewTest {
         fbv1.setPosition(1);
         TerminalHandler th1 = new TerminalHandler();
         assertNull(fbv1.closeView(1, th1));
-        assertEquals(fbv1.closeView(2, null), fbv1);
+        assertEquals(fbv1.closeView(2, null, th1), fbv1);
     }
 
     @Test

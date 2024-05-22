@@ -98,6 +98,9 @@ public class TerminalHandler implements TerminalInterface{
     }
 
     @Override
+    public void clearInputListener() {Terminal.clearInputListener();}
+
+    @Override
     public int response(long deadline) throws IOException, TimeoutException {
         return readByte(deadline);
     }
