@@ -307,5 +307,4 @@ public abstract class CompositeLayout extends Layout {
         }
         setSubLayouts(newSubLayouts);
     }
-
 }

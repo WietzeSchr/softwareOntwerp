@@ -404,7 +404,7 @@ public class TextrTest {
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
         test1.openWindow();
         assertEquals(test1.getWindowManager().getWindowCount(), 1);
-        SwingWindow w1 = test1.getWindowManager().swingWindows.get(0);
+        SwingWindow w1 = test1.getWindowManager().getSwingWindows()[0];
         assertEquals(test1.getInputHandler(), w1);
         test1.getWindowManager().closeWindow(w1);
         assertEquals(test1.getWindowManager().getWindowCount(), 0);
