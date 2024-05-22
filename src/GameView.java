@@ -100,7 +100,7 @@ public class GameView extends View{
      * ******************/
 
     @Override
-    public Layout closeView(int focus, CompositeLayout parent) {
+    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) {
         return null;
     }
 

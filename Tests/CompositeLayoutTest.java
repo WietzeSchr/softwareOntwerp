@@ -62,12 +62,13 @@ class CompositeLayoutTest {
         FileBuffer f3 = new FileBuffer(new String[] {"h", "ha","hal", "hall", "hallo"}, "test3");
         FileBufferView fbv3 = new FileBufferView(1,1,new Point(1,1),f3 );
         StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, fbv3});
+        TerminalHandler th1 = new TerminalHandler();
         sl1.initViewPosition(1);
-        CompositeLayout result = (CompositeLayout) sl1.closeView(1, sbsl1);
+        CompositeLayout result = (CompositeLayout) sl1.closeView(1, sbsl1, th1);
         assertEquals(result.getClass(), StackedLayout.class);
         assertArrayEquals(result.getSubLayouts(), new Layout[] {fbv2, fbv3});
         sl1 = new StackedLayout(1, 1, new Point(1, 1), new Layout[] {fbv1, fbv2, fbv3});
-        result = (CompositeLayout) sl1.closeView(2, sl1);
+        result = (CompositeLayout) sl1.closeView(2, sl1, th1);
         assertEquals(result.getClass(), StackedLayout.class);
         assertArrayEquals(result.getSubLayouts(), new Layout[] {fbv1, fbv3});
         sbsl1 = new SideBySideLayout(1, 1, new Point(1, 1), new Layout[] {fbv1, fbv2});
@@ -75,7 +76,7 @@ class CompositeLayoutTest {
         sl1.initViewPosition(1);
         f2.setDirty(true);
         long start = System.currentTimeMillis();
-        sl1 = (StackedLayout) sl1.closeView(2);
+        sl1 = (StackedLayout) sl1.closeView(2, th1);
         long end = System.currentTimeMillis();
         assertEquals(sl1.countViews(), 3);
         assertTrue(end-start >= 3000);

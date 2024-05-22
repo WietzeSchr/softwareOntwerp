@@ -56,7 +56,7 @@ public class DirectoryView extends View{
     }
 
     @Override
-    public Layout closeView(int focus, CompositeLayout parent) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
         return null;
     }
 

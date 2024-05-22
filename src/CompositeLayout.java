@@ -94,23 +94,23 @@ public abstract class CompositeLayout extends Layout {
      * @return: Layout, the new layout after closing the current focused view
      */
     @Override
-    public Layout closeView(int focus, CompositeLayout parent) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
         if (this == parent) {
             if (getSubLayouts().length == 2) {
-                if (getSubLayouts()[0].closeView(focus, parent) != null) {
-                    if (getSubLayouts()[1].closeView(focus, parent) == null) {
-                        return getSubLayouts()[0].closeView(focus, parent);
+                if (getSubLayouts()[0].closeView(focus, parent, printer) != null) {
+                    if (getSubLayouts()[1].closeView(focus, parent, printer) == null) {
+                        return getSubLayouts()[0].closeView(focus, parent, printer);
                     }
                     else {
                         return this;
                     }
-                } else return getSubLayouts()[1].closeView(focus, parent);
+                } else return getSubLayouts()[1].closeView(focus, parent, printer);
             } else {
                 Layout[] newSubLayouts = new Layout[countSubLayouts() - 1];
                 int i = 0;
                 for (int j = 0; j < getSubLayouts().length; j++) {
-                    if (getSubLayouts()[j].closeView(focus, parent) != null) {
-                        newSubLayouts[i] = getSubLayouts()[j].closeView(focus, parent);
+                    if (getSubLayouts()[j].closeView(focus, parent, printer) != null) {
+                        newSubLayouts[i] = getSubLayouts()[j].closeView(focus, parent, printer);
                         i++;
                     }
                 }
@@ -120,7 +120,7 @@ public abstract class CompositeLayout extends Layout {
         } else {
             Layout[] newSubLayouts = getSubLayouts();
             for (int i = 0; i < newSubLayouts.length; i++) {
-                newSubLayouts[i] = getSubLayouts()[i].closeView(focus, parent);
+                newSubLayouts[i] = getSubLayouts()[i].closeView(focus, parent, printer);
             }
             setSubLayouts(newSubLayouts);
             return this;
@@ -180,10 +180,10 @@ public abstract class CompositeLayout extends Layout {
      * This method shows the layout of the subLayouts
      * @return  | void
      */
-    public void show() {
+    public void show(TerminalInterface printer) {
         Layout[] subLays = getSubLayouts();
         for (int i = 0; i < countSubLayouts(); i++) {
-            subLays[i].show();
+            subLays[i].show(printer);
         }
     }
 

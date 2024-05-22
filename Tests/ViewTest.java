@@ -36,8 +36,9 @@ class ViewTest {
         FileBufferView fbv = new FileBufferView(1, 10, new Point(15, 25),
                 new FileBuffer(new String[] {"hallo", ""}, "test"));
         fbv.setPosition(1);
-        assertNull(gv.closeView(1));
-        assertNull(fbv.closeView(1));
+        TerminalHandler th1 = new TerminalHandler();
+        assertNull(gv.closeView(1, th1));
+        assertNull(fbv.closeView(1, th1));
     }
 
     @Test

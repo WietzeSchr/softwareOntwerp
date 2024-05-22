@@ -146,7 +146,7 @@ public class TextrTest {
         //testClose cleanBuffer
         FileBufferView focus = (FileBufferView)test1.getLayoutManager().getFocusedView();
         assertFalse(focus.getBuffer().getDirty());
-        test1.closeView();
+        test1.closeView(test1.getInputHandler());
         focus = (FileBufferView)test1.getLayoutManager().getFocusedView();
         StackedLayout newLayout = new StackedLayout(1, 1, new Point(1,1), new Layout[] {fbv2, fbv3});
         assertEquals(newLayout, test1.getLayout());
@@ -254,7 +254,7 @@ public class TextrTest {
         Snake snake = gameView.getGame().getSnake();
         assertEquals(snake.getHead(), new Point(19,9));
         assertEquals(gameView.getGame().getScore(), 0);
-        test1.closeView();
+        test1.closeView(test1.getInputHandler());
 
         focus = (FileBufferView) test1.getLayoutManager().getFocusedView();
         assertEquals(focus, fbv2);
@@ -394,4 +394,21 @@ public class TextrTest {
         FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
         test1.getLayoutManager().replace(fbv1, fbv2);
     }
+
+    @Test
+    void testOpenWindow() {
+        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
+        FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
+        Textr test1 = new Textr("\n", fbv1);
+
+        //focusListener
+        assertTrue(test1.inputHandler instanceof TerminalHandler);
+        TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
+        test1.openWindow();
+        SwingWindow w1 = test1.getLayoutManager().SwingWindows.get(0);
+        assertEquals(test1.inputHandler, w1);
+        test1.getLayoutManager().closeWindow(w1);
+        assertEquals(test1.inputHandler,th1);
+    }
+
 }

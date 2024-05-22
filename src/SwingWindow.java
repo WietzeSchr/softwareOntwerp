@@ -1,81 +1,202 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
-public class SwingWindow extends JFrame implements TerminalInterface {
+public class SwingWindow extends JFrame implements WindowFocusListener, TerminalInterface {
 
-    char[][] content;
-    int row;
-    int col;
-    int input;
+    class TerminalPanel extends JPanel {
+        char[][] buffer;
 
-    SwingWindow(int width, int height) {
-        super("Textr");
-        setFont(new Font("Monospaced", Font.PLAIN, 12));
-        FontMetrics fontMetrics = this.getFontMetrics(getFont());
-        int fontWidth = fontMetrics.charWidth('m');
-        int fontHeight = fontMetrics.getHeight();
-        setSize(fontWidth*width, fontHeight*height);
+        void clearBuffer() {
+            for (char[] chars : buffer) Arrays.fill(chars, ' ');
+        }
 
-        content = new char[height][width];
-        for (char[] chars : content) Arrays.fill(chars, ' ');
-        row = 0;
-        col = 0;
+        TerminalPanel(int width, int heigth) {
+            setFont(new Font("Monospaced", Font.PLAIN, 12));
+            buffer = new char[heigth][width];
+            clearBuffer();
+        }
+
+        public void putBuffer(int row, int col, char c){
+            row--;
+            col--;
+            buffer[row][col] = c;
+        }
+
+        public void putString(int row, int col, String s){
+            char[] chars = s.toCharArray();
+            for(int i=0; i< chars.length; i++){
+                putBuffer(row, col+i, chars[i]);
+            }
+        }
+
+        char[][] getBuffer(){
+            char[][] bufferCopy = new char[buffer.length][buffer[0].length];
+            for(int i=0; i< buffer.length; i++) {
+                bufferCopy[i] = Arrays.copyOf(buffer[i], buffer[0].length);
+            }
+            return bufferCopy;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            FontMetrics fontMetrics = g.getFontMetrics();
+            int fontHeight = fontMetrics.getHeight();
+            int baseLineOffset = fontHeight - fontMetrics.getDescent();
+
+            int y = baseLineOffset;
+            for (int lineIndex = 0; lineIndex < buffer.length; lineIndex++) {
+                g.drawChars(buffer[lineIndex], 0, buffer[lineIndex].length, 0, y);
+                y += fontHeight;
+            }
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            FontMetrics fontMetrics = this.getFontMetrics(getFont());
+            int width = fontMetrics.charWidth('m');
+            return new Dimension(width * buffer[0].length, fontMetrics.getHeight() * buffer.length);
+        }
+
+        @Override
+        public boolean isFocusable() {
+            return true;
+        }
     }
 
-    public int getRow() {return this.row;}
-    public void setRow(int newRow) { this.row = newRow;}
-    public int getCol() {return this.col;}
-    public void setCol(int newCol) { this.col = newCol;}
+    TerminalPanel terminalPanel;
+
+    SwingListenerService listenerService;
+
+    int lastKey;
+
+    int row;
+    int col;
+
+    SwingWindow(int width, int height, Textr textr) {
+        super("Textr");
+
+        terminalPanel = new TerminalPanel(width, height);
+        getContentPane().add(terminalPanel);
+        updateBuffer();
+
+        listenerService = new SwingListenerService(textr);
+        listenerService.fireFocusEvent(this);
+
+        setVisible(true);
+        setResizable(false);
+
+        row = 0;
+        col = 0;
+
+        terminalPanel.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int input = e.getKeyChar();
+                if(e.getKeyCode() == KeyEvent.VK_UP) {input = -2;}
+                if(e.getKeyCode() == KeyEvent.VK_DOWN) {input = -3;}
+                if(e.getKeyCode() == KeyEvent.VK_RIGHT) {input = -4;}
+                if(e.getKeyCode() == KeyEvent.VK_LEFT) {input = -5;}
+                if(e.getKeyCode() == KeyEvent.VK_F4) {input = -6;}
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {input = 13;}
+                if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {input = 127;}
+                if(input > 127 || input < -6){return;}
+
+                lastKey = input;
+                try {
+                    listenerService.fireKeyEvent(input);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                listenerService.fireFocusEvent(null);
+            }
+        });
+        pack();
+        setLocationRelativeTo(null);
+
+    }
+
+    void updateBuffer() {
+        terminalPanel.repaint();
+    }
+
+    /*****************
+     * WINDOW EVENTS *
+     *****************/
+
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+        listenerService.fireFocusEvent(this);
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent e) {
+        listenerService.fireFocusEvent(null);
+    }
+
+    /**********************
+     *  TerminalInterface *
+     **********************/
 
     @Override
     public void clearScreen() {
-        for (char[] chars : content) Arrays.fill(chars, ' ');
+        terminalPanel.clearBuffer();
+        terminalPanel.repaint();
     }
 
     @Override
-    public void init() {clearScreen();}
+    public void init() {}
 
     @Override
-    public void close() {clearScreen();}
+    public void close() {}
 
     @Override
     public void moveCursor(int row, int column) {
-        if(row<0 || row > content.length) {
-            return;
+        if(row < 1 || row > terminalPanel.getBuffer().length+1) {
+            throw new RuntimeException(("RowIndex out of bounds"));
         }
-        if(column<0 || column > content[0].length) {
-            return;
+        if(column < 1 || column > terminalPanel.getBuffer()[0].length+1) {
+            throw new RuntimeException("ColumnIndex out of bounds");
         }
-        setRow(row);
-        setCol(column);
+        this.row = row;
+        this.col = column;
     }
 
     @Override
     public void printText(int row, int column, String text) {
-        char[] chars = text.toCharArray();
-        for(int i=0; i<chars.length; i++) {
-            content[row][column++] = chars[i];
-        }
+        terminalPanel.putString(row, column, text);
+        terminalPanel.repaint();
     }
 
     @Override
-    public int readByte() throws IOException {
-        return 0;
-    }
+    public int readByte() throws IOException {return 0;}
 
     @Override
-    public int readByte(long deadline) throws IOException, TimeoutException {
-        return 0;
-    }
+    public int readByte(long deadline) throws IOException, TimeoutException {return 0;}
+
     @Override
     public Point getArea() throws IOException {
-        return new Point(0,0);
+        char[][] buffer = terminalPanel.getBuffer();
+        return new Point(buffer.length, buffer[0].length);
     }
 
     @Override
     public void setInputListener(Runnable runnable) {}
+
+    @Override
+    public int response(long deadline){
+        int resp = lastKey;
+        return resp;
+    }
 
 }
