@@ -11,25 +11,28 @@ import java.io.IOException;
  *      TEXTR       *
  * ******************/
 
-public class Textr
+public class Textr implements InputListener, KeyBoardFocusListener
 {
-    static TerminalHandler terminalHandler = new TerminalHandler();
+    TerminalHandler stdHandler = new TerminalHandler();
+    TerminalInterface inputHandler = stdHandler;
+
 
     interface FallibleRunnable {
         void run() throws Throwable;
     }
 
-    static void handleFailure(FallibleRunnable runnable) {
+    void handleFailure(FallibleRunnable runnable) {
         try {
             runnable.run();
         } catch (Throwable t) {
-            terminalHandler.close();
+            inputHandler.close();
             t.printStackTrace();
             System.exit(1);
         }
     }
 
     private LayoutManager layoutManager;
+    private WindowManager windowManager;
 
     /* ******************
      *  CONSTRUCTORS    *
@@ -61,6 +64,8 @@ public class Textr
         else {
             this.layoutManager = new LayoutManager(new FileBufferView(size.getX(), size.getY(), new Point(1, 1), filepaths[0], newLine), 1, newLine);
         }
+        this.windowManager = new WindowManager(size.getY(), size.getX());
+        inputHandler.init();
         show();
         runApp();
     }
@@ -75,6 +80,7 @@ public class Textr
      */
     public Textr(String newLine, Layout layout ) {
         this.layoutManager = new LayoutManager(layout, 1, newLine);
+        this.windowManager = new WindowManager(10, 10);
     }
 
     /* **********************
@@ -83,12 +89,28 @@ public class Textr
 
     LayoutManager getLayoutManager() {return this.layoutManager;}
 
+    WindowManager getWindowManager() {return this.windowManager;}
+
     /** 
      * This method returns the layout
      * @return   | Layout, the layout of Textr
      */
     protected Layout getLayout() {
         return getLayoutManager().getLayout();
+    }
+
+    void setInputHandler(TerminalInterface handler){
+        inputHandler.clearInputListener();
+        inputHandler = handler;
+    }
+
+    void resetInputHandler(){
+        this.inputHandler = stdHandler;
+        runApp();
+    }
+
+    TerminalInterface getInputHandler(){
+        return inputHandler;
     }
 
 
@@ -114,83 +136,50 @@ public class Textr
      */
 
     public void runApp() {
-        terminalHandler.init();
         class App {
-
             App() {
-                javax.swing.Timer timer = new javax.swing.Timer(100, e -> handleFailure(() -> show()));
-                //timer.start();
-
-                JFrame dummyFrame = new JFrame();
-                dummyFrame.pack();
-                terminalHandler.setInputListener(new Runnable() {
+                show();
+                inputHandler.setInputListener(new Runnable() {
                     public void run(){
                         java.awt.EventQueue.invokeLater(() -> handleFailure(() -> {
-                            int c = terminalHandler.readByte(getNextDeadline());
+                            int c = inputHandler.readByte(getNextDeadline());
                             tick();
                             if (layoutManager.getFocusedView().getTick() != 0) show();
 
-                            if (c == 27) {                          //  ARROWS
-                                int c1 = terminalHandler.readByte();
+                            // Arrows
+                            if (c == 27) {
+                                int c1 = inputHandler.readByte();
                                 if (c1 == 91) {
-                                    int c2 = terminalHandler.readByte();
+                                    int c2 = inputHandler.readByte();
                                     if (c2 == 65) {
-                                        arrowPressed(Direction.NORD);  //UP
+                                        handleInput(-2);
                                     } else if (c2 == 66) {
-                                        arrowPressed(Direction.SOUTH);   //DOWN
+                                        handleInput(-3);
                                     } else if (c2 == 67) {
-                                        arrowPressed(Direction.EAST);   //RIGHT
+                                        handleInput(-4);
                                     } else if (c2 == 68) {
-                                        arrowPressed(Direction.WEST);  //LEFT
+                                        handleInput(-5);
                                     }
                                 }
                             }
+                            // Shift + F4
                             else if (c == 59) {
-                                int c1 = terminalHandler.readByte();
+                                int c1 = inputHandler.readByte();
                                 if (c1 == 50) {
                                     int c2 = 0;
-                                    c2 = terminalHandler.readByte();
-                                    if (c2 == 83) {         // Shift + F4
-                                        closeView();
+                                    c2 = inputHandler.readByte();
+                                    if (c2 == 83) {
+                                        handleInput(-6);
                                     }
                                 }
-                            } else if (c == 4) {
-                                duplicateView();            //  Ctrl + D
-                            } else if (c == 7) {
-                                openGameView();             //  Ctrl + G
-                                changeFocusNext();
-                            } else if (c == 10) {
-                                parseJson();
-                            } else if (c == 13) {             //  ENTER
-                                addNewLineBreak();
-                            } else if (c == 15) {
-                                openDirectoryView();
-                            } else if (c == 17) {
-                                closeView();
-                            } else if (c == 21) {             //  Ctrl + U
-                                redo();
-                            } else if (c == -1 || c == 26) {   //  Ctrl + Z
-                                undo();
-                            } else if (c == 127) {
-                                deleteChar();               //  BACKSPACE
-                            } else if (c == 14) {             //  Ctrl + N
-                                changeFocusNext();
-                            } else if (c == 16) {             //  Ctrl + P
-                                changeFocusPrevious();
-                            } else if (c == 18) {             //  Ctrl + R
-                                rotateView(1);
-                            } else if (c == 20) {             //  Ctrl + T
-                                rotateView(-1);
-                            } else if (c == 19) {             //  Ctrl + S
-                                saveBuffer();
-                            } else if (c == 23) {             //  Ctrl + W
-                                openWindow();
-                            } else if (c >= 32 && c <= 126) { //  Legal Chars
-                                addNewChar((char) c);
                             }
+
+                            // Ctrl keybindings + legal chars
+                            else {handleInput(c);}
+
                             if (layoutManager.getFocusedView().getTick() == 0 && c != 0) show();
                             else if (layoutManager.getFocusedView().getTick() != 0) show();
-                            terminalHandler.setInputListener(this);
+                            inputHandler.setInputListener(this);
                         }));
                     }
                 });
@@ -198,6 +187,104 @@ public class Textr
 
         }
         new App();
+    }
+
+
+    public void handleInput(int input) throws IOException {
+        switch (input){
+            case -2:           // UP
+                arrowPressed(Direction.NORD);
+                break;
+            case -3:           // DOWN
+                arrowPressed(Direction.SOUTH);
+                break;
+            case -4:           //RIGHT
+                arrowPressed(Direction.EAST);
+                break;
+            case -5:           // LEFT
+                arrowPressed(Direction.WEST);
+                break;
+            case -6:           // Shift + F4
+                closeView(inputHandler);
+                break;
+            case 4:             // Ctrl + D
+                duplicateView();
+                break;
+            case 7:             // Ctrl + G
+                openGameView();
+                changeFocusNext();
+                break;
+            case 10:            // Ctrl + J
+                parseJson();
+                break;
+            case 14:            // Ctrl + N
+                changeFocusNext();
+                break;
+            case 15:            // Ctrl + O
+                openDirectoryView();
+                break;
+            case 16:            // Ctrl + P
+                changeFocusPrevious();
+                break;
+            case 18:            // Ctrl + R
+                rotateView(1);
+                break;
+            case 19:            // Ctrl + S
+                saveBuffer();
+                break;
+            case 20:            // Ctrl + T
+                rotateView(-1);
+                break;
+            case 21:            // Ctrl + U
+                redo();
+                break;
+            case 23:            // Ctrl + W
+                openWindow();
+                break;
+            case 26: case -1:   // Ctrl + Z
+                undo();
+                break;
+            case 13:            // Enter
+                addNewLineBreak();
+                break;
+            case 127:           // Backspace
+                deleteChar();
+                break;
+
+            default:            // Legal Chars
+                if(input >= 32 && input <= 126) {
+                    addNewChar((char)input);
+                }
+        }
+        show();
+    }
+
+    /**
+     * Listener for keyEvent coming in from SwingWindow
+     * @param key : the int value of the pressed key
+     */
+    @Override
+    public void respondTo(int key) {
+        try {
+            handleInput(key);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Listener for changes in Operating system focus
+     * @param focussed : the TerminalHandler Interface belonging to the window that has focus
+     *                   null = Terminal
+     */
+    @Override
+    public void updateKeyboardFocus(TerminalInterface focussed) {
+        if(focussed==null)  {
+            resetInputHandler();
+        }
+        else {
+            setInputHandler(focussed);
+        }
     }
 
     /* **********************
@@ -289,8 +376,8 @@ public class Textr
      * @return:  | void
      * Visible for testing
      */
-    void closeView() throws IOException {
-        getLayoutManager().closeView();
+    void closeView(TerminalInterface printer) throws IOException {
+        getLayoutManager().closeView(printer);
     }
 
     /* ******************
@@ -398,8 +485,9 @@ public class Textr
     /* *****************
      * OPEN NEW WINDOW *
      * *****************/
+
     void openWindow() {
-        getLayoutManager().openWindow();
+        getWindowManager().openWindow(this);
     }
 
     void openDirectoryView() {
@@ -408,7 +496,6 @@ public class Textr
 
     void parseJson() {
         getLayoutManager().parseJson();
-
     }
 
     /* ******************
@@ -420,8 +507,8 @@ public class Textr
      * @return: void
      */
     void show() {
-        terminalHandler.clearScreen();
-        getLayoutManager().show();
+        inputHandler.clearScreen();
+        getLayoutManager().show(inputHandler);
         showCursor();
     }
 
@@ -431,7 +518,7 @@ public class Textr
      */
     private void showCursor() {
         Point cursor = getLayoutManager().getCursor();
-        terminalHandler.moveCursor(cursor.getX(), cursor.getY());
+        inputHandler.moveCursor(cursor.getX(), cursor.getY());
     }
 
     /*
@@ -446,10 +533,10 @@ public class Textr
     }
 
     /** 
-     * This method returns the size of the terminalHandler
-     * @return  | Point, the size of the terminalHandler
+     * This method returns the size of the inputHandler
+     * @return  | Point, the size of the inputHandler
      */
     private Point getSize() throws IOException {
-        return terminalHandler.getArea();
+        return inputHandler.getArea();
     }
 }

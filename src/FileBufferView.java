@@ -237,18 +237,18 @@ public class FileBufferView extends View {
      * @return  | FileBufferView || null
      */
     @Override
-    public FileBufferView closeView(int focus, CompositeLayout parent) throws IOException {
+    public FileBufferView closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
         if (getPosition() != focus) {
             return this;
         }
         else {
             if (getBuffer().getDirty()) {
-                showCloseErr();
+                showCloseErr(printer);
                 int c = 0;
                 long deadline = System.currentTimeMillis() + 3000;     // Testing purposes
                 while (c != 121 && c != 89 && c != 78 && c != 110) {
                     try {
-                        c = terminalHandler.readByte(deadline);
+                        c = printer.response(deadline);
                     } catch (TimeoutException e) {
                         c = 78;
                     }
@@ -268,9 +268,9 @@ public class FileBufferView extends View {
         }
     }
 
-    private void showCloseErr() {
-        terminalHandler.clearScreen();
-        terminalHandler.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
+    private void showCloseErr(TerminalInterface printer) {
+        printer.clearScreen();
+        printer.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
     }
 
     /* ******************

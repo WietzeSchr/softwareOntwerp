@@ -96,4 +96,12 @@ public class TerminalHandler implements TerminalInterface{
     public void setInputListener(Runnable runnable) {
         Terminal.setInputListener(runnable);
     }
+
+    @Override
+    public void clearInputListener() {Terminal.clearInputListener();}
+
+    @Override
+    public int response(long deadline) throws IOException, TimeoutException {
+        return readByte(deadline);
+    }
 }

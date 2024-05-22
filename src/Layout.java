@@ -201,11 +201,11 @@ public abstract class Layout {
      * @param focus | The index of the focused view
      * @return      | Layout, the new layout
      */
-    public Layout closeView(int focus) throws IOException {
+    public Layout closeView(int focus, TerminalInterface printer) throws IOException {
         int heigth = getHeigth();
         int width = getWidth();
         CompositeLayout parent = getFocusedView(focus).getParent();
-        Layout result = closeView(focus, parent);
+        Layout result = closeView(focus, parent, printer);
         if (result != null) {
             result.initViewPosition(1);
             result.updateSize(heigth, width, new Point(1, 1));
@@ -229,7 +229,7 @@ public abstract class Layout {
      * This method closes the buffer and updates the subLayouts
      * @return: Layout, the new layout after closing the buffer
      */
-    public abstract Layout closeView(int focus, CompositeLayout parent) throws IOException;
+    public abstract Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException;
 
     /* ******************
      *    SAVE BUFFER   *
@@ -448,7 +448,7 @@ public abstract class Layout {
      * This method shows the layout of the subLayouts
      * @return  | void
      */
-    public abstract void show();
+    public abstract void show(TerminalInterface printer);
 
     /* ******************
      *  HELP FUNCTIONS  *

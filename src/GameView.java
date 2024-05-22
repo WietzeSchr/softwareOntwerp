@@ -98,6 +98,14 @@ public class GameView extends View{
         }
     }
 
+    /* ******************
+     *   CLOSE BUFFER   *
+     * ******************/
+
+    @Override
+    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) {
+        return null;
+    }
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/

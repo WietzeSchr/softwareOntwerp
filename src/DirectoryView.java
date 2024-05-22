@@ -70,6 +70,11 @@ public class DirectoryView extends View{
      * ******************/
 
     @Override
+    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
+        return null;
+    }
+
+    @Override
     public void move(Direction dir) {
         if (dir == Direction.SOUTH) {
             setLine(getLine() + 1);

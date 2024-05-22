@@ -60,9 +60,10 @@ class LayoutTest {
         FileBuffer f3 = new FileBuffer(new String[]{"h", "ha", "hal", "hall", "hallo"}, "test3");
         FileBufferView fbv3 = new FileBufferView(1, 1, new Point(1, 1), f3);
         StackedLayout sl1 = new StackedLayout(1, 1, new Point(1, 1), new Layout[]{sbsl1, fbv3});
+        TerminalHandler th1 = new TerminalHandler();
         sl1.initViewPosition(1);
         sl1.updateSize(20, 20, new Point(1, 1));
-        CompositeLayout result = (CompositeLayout) sl1.closeView(1);
+        CompositeLayout result = (CompositeLayout) sl1.closeView(1, th1);
         assertEquals(result.getSubLayouts()[0].getHeigth(), 10);
         assertEquals(result.getSubLayouts()[1].getHeigth(), 10);
         assertEquals(result.getSubLayouts()[0].getWidth(), 20);
