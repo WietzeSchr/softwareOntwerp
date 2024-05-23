@@ -108,12 +108,8 @@ public class FileBufferView extends View {
         }
     }
 
-    Path getPath() {
-        return getBuffer().getFile().getPath();
-    }
-
     String getPathString() {
-        return getPath().toString();
+        return getBuffer().getPathString();
     }
 
     /* **********************
@@ -149,7 +145,7 @@ public class FileBufferView extends View {
     }
 
     public String getFileName() {
-        return getPath().getName();
+        return getBuffer().getName();
     }
 
     /** This method returns the position of the cursor
@@ -234,7 +230,7 @@ public class FileBufferView extends View {
     /** This method checks whether this View is focused. If this view is focused, the corresponding buffer
      *  whill close
      *  -   When the buffer is dirty, the user needs to press y or n to either discard the changes or close the buffer
-     * @return  | FileBufferView || null
+     * @return   FileBufferView || null
      */
     @Override
     public FileBufferView closeView(int focus, CompositeLayout parent, InputInterface printer) throws IOException {
@@ -362,11 +358,11 @@ public class FileBufferView extends View {
 
     public View[] getDirectoryView(LayoutManager manager) {
         String path = getParentPath();
-        return new View[] {new DirectoryView(getHeigth(), getWidth(), getLeftUpperCorner(), path, manager)};
+        return getBuffer().getDirectoryView(path, manager);
     }
 
     public String getParentPath() {
-        return getPath().getParentPath();
+        return getBuffer().getParentPath();
     }
 
     public View[] parseJson(LayoutManager manager) {

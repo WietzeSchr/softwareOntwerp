@@ -209,6 +209,7 @@ public class Textr implements SwingListener
                             }
 
                             // Ctrl keybindings + legal chars
+
                             else {
                                 handleInput(c);
                             }

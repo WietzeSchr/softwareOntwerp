@@ -76,15 +76,19 @@ public class LayoutManager {
      * Visible for testing
      */
     View getFocusedView() {
-        return getLayout().getFocusedView(getFocus());
+        if (getLayout() != null) return getLayout().getFocusedView(getFocus());
+        return null;
     }
 
     Point getCursor() {
-        return getFocusedView().getCursor();
+        if (getFocusedView() != null) return getFocusedView().getCursor();
+        return null;
     }
+
 
     int getDelay() {
         return getFocusedView().getDelay();
+
     }
 
     /* ******************
@@ -369,6 +373,6 @@ public class LayoutManager {
     }
 
     public Buffer getCurrentBuffer() {
-        return getFocusedView().getCurrentBuffer();
+         return getFocusedView().getCurrentBuffer();
     }
 }

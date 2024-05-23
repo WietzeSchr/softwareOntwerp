@@ -119,25 +119,6 @@ public class JsonValue extends FileSystemLeaf {
      * This method saves new content to this JsonValue and updates the original buffer containing the json object
      * @param newLine   The line seperator added to the content to get a single string
      * @param content   The content as an array of strings
-     */
-    @Override
-    public void save(String newLine, String[] content) {
-        StringBuilder text = new StringBuilder();
-        for (int i = 0; i < content.length; i++) {
-            text.append(content[i]);
-            if (i != content.length - 1) {
-                text.append(newLine);
-            }
-        }
-        setValue(text.toString());
-        getRoot().saveToBuffer();
-    }
-
-
-    /**
-     * This method saves new content to this JsonValue and updates the original buffer containing the json object
-     * @param newLine   The line seperator added to the content to get a single string
-     * @param content   The content as an array of strings
      * @param edits     The list of edits made in the Json Buffer. Used for save edit
      */
     @Override
@@ -154,7 +135,7 @@ public class JsonValue extends FileSystemLeaf {
             }
         }
         setValue(text.toString());
-        getRoot().saveToBuffer(text.toString(), mappedEdits);
+        getRoot().saveToBuffer(mappedEdits);
     }
 
     /* ******************
@@ -163,7 +144,7 @@ public class JsonValue extends FileSystemLeaf {
 
     /**
      * Method needed for compiling without SDK 19 preview 3 (handling switch in JsonGenerator)
-     * @param generator
+     * @param generator     The generator
      */
     @Override
     public void generate(SimpleJsonGenerator generator) {
@@ -176,7 +157,7 @@ public class JsonValue extends FileSystemLeaf {
 
 
     /**
-     * This method opens a new view for the current JsonValue
+     * This method opens a new view for this JsonValue
      * @param manager   The Layout Manager, not used for JsonValue
      * @param buffer    JsonBuffer if there already was a view on this JsonValue
      * @param newLine   The line seperator used to read the string of this JsonValue

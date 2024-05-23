@@ -1,7 +1,4 @@
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 /* ***********************
@@ -12,76 +9,59 @@ public class Directory extends FileSystemNode {
     /* ***************
      *  CONSTRUCTORS *
      *****************/
+
+    /**
+     * This constructor creates a new directory
+     * @param absPath   The absolute path of the directory
+     */
     public Directory(String absPath) {
         super(new FilePath(absPath));
     }
 
+    /**
+     * This constructor creates a new subdirectory
+     * @param absPath   The absolute path of the directory
+     * @param parent    The parent of the directory
+     */
     public Directory(String absPath, Directory parent) {
         super(new FilePath(absPath), parent);
     }
 
+    /**
+     * This method reads the directory, used for initializing directory entries
+     * @return  FilSystemEntry[]    The entries of the directory (first entry is parent if this directory had a parent)
+     */
     @Override
     FileSystemEntry[] readNode() {
         ArrayList<FileSystemEntry> subNodes = new ArrayList<>();
-        Collections.addAll(subNodes, readSubNodes());
-        Collections.addAll(subNodes, readLeaves());
-        return subNodes.toArray(new FileSystemEntry[0]);
-    }
-
-    FileSystemNode[] readSubNodes() {
         String absDirPath = getPathString();
-        List<Directory> resultList = new ArrayList<>();
         java.io.File[] files = new java.io.File(absDirPath).listFiles();
         if (getParentPath() != null) {
-            resultList.add(null);
+            subNodes.add(getParent());
         }
         for (int i = 0; i < Objects.requireNonNull(files).length; i++) {
             if (files[i].isDirectory()) {
-                resultList.add(new Directory(files[i].getAbsolutePath() + "/", this));
+                subNodes.add(new Directory(files[i].getAbsolutePath() + "/", this));
+            }
+            if (files[i].isFile()) {
+                subNodes.add(new File(files[i].getAbsolutePath(), this));
             }
         }
-        return resultList.toArray(new Directory[0]);
+        return subNodes.toArray(new FileSystemEntry[0]);
     }
 
-    FileSystemLeaf[] readLeaves() {
-        String absDirPath = getPathString();
-        List<File> resultList = new ArrayList<>();
-        java.io.File[] flist = new java.io.File(absDirPath).listFiles();
-        for (int i = 0; i < flist.length; i++) {
-            if (flist[i].isFile()) {
-                resultList.add(new File(flist[i].getAbsolutePath(), this));
-            }
-        }
-        return resultList.toArray(new File[0]);
-    }
+    /* ******************
+     *  JSON GENERATOR  *
+     * ******************/
 
-    /* **************
-     *  OPEN ENTRY  *
-     * **************/
-
-    @Override
-    public View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException {
-        FileSystemEntry entry = getEntry(line);
-        if (entry == null) {
-            return new DirectoryView(5,5, new Point(1,1), getParentPath(), manager);
-        }
-        return entry.open(manager, buffer, newLine);
-    }
-
+    /**
+     * Method needed for compiling without SDK 19 preview 3 (handling switch in JsonGenerator)
+     * @param generator     The generator
+     */
     @Override
     public void generate(SimpleJsonGenerator generator) {
         generator.generateDir(this);
     }
-
-    @Override
-    protected void saveToBuffer() {}
-
-    /* ******************
-     *    CLOSE ENTRY   *
-     * ******************/
-
-    @Override
-    protected void close() {}
 
     /* ******************
      *  HELP FUNCTIONS  *

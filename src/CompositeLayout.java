@@ -88,8 +88,9 @@ public abstract class CompositeLayout extends Layout {
 
     /**
      * This method closes the buffer at the given focus and returns the new focused layout and updates the subLayouts
-     * @param focus the focussed view
-     * @param parent the parent of the view
+     * @param focus     The focussed view
+     * @param parent    The parent of the view
+     * @param printer   The terminalInterface to print errors
      * @post getSubLayouts().length == countSubLayouts() - 1
      * @return: Layout, the new layout after closing the current focused view
      */

@@ -1,7 +1,6 @@
 /* *************************
  *   JSON EDIT LOCK CLASS  *
  * *************************/
-
 public class JsonEditLock {
 
     private int jsonViewCount;
@@ -39,9 +38,6 @@ public class JsonEditLock {
     }
 
     public boolean isLocked() {
-        if (getJsonViewCount() > 0) {
-            return true;
-        }
-        return false;
+        return getJsonViewCount() > 0;
     }
 }
