@@ -74,6 +74,11 @@ class JsonBuffer extends Buffer {
     public void close() {
         getFile().close();
     }
+
+    @Override
+    public View[] getDirectoryView(String path, LayoutManager manager) {
+        return new View[] {};
+    }
 }
 
 public abstract class Buffer {
@@ -422,6 +427,22 @@ public abstract class Buffer {
 
     public abstract void close();
 
+    public String getPathString() {
+        return getFile().getPathString();
+    }
+
+    public String getName() {
+        return getFile().getName();
+    }
+
+    public String getParentPath() {
+        return getFile().getParentPath();
+    }
+
+    public View[] getDirectoryView(String path, LayoutManager manager) {
+        return new View[] {new DirectoryView(1,1, new Point(1,1), path, manager)};
+    }
+
 
     /* *******************
      *   ABSTRACT EDIT   *
@@ -679,15 +700,8 @@ public abstract class Buffer {
 
     public void saveBuffer(String newLine) throws IOException {
         clearEdits();
-        getFile().save(newLine, getContent());
+        getFile().save(newLine, getContent(), null);
         setDirty(false);
-    }
-    /* ******************
-     *   TEST LASTEDIT  *
-     * ******************/
-
-    boolean lastEditIsEmptyEdit() {
-        return getLastEdit().getClass() == EmptyEdit.class;
     }
 
     /* *******************

@@ -75,15 +75,18 @@ public class LayoutManager {
      * Visible for testing
      */
     View getFocusedView() {
-        return getLayout().getFocusedView(getFocus());
+        if (getLayout() != null) return getLayout().getFocusedView(getFocus());
+        return null;
     }
 
     Point getCursor() {
-        return getFocusedView().getCursor();
+        if (getFocusedView() != null) return getFocusedView().getCursor();
+        return null;
     }
 
     long getTick() {
-        return getFocusedView().getTick();
+        if (getFocusedView() != null) return getFocusedView().getTick();
+        return 0;
     }
 
     /* ******************
@@ -300,11 +303,13 @@ public class LayoutManager {
      * @return: void
      */
     void show(TerminalInterface printer) {
-        setFocus(getLayout().getNewFocus(getFocus()));
-        View focused = getFocusedView();
-        initViewPositions();
-        setFocus(focused.getPosition());
-        getLayout().show(printer);
+        if (getLayout() != null) {
+            setFocus(getLayout().getNewFocus(getFocus()));
+            View focused = getFocusedView();
+            initViewPositions();
+            setFocus(focused.getPosition());
+            getLayout().show(printer);
+        }
     }
 
     /* ******************
@@ -377,6 +382,6 @@ public class LayoutManager {
     }
 
     public Buffer getCurrentBuffer() {
-        return getFocusedView().getCurrentBuffer();
+         return getFocusedView().getCurrentBuffer();
     }
 }

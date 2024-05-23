@@ -1,5 +1,4 @@
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /* *************************
  *   DIRECTORY VIEW CLASS  *
@@ -101,7 +100,7 @@ public class DirectoryView extends View{
 
     /**
      * This method opens a buffer for when a file should be opened. It first checks if there already exists a
-     * buffer with the same path, if not a new filebuffer is opened
+     * buffer with the same path, if not a new fileBuffer is opened
      * @param path      The absolute path of the file
      * @param newLine   The line separator to read files
      * @return          Buffer
