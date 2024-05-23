@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
-public class SwingWindow extends JFrame implements TerminalInterface {
+public class SwingWindow extends JFrame implements InputInterface {
 
     class TerminalPanel extends JPanel {
         char[][] buffer;
@@ -88,6 +88,7 @@ public class SwingWindow extends JFrame implements TerminalInterface {
         listenerService = new SwingListenerService(textr);
         listenerService.fireFocusEvent(this);
 
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
         setResizable(false);
 
@@ -129,8 +130,18 @@ public class SwingWindow extends JFrame implements TerminalInterface {
 
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                listenerService.fireFocusEvent(null);
+            public void windowClosed(WindowEvent e) {
+                listenerService.fireCloseEvent((SwingWindow) e.getSource());
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e){
+                listenerService.fireFocusEvent((SwingWindow) e.getSource());
+            }
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                listenerService.fireFocusEvent((SwingWindow) e.getSource());
             }
         });
         pack();
@@ -161,7 +172,13 @@ public class SwingWindow extends JFrame implements TerminalInterface {
     public void init() {}
 
     @Override
-    public void close() {}
+    public void close(int openWindows) {
+        dispose();
+    }
+
+    @Override
+    public void prepareToClose(){}
+
 
     @Override
     public void moveCursor(int row, int column) {

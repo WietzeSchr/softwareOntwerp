@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -6,7 +7,7 @@ public class LayoutManager {
     private int focus;
     private String newLine;
 
-    LayoutManager(Layout layout, int focus, String newLine){
+    LayoutManager(Layout layout, int focus, String newLine) throws IOException {
         this.layout = layout;
         this.focus = focus;
         this.newLine = newLine;
@@ -82,8 +83,8 @@ public class LayoutManager {
         return getFocusedView().getCursor();
     }
 
-    long getTick() {
-        return getFocusedView().getTick();
+    int getDelay() {
+        return getFocusedView().getDelay();
     }
 
     /* ******************
@@ -166,7 +167,7 @@ public class LayoutManager {
      * @return:  | void
      * Visible for testing
      */
-    void closeView(TerminalInterface printer) throws IOException {
+    void closeView(InputInterface printer) throws IOException {
         setLayout(getLayout().closeView(getFocus(), printer));
         if (getLayout() != null) {
             setFocus(getLayout().getNewFocus(getFocus()));
@@ -299,7 +300,8 @@ public class LayoutManager {
      * This method shows the layout on the Terminal
      * @return: void
      */
-    void show(TerminalInterface printer) {
+    void show(InputInterface printer) {
+        if(getLayout() == null) {return;}
         setFocus(getLayout().getNewFocus(getFocus()));
         View focused = getFocusedView();
         initViewPositions();
@@ -350,16 +352,6 @@ public class LayoutManager {
     /* ************
      *   HELP     *
      * ************/
-    /**
-     * This method returns the next deadline. If the focused view is a FileBufferView the nextDeadline is the current
-     * time. If the focused view is a GameView the nextDeadline is the time of the last tick + the time in between ticks
-     * of the Game
-     * @return   | long, the next deadline
-     * Visible for testing
-     */
-    long getNextDeadline() {
-        return getLayout().getNextDeadline(getFocus());
-    }
 
     Buffer getBufferByName(String path) {
         return getLayout().getBufferByName(path);

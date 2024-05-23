@@ -1,20 +1,22 @@
 import javax.swing.*;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class WindowManager {
 
     private ArrayList<SwingWindow> swingWindows = new ArrayList<>();
-    private Dictionary<TerminalInterface, LayoutManager> layoutManagers = new Hashtable<>();
+    private Dictionary<InputInterface, LayoutManager> layoutManagers = new Hashtable<>();
 
     int width;
     int heigth;
 
-    public WindowManager(int width, int heigth, LayoutManager layoutManager, TerminalInterface terminalHandler){
-        JFrame dummyFrame = new JFrame();
+    JFrame dummyFrame;
+
+    public WindowManager(int width, int heigth, LayoutManager layoutManager, InputInterface terminalHandler){
+        dummyFrame = new JFrame();
         dummyFrame.pack();
         this.width = width;
         this.heigth = heigth;
@@ -29,7 +31,7 @@ public class WindowManager {
         return swingWindows.size();
     }
 
-    public LayoutManager getLayoutManager(TerminalInterface inputHandler){
+    public LayoutManager getLayoutManager(InputInterface inputHandler){
         return layoutManagers.get(inputHandler);
     }
 
@@ -51,12 +53,21 @@ public class WindowManager {
         swingWindows.add(newWindow);
         Layout lay = layoutManager.getLayout();
         FileBufferView fbv = new FileBufferView(lay.getHeigth(), lay.getWidth(), lay.getLeftUpperCorner(), currBuffer);
-        layoutManagers.put(newWindow, new LayoutManager(fbv, 1, newLine));
+        try {
+            layoutManagers.put(newWindow, new LayoutManager(fbv, 1, newLine));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void closeWindow(SwingWindow window) {
         swingWindows.remove(window);
         layoutManagers.remove(window);
-        window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+        //window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        //window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+    }
+
+    public void close(){
+        dummyFrame.dispatchEvent(new WindowEvent(dummyFrame, WindowEvent.WINDOW_CLOSING));
     }
 }

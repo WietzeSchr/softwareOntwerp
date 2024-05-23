@@ -6,8 +6,6 @@ import java.util.Arrays;
 public class GameView extends View{
     private Game game;
 
-    private long lastMove;
-
     /* ******************
      *  CONSTRUCTORS    *
      * ******************/
@@ -22,7 +20,6 @@ public class GameView extends View{
     public GameView(int height, int width, Point leftUpperCorner) {
         super(height, width, leftUpperCorner);
         this.game = new Game(height - 1, width - 1);
-        this.lastMove = System.currentTimeMillis();
     }
 
     /* **********************
@@ -47,23 +44,6 @@ public class GameView extends View{
         return game;
     }
 
-    /**
-     * This method sets the last move of the GameView to the given parameter newLastMove
-     * @post | getLastMove() == newLastMove
-     * @param newLastMove | The new last move of the GameView
-     * @return            | void
-     */
-    public void setLastMove(long newLastMove) {
-        this.lastMove = newLastMove;
-    }
-
-    /**
-     * This method returns the last move of the GameView
-     * @return  | long, the last move of the GameView
-     */
-    public long getLastMove() {
-        return lastMove;
-    }
 
     /* ******************
      *  INSPECT CONTENT *
@@ -183,22 +163,14 @@ public class GameView extends View{
      *    RUN SNAKE   *
      * ****************/
 
-    /**
-     * This method returns the next deadline of the game which is the last move + the tick
-     * @return  | long, the next deadline
-     */
-    @Override
-    public long getNextDeadline() {
-        return getLastMove() + getTick();
-    }
 
     /**
      * This method returns the current tick of the system
      * @return  | long, the current tick
      */
     @Override
-    public long getTick() {
-        return getGame().getTick();
+    public int getDelay() {
+        return getGame().getDelay();
     }
 
     /**
@@ -207,7 +179,6 @@ public class GameView extends View{
      */
     public void tick() {
         getGame().tick();
-        setLastMove(System.currentTimeMillis());
     }
 
     /**

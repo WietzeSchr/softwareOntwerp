@@ -20,7 +20,7 @@ public class Game {
 
     private Snake snake;
 
-    private long tick;
+    private int delay;
 
     private int score;
 
@@ -38,7 +38,7 @@ public class Game {
      */
     public Game(int heigth, int width) {
         this.grid = new int[heigth][width];
-        this.tick = 1000;
+        this.delay = 1000;
         ArrayList<Point> snake = new ArrayList<>();
         int i = (int) Math.floor((float) heigth / 2);
         int j = (int) Math.floor((float) width / 2);
@@ -106,21 +106,21 @@ public class Game {
     }
 
     /**
-     * This method sets the tick of the Game to the given parameter newTick
-     * @param newTick  | The new tick of the Game
-     * @post    | getTick() == newTick
+     * This method sets the delay of the Game to the given parameter newTick
+     * @param newDelay  | The new delay of the Game
+     * @post    | getDelay() == newDelay
      * @return  | void
      */
-    public void setTick(long newTick) {
-        this.tick = newTick;
+    public void setDelay(int newDelay) {
+        this.delay = newDelay;
     }
 
     /**
-     * This method returns the tick of the Game
-     * @return  | long, the tick of the Game
+     * This method returns the delay of the Game
+     * @return  | int, the delay of the Game
      */
-    public long getTick() {
-        return tick;
+    public int getDelay() {
+        return delay;
     }
 
     /**
@@ -255,7 +255,7 @@ public class Game {
         if (getGridAt(getSnake().getHead()) == 1) {
             setGridAt(0, getSnake().getHead());
             spawnApple();
-            setTick(getTick() * (100 - P) / 100);
+            setDelay(getDelay() * (100 - P) / 100);
             setScore(getScore() + K);
             return true;
         }

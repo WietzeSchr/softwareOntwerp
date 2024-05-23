@@ -162,18 +162,4 @@ class LayoutTest {
         assertEquals(sbsl1.getSubLayouts()[2].getWidth(), 10);
         assertEquals(sbsl1.getSubLayouts()[2].getLeftUpperCorner(), new Point(1, 21));
     }
-
-    @Test
-    void testGetNextDeadline() {
-        FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3"}, "test1");
-        FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
-        FileBuffer f2 = new FileBuffer(new String[] {"t", "te", "tes", "test"}, "test2");
-        FileBufferView fbv2 = new FileBufferView(1, 1, new Point(1,1), f2);
-        SideBySideLayout sbsl1 = new SideBySideLayout(1, 1, new Point(1,1), new Layout[] {fbv1, fbv2});
-        GameView gv = new GameView(10, 10, new Point(1, 1));
-        StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, gv});
-        sl1.initViewPosition(1);
-        assertTrue(sl1.getNextDeadline(3) - (System.currentTimeMillis() + 1000) <= 1);
-        assertTrue(sl1.getNextDeadline(1) - System.currentTimeMillis() <= 1);
-    }
 }

@@ -199,17 +199,14 @@ public abstract class View extends Layout {
      *    RUN SNAKE   *
      * ****************/
 
-    /**
-     * This method returns the next deadline of the system
-     * @return  | long, the next deadline
-     */
-    public abstract long getNextDeadline();
 
     /**
-     * This method returns the current tick of the system
-     * @return  | long, the current tick
+     * This method returns the current delay of the system
+     * @return  | int, the current delay
      */
-    public abstract long getTick();
+    public int getDelay(){
+        return 0;
+    }
 
     /**
      * This method ticks the game
@@ -232,7 +229,7 @@ public abstract class View extends Layout {
         return this;
     }
 
-    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent, InputInterface printer) throws IOException {
         if (getPosition() == focus ) return null;
         return this;
     }
@@ -266,7 +263,7 @@ public abstract class View extends Layout {
      * This method shows the content of the FileBufferView and the updated scrollbars
      * @return  | void
      */
-    public void show(TerminalInterface printer) {
+    public void show(InputInterface printer) {
         String[] toShow = makeShow();
         String horizontalBar = makeHorizontalScrollBar();
         if (horizontalBar.length() > getWidth()) horizontalBar = horizontalBar.substring(0, getWidth());
