@@ -12,7 +12,7 @@ class GameTest {
         Point[] points = new Point[] {new Point(1,1), new Point(1,2),
                 new Point(1,3), new Point(1,4), new Point(1,5)};
         Game game = new Game(9, 19);
-        //assertEquals(game.getTick(), 1000);
+        assertEquals(game.getDelay(), 1000);
         assertEquals(game.getSnake(), new Snake(new ArrayList<>(List.of(new Point[] {new Point(4,9), new Point(4,10), new Point(4,11),
                 new Point(4,12),new Point(4,13),new Point(4,14)})), Direction.WEST));
         assertEquals(game.getScore(), 0);
@@ -28,8 +28,8 @@ class GameTest {
         assertEquals(game.getSnake(), snake);
         game.setScore(50);
         assertEquals(game.getScore(), 50);
-        //game.setTick(900);
-        //assertEquals(game.getTick(), 900);
+        game.setDelay(900);
+        assertEquals(game.getDelay(), 900);
         assertEquals(game.getGrid().length, 9);
         assertEquals(game.getGrid()[0].length, 19);
         for (int i = 1; i < game.getGrid().length + 1; i++) {
@@ -118,7 +118,7 @@ class GameTest {
         game.setGridAt(1, new Point(1, 1));
         assertTrue(game.eatApple());
         assertEquals(game.countApples(), 1);
-        //assertEquals(game.getTick(), 990);
+        assertEquals(game.getDelay(), 990);
         assertEquals(game.getScore(), 10);
     }
 
@@ -139,5 +139,19 @@ class GameTest {
         game.setSnake(snake);
         game.setGridAt(1, new Point(2,1));
         assertArrayEquals(game.getAbstractGrid(), new char[][] {{'v', 'o', 'o', 'o', '-', ' '}, {'*', ' ', ' ', ' ', ' ', ' '}});
+    }
+
+    @Test
+    void findBestFit(){
+        Point[] points = new Point[] {new Point(1,4), new Point(1,5),
+                new Point(1,6)};
+        Snake snake = new Snake(new ArrayList<>(List.of(points)), Direction.WEST);
+        Game game = new Game(2, 7);
+        game.setSnake(snake);
+        assertArrayEquals(game.getAbstractGrid(), new char[][] {{' ',' ',' ','<','o','-',' '},
+                                                                {' ',' ',' ',' ',' ',' ',' '}});
+        game.updateSize(2, 4);
+        assertArrayEquals(game.getAbstractGrid(), new char[][] {{' ',' ',' ',' '},
+                                                                {' ',' ','<','o'}});
     }
 }
