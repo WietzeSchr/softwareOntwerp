@@ -15,11 +15,11 @@ class FileBuffer extends Buffer {
     /**
      * This constructor creates a new FileBuffer object with the given path and newLine
      *
-     * @param path    | The path of the file
-     * @param newLine | The new line separator
-     * @post | getPath() == path
-     * @post | getContent() == getFile().load(newLine)
-     * @post | getDirty() == false
+     * @param path     The path of the file
+     * @param newLine  The new line separator
+     * @post           getPath() == path
+     * @post           getContent() == getFile().load(newLine)
+     * @post           getDirty() == false
      */
     public FileBuffer(String path, String newLine) throws FileNotFoundException {
         super(new File(path), newLine);
@@ -28,27 +28,32 @@ class FileBuffer extends Buffer {
     /**
      * This constructor creates a new FileBuffer object with the given content and path
      *
-     * @param content | The content of the file
-     * @param path    | The path of the file
-     * @post | getPath() == path
-     * @post | getContent() == content
-     * @post | getDirty() == false
+     * @param content   The content of the file
+     * @param path      The path of the file
+     * @post            getPath() == path
+     * @post            getContent() == content
+     * @post            getDirty() == false
      */
     public FileBuffer(String[] content, String path) {
         super(new File(path), content);
-    }
-
-    @Override
-    public void close() {
     }
 }
 
 class JsonBuffer extends Buffer {
 
+    /**
+     * This constructor creates a new JsonBuffer
+     * @param value     The JsonValue of the buffer
+     * @param newLine   The line seperator used
+     */
     public JsonBuffer(JsonValue value, String newLine) throws FileNotFoundException {
         super(value, newLine);
     }
 
+    /**
+     * This method returns the edits made to get to the current buffer state
+     * @return  Edit[]
+     */
     public Edit[] getCurrentEdits() {
         Edit lastEdit = getLastEdit();
         Edit firstEdit = getLastEdit();
@@ -63,6 +68,10 @@ class JsonBuffer extends Buffer {
         return edits.toArray(new Edit[0]);
     }
 
+    /**
+     * This method saves the content of the buffer to the JsonValue
+     * @param newLine   The line seperator used
+     */
     @Override
     public void saveBuffer(String newLine) throws IOException {
         Edit[] edits = getCurrentEdits();
@@ -70,11 +79,12 @@ class JsonBuffer extends Buffer {
         setDirty(false);
     }
 
-    @Override
-    public void close() {
-        getFile().close();
-    }
-
+    /**
+     * This method opens the directory the current file is in, does nothing for JsonValue
+     * @param path      The absolute path of the directory
+     * @param manager   The LayoutManager
+     * @return          View[]  The new views
+     */
     @Override
     public View[] getDirectoryView(String path, LayoutManager manager) {
         return new View[] {};
@@ -95,52 +105,124 @@ public abstract class Buffer {
 
     private final JsonEditLock lock = new JsonEditLock();
 
-    public Buffer(FileSystemLeaf file, String newLine) throws FileNotFoundException {
-        this.file = file;
+    /**
+     * This constructor creates a new Buffer
+     * @param fsLeaf    The FileSystemLeaf
+     * @param newLine   The line seperator used
+     * @throws FileNotFoundException
+     */
+    public Buffer(FileSystemLeaf fsLeaf, String newLine) throws FileNotFoundException {
+        this.file = fsLeaf;
         this.dirty = false;
         this.content = file.load(newLine);
         this.lastEdit = new EmptyEdit();
     }
 
-    public Buffer(FileSystemLeaf file, String[] content) {
-        this.file = file;
+    /**
+     * This constructor creates a new buffer
+     * @param fsLeaf    The FileSystemLeaf
+     * @param content   The content of the buffer
+     */
+    public Buffer(FileSystemLeaf fsLeaf, String[] content) {
+        this.file = fsLeaf;
         this.dirty = false;
         this.content = content;
         this.lastEdit = new EmptyEdit();
     }
 
+    /**
+     * This method returns the content of the buffer
+     * @return  String[]    content
+     */
     public String[] getContent() {
         return content;
     }
 
+    /**
+     * This method sets the content to the new content
+     * @param newContent    The new content
+     */
     public void setContent(String[] newContent) {
         this.content = newContent;
     }
 
+    /**
+     * This method returns the FileSystemLeaf of this buffer
+     * @return  FileSystemLeaf
+     */
     public FileSystemLeaf getFile() {
         return file;
     }
 
+    /**
+     * This method sets the FileSystemLeaf to the new leaf
+     * @param newFile   The new FileSystemLeaf
+     */
     public void setFile(FileSystemLeaf newFile) {
         this.file = newFile;
     }
 
+    /**
+     * This method returns true if the buffer is dirty, returns else otherwise
+     * @return  boolean
+     */
     public boolean getDirty() {
         return dirty;
     }
 
+    /**
+     * This method marks the buffer as being dirty or not
+     * @param dirty new mark
+     */
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
     }
+
 
     private JsonEditLock getLock() {
         return lock;
     }
 
+    /**
+     * This method sets the last edit to the new last edit
+     * @param newLastEdit   The new last edit
+     */
+    public void setLastEdit(Edit newLastEdit) {
+        this.lastEdit = newLastEdit;
+    }
+
+    /**
+     * This method returns the last edit
+     * @return  Edit
+     */
+    public Edit getLastEdit() {
+        return lastEdit;
+    }
+
+    /**
+     * This method clears the edits of the buffer
+     */
+    protected void clearEdits() {
+        setLastEdit(new EmptyEdit());
+    }
+
+    /* **********************
+     *  DERIVED ATTRIBUTES  *
+     * **********************/
+
+    /**
+     * This method returns the amount of rows in this buffer
+     * @return  int
+     */
     public int getRowCount() {
         return getContent().length;
     }
 
+    /**
+     * This method return the amount of columns in this buffer
+     * This is equal to the maximum line length
+     * @return  int
+     */
     public int getColumnCount() {
         String[] content = getContent();
         int result = 1;
@@ -154,6 +236,10 @@ public abstract class Buffer {
         return result;
     }
 
+    /**
+     * This method returns the amount of characters in the buffer
+     * @return  int
+     */
     public int countCharacters() {
         int result = 0;
         for (String row : getContent()) {
@@ -162,38 +248,26 @@ public abstract class Buffer {
         return result;
     }
 
-    public void setLastEdit(Edit newLastEdit) {
-        this.lastEdit = newLastEdit;
-    }
-
-    public Edit getLastEdit() {
-        return lastEdit;
-    }
-
-    protected void clearEdits() {
-        setLastEdit(new EmptyEdit());
-    }
-
     /* **********************
      *  EDIT BUFFER CONTENT *
      ************************/
 
+    /**
+     * This method adds a new line break and adds a new edit object representing this linebreak
+     * @param insert        The insertion point before adding the linebreak
+     * @param newInsert     The insertion point after adding the linebreak
+     */
     public void insertLineBreak(Point insert, Point newInsert) {
         NonEmptyEdit nextEdit = new Insertion((char) 13, insert, newInsert);
-        nextEdit.setPrevious(getLastEdit());
-        getLastEdit().setNext(nextEdit);
-        setLastEdit(nextEdit);
+        addEdit(nextEdit);
         insertLineBreak(insert);
     }
 
     /**
-     * This method inserts a line break at the insertion point and sets the buffer to dirty
-     *
-     * @return | void
-     * @post | getDirty() == true
+     * This method adds a new line break at the given insertion point
+     * @param insert    The insertion point
      */
     public void insertLineBreak(Point insert) {
-
         if (isNotLocked()) {
             int row = insert.getX() - 1;
             int col = insert.getY() - 1;
@@ -209,23 +283,24 @@ public abstract class Buffer {
         }
     }
 
+    /**
+     * This method adds a new char at the insertion point and makes a new edit object representing this insertion
+     * @param c         The added character
+     * @param insert    The insertion point before the character was added
+     * @param newInsert The insertion point after the character is added
+     */
     public void addNewChar(char c, Point insert, Point newInsert) {
         Edit nextEdit = new Insertion(c, insert, newInsert);
-        nextEdit.setPrevious(getLastEdit());
-        getLastEdit().setNext(nextEdit);
-        setLastEdit(nextEdit);
+        addEdit(nextEdit);
         addNewChar(c, insert);
     }
 
     /**
-     * This method adds a new character to the buffer and sets the buffer to dirty and moves the insertion point
-     *
-     * @param c      | The character to add
-     * @param insert | The insertion point
-     * @return | void
-     * @post | getDirty() == true
+     * This method adds a new char at the given insertion point
+     * @param c         The character to be added
+     * @param insert    The point of insertion
      */
-    public void addNewChar(char c, Point insert) {  //  Hier geeft substring soms een CheckBoundsBeginEnd Error !
+    public void addNewChar(char c, Point insert) {
         if (isNotLocked()) {
             String[] content = getContent();
             if (content.length == 0) {
@@ -262,22 +337,23 @@ public abstract class Buffer {
         }
     }
 
+    /**
+     * This method deletes a character and makes a new edit object representing this deletion
+     * @param insert    The insertion point before the deletion
+     * @param newInsert The insertion point after the deletion
+     */
     public void deleteChar(Point insert, Point newInsert) {
         char c = deleteChar(insert);
         if (c != (char) 1) {
             Edit nextEdit = new Deletion(c, insert, newInsert);
-            nextEdit.setPrevious(getLastEdit());
-            getLastEdit().setNext(nextEdit);
-            setLastEdit(nextEdit);
+            addEdit(nextEdit);
         }
     }
 
     /**
-     * This method deletes a character from the buffer and sets the buffer to dirty and moves the insertion point
-     *
-     * @param insert | the insertion point
-     * @return | void
-     * @post | getDirty() == true
+     * This method deletes a character from the buffer at the given insertion point
+     * @param insert    The insertion point
+     * @return  char    The deleted character
      */
     public char deleteChar(Point insert) {
         char c = (char) 1;
@@ -325,6 +401,25 @@ public abstract class Buffer {
             return c;
         }
         return c;
+    }
+
+    /**
+     * This method adds a new edit to the edit chain
+     * @param newEdit   The edit to be added
+     */
+    private void addEdit(Edit newEdit) {
+        newEdit.setPrevious(getLastEdit());
+        getLastEdit().setNext(newEdit);
+        setLastEdit(newEdit);
+    }
+
+    /**
+     * This method adds a new save edit containing a list of edits to be undone or redone at once
+     * @param edits The list of edits
+     */
+    public void addSaveEdit(Edit[] edits) {
+        SaveEdit newEdit = new SaveEdit(edits);
+        addEdit(newEdit);
     }
 
     /* ***************
@@ -385,6 +480,16 @@ public abstract class Buffer {
         }
     }
 
+    /* ******************
+     *   CLOSE VIEW     *
+     * ******************/
+    public void close() {
+        getFile().close();
+    }
+
+    /* ******************
+     *   JSON LOCKING   *
+     * ******************/
 
     protected void acquireLock() {
         getLock().acquireNewLock();
@@ -397,6 +502,10 @@ public abstract class Buffer {
     public boolean isNotLocked() {
         return !getLock().isLocked();
     }
+
+    /* ******************
+     *  HELP FUNCTIONS  *
+     * ******************/
 
     /**
      * This method sets the insertion point of the buffer to the given parameter insertionPoint
@@ -418,15 +527,6 @@ public abstract class Buffer {
         return insertionPoint;
     }
 
-    public void addSaveEdit(Edit[] edits) {
-        SaveEdit newEdit = new SaveEdit(edits);
-        getLastEdit().setNext(newEdit);
-        newEdit.setPrevious(getLastEdit());
-        setLastEdit(newEdit);
-    }
-
-    public abstract void close();
-
     public String getPathString() {
         return getFile().getPathString();
     }
@@ -442,7 +542,6 @@ public abstract class Buffer {
     public View[] getDirectoryView(String path, LayoutManager manager) {
         return new View[] {new DirectoryView(1,1, new Point(1,1), path, manager)};
     }
-
 
     /* *******************
      *   ABSTRACT EDIT   *
@@ -557,6 +656,7 @@ public abstract class Buffer {
     class SaveEdit extends Edit {
 
         Edit[] edits;
+        
         public SaveEdit(Edit[] edits) {
             super();
             this.edits = edits;
@@ -752,10 +852,6 @@ public abstract class Buffer {
             }
         }
     }
-
-    /* ******************
-     *  HELP FUNCTIONS  *
-     * ******************/
 
     /* *******************
      *   DELETION EDIT   *
