@@ -8,7 +8,7 @@ import java.util.Hashtable;
 public class WindowManager {
 
     private ArrayList<SwingWindow> swingWindows = new ArrayList<>();
-    private Dictionary<TerminalInterface, LayoutManager> layoutManagers= new Hashtable<>();
+    private Dictionary<TerminalInterface, LayoutManager> layoutManagers = new Hashtable<>();
 
     int width;
     int heigth;
@@ -24,6 +24,7 @@ public class WindowManager {
     /***********
      * Getters *
      ***********/
+
     public int getWindowCount(){
         return swingWindows.size();
     }
