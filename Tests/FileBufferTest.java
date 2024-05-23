@@ -9,7 +9,7 @@ class FileBufferTest {
     void testConstructor() throws IOException {
         FileBuffer fb1 = new FileBuffer(new String[] {"testtest", "1", "", "2"}, "test1.txt");
         File f = new File("test1.txt");
-        f.save("\n", new String[] {"1", "abc"});
+        f.save("\n", new String[] {"1", "abc"}, null);
         FileBuffer fb2 = new FileBuffer("test1.txt", "\n");
         assertArrayEquals(fb1.getContent(), new String[] {"testtest", "1", "", "2"});
         assertFalse(fb1.getDirty());
@@ -25,7 +25,7 @@ class FileBufferTest {
         assertEquals(fb1.getContent()[0], "hallo");
         assertEquals(fb1.getContent()[1], "");
         fb1.setFile(new File("test2.txt"));
-        assertEquals(fb1.getFile().getPath(), "test2.txt");
+        assertEquals(fb1.getFile().getPathString(), "test2.txt");
         fb1.setDirty(true);
         assertTrue(fb1.getDirty());
         fb1.setDirty(false);

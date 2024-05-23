@@ -1,4 +1,3 @@
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -65,46 +64,49 @@ public class JsonObject extends FileSystemNode {
         ArrayList<FileSystemEntry> entries = new ArrayList<>();
         entries.add(entry);
         Collections.addAll(entries, getEntries());
-        setSubNodes(entries.toArray(new FileSystemEntry[0]));
+        setEntries(entries.toArray(new FileSystemEntry[0]));
     }
 
+    /**
+     * This method return all entries of the current object (used for reading Directories)
+     * @return  FileSystemEntr[]
+     */
     @Override
     FileSystemEntry[] readNode() {
-        return null;
+        return getEntries();
     }
 
     /* ******************
      *  JSON GENERATOR  *
      * ******************/
 
+    /**
+     * Method needed for compiling without SDK 19 preview 3 (handling switch in JsonGenerator)
+     * @param generator     The generator
+     */
     @Override
     public void generate(SimpleJsonGenerator generator) {
         generator.generateJsonObject(this);
     }
 
-    /* **************
-     *  OPEN ENTRY  *
-     * **************/
-
-    @Override
-    protected View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException {
-        FileSystemEntry entry = getEntry(line);
-        return entry.open(manager, buffer, newLine);
+    /**
+     * This method generates Json in String[] format for this JsonObject
+     * @return  String[]
+     */
+    private String[] generateJson() {
+        return SimpleJsonGenerator.generateJson(this);
     }
 
     /* ********************
      *   SAVE TO BUFFER   *
      * ********************/
 
+    /**
+     * This method saves the current JsonObject to the original buffer and adds a saveEdit to this buffer
+     * @param edits The edits done on the changed JsonValue
+     */
     @Override
-    protected void saveToBuffer() {
-        String[] content = generateJson();
-        getBuffer().setContent(content);
-        getBuffer().setDirty(true);
-    }
-
-    @Override
-    protected void saveToBuffer(String text, Buffer.Edit[] edits) {
+    protected void saveToBuffer(Buffer.Edit[] edits) {
         String[] content = generateJson();
         getBuffer().setContent(content);
         getBuffer().setDirty(true);
@@ -114,17 +116,13 @@ public class JsonObject extends FileSystemNode {
     /* ******************
      *    CLOSE ENTRY   *
      * ******************/
+
+    /**
+     * This method releases a lock on the original buffer containing the json
+     */
     @Override
     public void close() {
         getBuffer().releaseLock();
-    }
-
-    /* ******************
-     *  JSON GENERATOR  *
-     * ******************/
-
-    private String[] generateJson() {
-        return SimpleJsonGenerator.generateJson(this);
     }
 
     /* ******************

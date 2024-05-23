@@ -191,7 +191,9 @@ public class Textr implements InputListener, KeyBoardFocusListener
 
                             // Ctrl keybindings + legal chars
                             else {handleInput(c);}
-
+                            if (getLayout() == null) {
+                                return;
+                            }
                             if (getLayoutManager().getFocusedView().getTick() == 0 && c != 0) show();
                             else if (getLayoutManager().getFocusedView().getTick() != 0) show();
                             inputHandler.setInputListener(this);
