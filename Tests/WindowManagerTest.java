@@ -1,14 +1,16 @@
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WindowManagerTest {
     @Test
-    void testConstructor(){
+    void testConstructor() throws IOException {
         Buffer b1 = new FileBuffer(new String[] {"testtest", "1", "", "2"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(10, 10, new Point(0, 0), b1);
         LayoutManager lm1 = new LayoutManager(fbv1, 1, "\n");
-        TerminalInterface ih1 = new TerminalHandler();
+        InputInterface ih1 = new TerminalHandler();
         WindowManager wm1 = new WindowManager(10, 10, lm1, ih1);
 
         assertEquals(wm1.getLayoutManager(ih1), lm1);
@@ -16,8 +18,8 @@ public class WindowManagerTest {
     }
 
     @Test
-    void testOpenWindow(){
-        TerminalInterface ih1 = new TerminalHandler();
+    void testOpenWindow() throws IOException {
+        InputInterface ih1 = new TerminalHandler();
 
         //opening window in FileBufferView in terminal
         Buffer b1 = new FileBuffer(new String[] {"testtest", "1", "", "2"}, "test1.txt");
@@ -41,8 +43,8 @@ public class WindowManagerTest {
     }
 
     @Test
-    void testCloseWindow(){
-        TerminalInterface ih1 = new TerminalHandler();
+    void testCloseWindow() throws IOException {
+        InputInterface ih1 = new TerminalHandler();
 
         Buffer b1 = new FileBuffer(new String[] {"testtest", "1", "", "2"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(10, 10, new Point(0, 0), b1);

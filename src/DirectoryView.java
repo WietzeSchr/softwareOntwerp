@@ -154,7 +154,7 @@ public class DirectoryView extends View{
      * @return          View
      */
     @Override
-    public View closeView(int focus, CompositeLayout parent, TerminalInterface printer) {
+    public View closeView(int focus, CompositeLayout parent, InputInterface printer) {
         if (getPosition() == focus) {
             getFileSystemNode().getRoot().close();
             return null;
@@ -238,15 +238,5 @@ public class DirectoryView extends View{
     @Override
     public View[] duplicate() {
         return new View[0];
-    }
-
-    @Override
-    public long getNextDeadline() {
-        return 0;
-    }
-
-    @Override
-    public long getTick() {
-        return 0;
     }
 }

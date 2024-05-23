@@ -2,35 +2,29 @@ import java.io.IOException;
 
 public class SwingListenerService {
 
-    private InputListener inputListener;
-    private KeyBoardFocusListener keyBoardFocusListener;
+    private SwingListener swingListener;
 
-    SwingListenerService(Textr textr){
-        setInputListener(textr);
-        setKeyBoardFocusListener(textr);
+    SwingListenerService(SwingListener textr){
+        setSwingListener(textr);
     }
 
-    public void setKeyBoardFocusListener(KeyBoardFocusListener k) {
-        keyBoardFocusListener = k;
+    public void setSwingListener(SwingListener l) {
+        swingListener = l;
     }
 
-    public void removeKeyBoardFocusListener(){
-        keyBoardFocusListener = null;
-    }
+    public void removeSwingListener(){swingListener = null;}
 
-    public void setInputListener(InputListener i) {
-        inputListener = i;
-    }
-
-    public void removeInputListener(){
-        inputListener = null;
-    }
 
     void fireKeyEvent(int key) throws IOException {
-        inputListener.respondTo(key);
+        swingListener.respondTo(key);
     }
 
-    void fireFocusEvent(TerminalInterface focussed){
-        keyBoardFocusListener.updateKeyboardFocus(focussed);
+    void fireFocusEvent(InputInterface focussed){
+        swingListener.updateKeyboardFocus(focussed);
+    }
+
+    void fireCloseEvent(SwingWindow window){
+        swingListener.removeWindow(window);
+        fireFocusEvent(null);
     }
 }

@@ -386,7 +386,7 @@ public class TextrTest {
     }
 
     @Test
-    void testOpenFile() throws FileNotFoundException {
+    void testOpenFile() throws IOException {
         FileBuffer f1 = new FileBuffer("testTxt/test2.txt", "\n");
         FileBufferView fbv1 = new FileBufferView(5,5, new Point(1,1), f1);
         LayoutManager manager = new LayoutManager(fbv1, 1, "\n");
@@ -400,7 +400,7 @@ public class TextrTest {
         Textr test1 = new Textr("\n", fbv1);
 
         //focusListener
-        assertTrue(test1.inputHandler instanceof TerminalHandler);
+        assertTrue(test1.getInputHandler() instanceof TerminalHandler);
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
         test1.openWindow();
         assertEquals(test1.getWindowManager().getWindowCount(), 1);

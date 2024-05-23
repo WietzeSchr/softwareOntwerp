@@ -233,7 +233,7 @@ public class FileBufferView extends View {
      * @return   FileBufferView || null
      */
     @Override
-    public FileBufferView closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
+    public FileBufferView closeView(int focus, CompositeLayout parent, InputInterface printer) throws IOException {
         if (getPosition() != focus) {
             return this;
         }
@@ -264,7 +264,7 @@ public class FileBufferView extends View {
         }
     }
 
-    private void showCloseErr(TerminalInterface printer) {
+    private void showCloseErr(InputInterface printer) {
         printer.clearScreen();
         printer.printText(1,1, "The buffer is dirty! are you sure the changes should be discarded (y|n)");
     }
@@ -307,16 +307,8 @@ public class FileBufferView extends View {
      *    RUN SNAKE   *
      * ****************/
 
-   /**
-    * This method returns the next deadline of the system
-    * @return  | long, the next deadline
-    */
-    @Override
-    public long getNextDeadline() {
-        return System.currentTimeMillis();
-    }
 
-    public void tick() {return;}
+    public void tick() {}
 
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
@@ -548,12 +540,6 @@ public class FileBufferView extends View {
         }
         return null;
     }
-
-    @Override
-    public long getTick() {
-        return 0;
-    }
-
     @Override
     public Buffer getCurrentBuffer(){
         return getBuffer();

@@ -1,21 +1,18 @@
-
-
 import javax.swing.*;
-
 import java.io.FileNotFoundException;
-
 import java.io.IOException;
-
 
 /* ******************
  *      TEXTR       *
  * ******************/
 
-public class Textr implements InputListener, KeyBoardFocusListener
+public class Textr implements SwingListener
 {
-    TerminalHandler stdHandler;
-    TerminalInterface inputHandler;
+    private TerminalHandler stdHandler;
+    private InputInterface inputHandler;
 
+    private Timer timer;
+    private int delay;
 
     interface FallibleRunnable {
         void run() throws Throwable;
@@ -25,7 +22,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
         try {
             runnable.run();
         } catch (Throwable t) {
-            inputHandler.close();
+            inputHandler.close(0);
             t.printStackTrace();
             System.exit(1);
         }
@@ -71,8 +68,18 @@ public class Textr implements InputListener, KeyBoardFocusListener
             this.stdLayoutManager = new LayoutManager(new FileBufferView(size.getX(), size.getY(), new Point(1, 1), filepaths[0], newLine), 1, newLine);
         }
         this.windowManager = new WindowManager(size.getY(), size.getX(), stdLayoutManager, stdHandler);
+
+        this.delay = 1000;
+        timer = new Timer(delay, e-> {
+            try {
+                tick();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        timer.start();
+
         inputHandler.init();
-        show();
         runApp();
     }
 
@@ -87,8 +94,21 @@ public class Textr implements InputListener, KeyBoardFocusListener
     public Textr(String newLine, Layout layout) {
         this.stdHandler = new TerminalHandler();
         this.inputHandler = stdHandler;
-        this.stdLayoutManager = new LayoutManager(layout, 1, newLine);
+        try {
+            this.stdLayoutManager = new LayoutManager(layout, 1, newLine);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.windowManager = new WindowManager(10, 10, stdLayoutManager, stdHandler);
+        this.delay = 1000;
+        timer = new Timer(delay, e-> {
+            try {
+                tick();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        timer.start();
     }
 
     /* **********************
@@ -113,7 +133,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
         return getLayoutManager().getLayout();
     }
 
-    void setInputHandler(TerminalInterface handler) {
+    void setInputHandler(InputInterface handler) {
         inputHandler.clearInputListener();
         inputHandler = handler;
     }
@@ -121,10 +141,12 @@ public class Textr implements InputListener, KeyBoardFocusListener
     void resetInputHandler() {
         inputHandler.clearInputListener();
         this.inputHandler = stdHandler;
-        runApp();
+        if(getLayout()!=null) {
+            runApp();
+        }
     }
 
-    TerminalInterface getInputHandler(){
+    InputInterface getInputHandler(){
         return inputHandler;
     }
 
@@ -153,13 +175,10 @@ public class Textr implements InputListener, KeyBoardFocusListener
     public void runApp() {
         class App {
             App() {
-                show();
                 inputHandler.setInputListener(new Runnable() {
-                    public void run(){
+                    public void run() {
                         java.awt.EventQueue.invokeLater(() -> handleFailure(() -> {
-                            int c = inputHandler.readByte(getNextDeadline());
-                            tick();
-                            if (getLayoutManager().getFocusedView().getTick() != 0) show();
+                            int c = inputHandler.readByte();
 
                             // Arrows
                             if (c == 27) {
@@ -190,16 +209,18 @@ public class Textr implements InputListener, KeyBoardFocusListener
                             }
 
                             // Ctrl keybindings + legal chars
-                            else {handleInput(c);}
-                            if (getLayout() == null) {
-                                return;
+
+                            else {
+                                handleInput(c);
                             }
-                            if (getLayoutManager().getFocusedView().getTick() == 0 && c != 0) show();
-                            else if (getLayoutManager().getFocusedView().getTick() != 0) show();
-                            inputHandler.setInputListener(this);
+
+                            if (getLayout() != null) {
+                                inputHandler.setInputListener(this);
+                            }
                         }));
                     }
                 });
+                show();
             }
         }
         new App();
@@ -272,7 +293,15 @@ public class Textr implements InputListener, KeyBoardFocusListener
                     addNewChar((char)input);
                 }
         }
-        show();
+        if(getLayout() == null){
+            inputHandler.prepareToClose();
+            if(getWindowManager().getWindowCount() < 1){
+                getWindowManager().close();
+            }
+            inputHandler.close(getWindowManager().getWindowCount());
+        } else {
+            show();
+        }
     }
 
     /**
@@ -281,6 +310,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
      */
     @Override
     public void respondTo(int key) {
+        if(getLayout() == null){return;}
         try {
             handleInput(key);
         } catch (IOException e) {
@@ -294,7 +324,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
      *                   null = Terminal
      */
     @Override
-    public void updateKeyboardFocus(TerminalInterface focussed) {
+    public void updateKeyboardFocus(InputInterface focussed) {
         if(focussed==null)  {
             resetInputHandler();
         }
@@ -303,12 +333,18 @@ public class Textr implements InputListener, KeyBoardFocusListener
         }
     }
 
+    public void removeWindow(SwingWindow swingWindow) {
+        getWindowManager().closeWindow(swingWindow);
+        stdHandler.close(getWindowManager().getWindowCount());
+    }
+
+
     /* **********************
      *  DERIVED ATTRIBUTES  *
      * **********************/
 
-    long getTick() {
-        return getLayoutManager().getTick();
+    int getDelay() {
+        return getLayoutManager().getDelay();
     }
 
     /* ******************
@@ -392,7 +428,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * @return:  | void
      * Visible for testing
      */
-    void closeView(TerminalInterface printer) throws IOException {
+    void closeView(InputInterface printer) throws IOException {
         getLayoutManager().closeView(printer);
     }
 
@@ -495,7 +531,13 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * Visible for testing
      */
     void tick() throws IOException {
+        int newDelay = getDelay();
+        if(newDelay==0){
+            return;
+        }
+        timer.setDelay(newDelay);
         getLayoutManager().tick();
+        show();
     }
 
     /* *****************
@@ -535,17 +577,6 @@ public class Textr implements InputListener, KeyBoardFocusListener
     private void showCursor() {
         Point cursor = getLayoutManager().getCursor();
         inputHandler.moveCursor(cursor.getX(), cursor.getY());
-    }
-
-    /*
-     * This method returns the next deadline. If the focused view is a FileBufferView the nextDeadline is the current
-     * time. If the focused view is a GameView the nextDeadline is the time of the last tick + the time in between ticks
-     * of the Game
-     * @return   | long, the next deadline
-     * Visible for testing
-     */
-    long getNextDeadline() {
-        return getLayoutManager().getNextDeadline();
     }
 
     /** 

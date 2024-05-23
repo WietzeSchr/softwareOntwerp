@@ -22,7 +22,6 @@ public class Main {
             newLine = System.lineSeparator();
         }
         new Textr(newLine, args);
-        terminalHandler.close();
     }
 }
 

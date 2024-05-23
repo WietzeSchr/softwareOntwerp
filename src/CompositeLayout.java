@@ -95,7 +95,7 @@ public abstract class CompositeLayout extends Layout {
      * @return: Layout, the new layout after closing the current focused view
      */
     @Override
-    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
+    public Layout closeView(int focus, CompositeLayout parent, InputInterface printer) throws IOException {
         if (this == parent) {
             if (getSubLayouts().length == 2) {
                 if (getSubLayouts()[0].closeView(focus, parent, printer) != null) {
@@ -181,7 +181,7 @@ public abstract class CompositeLayout extends Layout {
      * This method shows the layout of the subLayouts
      * @return  | void
      */
-    public void show(TerminalInterface printer) {
+    public void show(InputInterface printer) {
         Layout[] subLays = getSubLayouts();
         for (int i = 0; i < countSubLayouts(); i++) {
             subLays[i].show(printer);

@@ -3,8 +3,9 @@ import io.github.btj.termios.Terminal;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class TerminalHandler implements TerminalInterface{
+public class TerminalHandler implements InputInterface {
 
+    boolean readyToClose;
 
     class TerminalParser {
         int buffer;
@@ -53,7 +54,9 @@ public class TerminalHandler implements TerminalInterface{
         }
     }
 
-    TerminalHandler(){}
+    TerminalHandler(){
+        readyToClose = false;
+    }
     @Override
     public void clearScreen() { Terminal.clearScreen();
     }
@@ -63,10 +66,24 @@ public class TerminalHandler implements TerminalInterface{
         Terminal.clearScreen();
     }
     @Override
-    public void close() {
-        Terminal.clearScreen();
-        Terminal.leaveRawInputMode();
+    public void close(int openWindows) {
+        if(!readyToClose) {return;}
+        if(openWindows > 0) {
+            Terminal.clearScreen();
+            Terminal.printText(1,1, openWindows + " Windows open please close them to end Textr");
+        }
+        else {
+            Terminal.clearScreen();
+            Terminal.printText(1,1, "closing Textr");
+            Terminal.leaveRawInputMode();
+            System.exit(0);
+        }
     }
+    @Override
+    public void prepareToClose(){
+        readyToClose = true;
+    }
+
     @Override
     public void moveCursor(int row, int column) {
         Terminal.moveCursor(row, column);
