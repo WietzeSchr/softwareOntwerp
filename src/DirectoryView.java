@@ -69,12 +69,6 @@ public class DirectoryView extends View{
     /* ******************
      *  INSPECT CONTENT *
      * ******************/
-
-    @Override
-    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) throws IOException {
-        return null;
-    }
-
     @Override
     public void move(Direction dir) {
         if (dir == Direction.SOUTH) {
@@ -89,8 +83,12 @@ public class DirectoryView extends View{
      *  OPEN ENTRY  *
      * **************/
 
+    /**
+     * This method opens the selected entry by replacing this view with a new view
+     * @param newLine   Line seperator used to read files, if file should be read from disc
+     */
     @Override
-    public void addNewLineBreak(String newLine) throws FileNotFoundException {
+    public void enterPressed(String newLine) throws FileNotFoundException {
         FileSystemEntry entry = getFileSystemNode().getEntry(getLine());
         Buffer buffer = null;
         if (entry != null) {
@@ -101,6 +99,13 @@ public class DirectoryView extends View{
         getManager().replace(this, newView);
     }
 
+    /**
+     * This method opens a buffer for when a file should be opened. It first checks if there already exists a
+     * buffer with the same path, if not a new filebuffer is opened
+     * @param path      The absolute path of the file
+     * @param newLine   The line separator to read files
+     * @return          Buffer
+     */
     public Buffer openFile(String path, String newLine) {
         Buffer result = findBuffer(path);
         if (result != null) {
@@ -120,6 +125,15 @@ public class DirectoryView extends View{
 
     @Override
     public View closeView(int focus, CompositeLayout parent) {
+        if (getPosition() == focus) {
+            getFileSystemNode().getRoot().close();
+            return null;
+        }
+        return this;
+    }
+
+    @Override
+    public View closeView(int focus, CompositeLayout parent, TerminalInterface printer) {
         if (getPosition() == focus) {
             getFileSystemNode().getRoot().close();
             return null;

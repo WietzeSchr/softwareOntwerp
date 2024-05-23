@@ -97,7 +97,7 @@ public class TextrTest {
         test1.addNewChar('!');
         assertEquals(fbv1.getContent()[0], "rij1!");
         // Tests Add New Line Break
-        test1.addNewLineBreak();
+        test1.enterPressed();
         assertEquals(fbv1.getContent().length, 4);
         assertEquals(fbv1.getContent()[0], "rij1!");
         assertEquals(fbv1.getContent()[1], "");
@@ -220,7 +220,7 @@ public class TextrTest {
         assertEquals(focus.getBuffer().getRowCount(), 5);
         assertEquals(Arrays.toString(focus.makeShow()), Arrays.toString(new String[]{"rij5", null, null, null}));
         assertEquals(Arrays.toString(focusDupe.makeShow()), Arrays.toString(new String[] {"arij1", "rij2", "rij3", "rij4"}));
-        test1.addNewLineBreak();
+        test1.enterPressed();
         assertEquals(Arrays.toString(focus.makeShow()), Arrays.toString(new String[] {"rij5", null, null, null}));
         assertEquals(Arrays.toString(focusDupe.makeShow()), Arrays.toString(new String[] {"arij1", null, "rij2", "rij3"}));
         assertEquals(focus.getBuffer().getContent(), focusDupe.getBuffer().getContent());
@@ -418,7 +418,7 @@ public class TextrTest {
         test1.getLayoutManager().initViewPositions();
         test1.parseJson();
         test1.closeView(test1.getInputHandler());
-        test1.addNewLineBreak();
+        test1.enterPressed();
     }
 
 }
