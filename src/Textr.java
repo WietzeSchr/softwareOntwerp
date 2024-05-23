@@ -96,7 +96,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * **********************/
 
     String getNewLine(){
-        return this.getNewLine();
+        return this.newLine;
     }
 
     LayoutManager getLayoutManager() {
@@ -113,12 +113,13 @@ public class Textr implements InputListener, KeyBoardFocusListener
         return getLayoutManager().getLayout();
     }
 
-    void setInputHandler(TerminalInterface handler){
+    void setInputHandler(TerminalInterface handler) {
         inputHandler.clearInputListener();
         inputHandler = handler;
     }
 
-    void resetInputHandler(){
+    void resetInputHandler() {
+        inputHandler.clearInputListener();
         this.inputHandler = stdHandler;
         runApp();
     }
@@ -198,7 +199,6 @@ public class Textr implements InputListener, KeyBoardFocusListener
                     }
                 });
             }
-
         }
         new App();
     }
