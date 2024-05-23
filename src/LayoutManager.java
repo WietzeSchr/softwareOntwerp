@@ -53,7 +53,7 @@ public class LayoutManager {
      * This method returns the newLine
      * @return  | String, the newLine
      */
-    private String getNewLine() {
+    public String getNewLine() {
         return this.newLine;
     }
 
@@ -317,7 +317,7 @@ public class LayoutManager {
      *  HELP FUNCTIONS  *
      * ******************/
 
-    private void openViews(View[] newViews) {
+    void openViews(View[] newViews) {
         setLayout(getLayout().openViews(getFocus(), getFocusedView().getParent(), newViews));
     }
 
@@ -339,6 +339,10 @@ public class LayoutManager {
      * @return  | int, the index of previous focus
      */
     private int previousFocus() {
+        if (getFocus() == 1) {
+            System.out.println('\u0007');
+            return getFocus();
+        }
         return getLayout().getPreviousFocus(getFocus());
     }
 
