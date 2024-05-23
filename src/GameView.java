@@ -92,20 +92,12 @@ public class GameView extends View{
      * @return | boolean
      */
     @Override
-    public void addNewLineBreak(String newLine) {
+    public void enterPressed(String newLine) {
         if (getGame().getSnake() == null) {
             runNewGame();
         }
     }
 
-    /* ******************
-     *   CLOSE BUFFER   *
-     * ******************/
-
-    @Override
-    public Layout closeView(int focus, CompositeLayout parent, TerminalInterface printer) {
-        return null;
-    }
     /* ************************
      *  OPEN FILEBUFFER VIEW  *
      * ************************/

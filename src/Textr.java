@@ -204,7 +204,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
             case -5:           // LEFT
                 arrowPressed(Direction.WEST);
                 break;
-            case -6:           // Shift + F4
+            case -6: case 17:  // Shift + F4
                 closeView(inputHandler);
                 break;
             case 4:             // Ctrl + D
@@ -245,7 +245,7 @@ public class Textr implements InputListener, KeyBoardFocusListener
                 undo();
                 break;
             case 13:            // Enter
-                addNewLineBreak();
+                enterPressed();
                 break;
             case 127:           // Backspace
                 deleteChar();
@@ -339,8 +339,8 @@ public class Textr implements InputListener, KeyBoardFocusListener
      * @return    | void
      * Visible for testing
      */
-    void addNewLineBreak() throws FileNotFoundException {
-        getLayoutManager().addNewLineBreak();
+    void enterPressed() throws FileNotFoundException {
+        getLayoutManager().enterPressed();
     }
 
     /** 

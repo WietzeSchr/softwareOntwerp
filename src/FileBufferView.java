@@ -185,7 +185,7 @@ public class FileBufferView extends View {
      * It also makes a new Edit object and set this new Edit as the lastEdit
      * @return: View
      */
-    public void addNewLineBreak(String newLine) {
+    public void enterPressed(String newLine) {
         Point insert = getInsertionPoint();
         Point newInsert = new Point(insert.getX()+1, 1);
         getBuffer().insertLineBreak(insert, newInsert);

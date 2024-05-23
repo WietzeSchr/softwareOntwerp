@@ -12,8 +12,14 @@ public class JsonObject extends FileSystemNode {
     /* ***************
      *  CONSTRUCTORS *
      *****************/
-    public JsonObject(String name, FileSystemEntry[] subNodes) {
-        super(new JsonPath(name), subNodes);
+
+    /**
+     * This constructor creates a new JsonObject
+     * @param path      The path of the JsonObject
+     * @param subNodes  The array of properties of this json object (should all be other JsonObjects or JsonValues)
+     */
+    public JsonObject(String path, FileSystemEntry[] subNodes) {
+        super(new JsonPath(path), subNodes);
         for (int i = 0; i < subNodes.length; i++) {
             subNodes[i].addParent(this);
         }
@@ -23,22 +29,38 @@ public class JsonObject extends FileSystemNode {
      *  GETTERS AND SETTERS *
      * **********************/
 
+    /**
+     * This method returns the original buffer from where the json object was parsed
+     * @return  Buffer, returns null if this is not the root object
+     */
     private Buffer getBuffer() {
         return buffer;
     }
 
+    /**
+     * This method sets the of this JsonObject to the new buffer
+     * @param buffer    The new buffer
+     */
     protected void setBuffer(Buffer buffer) {
         this.buffer = buffer;
     }
 
+    /**
+     * This method sets the parent of this object to the given parent and adds it to the entries of this object
+     * @param parent    The new parent of this JsonObject
+     */
     @Override
     public void addParent(FileSystemNode parent) {
-        if (getParent() == null || getParent() != null && getEntries()[0] != parent) {
+        setParent(parent);
+        if (getEntries()[0] != parent) {
             addToEntries(parent);
         }
-        setParent(parent);
     }
 
+    /**
+     * This method adds a new entry to the start of the entries list
+     * @param entry The new entry
+     */
     public void addToEntries(FileSystemEntry entry) {
         ArrayList<FileSystemEntry> entries = new ArrayList<>();
         entries.add(entry);

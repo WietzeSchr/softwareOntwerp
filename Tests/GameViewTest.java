@@ -16,7 +16,7 @@ class GameViewTest {
         gv.setLastMove(1500);
         gv.saveBuffer("\n");
         gv.addNewChar('x');
-        gv.addNewLineBreak("\n");
+        gv.enterPressed("\n");
         gv.deleteChar();
         gv.undo();
         gv.redo();
@@ -58,7 +58,7 @@ class GameViewTest {
         GameView gv = new GameView(10, 20, new Point(5, 15));
         gv.getGame().loseGame();
         assertNull(gv.getGame().getSnake());
-        gv.addNewLineBreak("\n");
+        gv.enterPressed("\n");
         assertNotNull(gv.getGame().getSnake());
     }
 

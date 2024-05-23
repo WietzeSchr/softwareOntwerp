@@ -130,9 +130,9 @@ public class LayoutManager {
      * @return    | void
      * Visible for testing
      */
-    void addNewLineBreak() throws FileNotFoundException {
+    void enterPressed() throws FileNotFoundException {
         View focussedView = getFocusedView();
-        focussedView.addNewLineBreak(getNewLine());
+        focussedView.enterPressed(getNewLine());
     }
 
     /**
