@@ -676,9 +676,23 @@ public abstract class Buffer {
         }
 
         @Override
+        public void undo(Buffer buffer) {
+            for (int i = getEdits().length - 1; i >= 0; i--) {
+                getEdits()[i].undo(buffer);
+            }
+        }
+
+        @Override
         public void redo() {
             for (int i = 0; i < getEdits().length; i++) {
                 getEdits()[i].redo(Buffer.this);
+            }
+        }
+
+        @Override
+        public void redo(Buffer buffer) {
+            for (int i = 0; i < getEdits().length; i++) {
+                getEdits()[i].redo(buffer);
             }
         }
 
@@ -783,14 +797,14 @@ public abstract class Buffer {
                 position1 += content[i].length();
                 position1 += newLine.length();
             }
-            position1 += getInsertionPoint().getY();
+            position1 += getInsertionPoint().getY() - 1;
             int row2 = getInsertionPointAfter().getX() - 1;
             int position2 = 0;
             for (int i = 0; i < row2; i++) {
                 position2 = content[i].length();
                 position2 += newLine.length();
             }
-            position2 += getInsertionPointAfter().getY();
+            position2 += getInsertionPointAfter().getY() - 1;
             setInsertionPoint(new Point(1, position1));
             setInsertionPointAfter(new Point(1, position2));
         }
