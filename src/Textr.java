@@ -146,6 +146,16 @@ public class Textr implements SwingListener
         }
     }
 
+    /**
+     * this method is here for testing purposes
+     * does the same as the method above but does not run App
+     * @param test
+     */
+    void resetInputHandler(boolean test) {
+        inputHandler.clearInputListener();
+        this.inputHandler = stdHandler;
+    }
+
     InputInterface getInputHandler(){
         return inputHandler;
     }
@@ -327,6 +337,21 @@ public class Textr implements SwingListener
     public void updateKeyboardFocus(InputInterface focussed) {
         if(focussed==null)  {
             resetInputHandler();
+        }
+        else {
+            setInputHandler(focussed);
+        }
+    }
+
+    /**
+     * this method is here for testing purposes
+     * @param focussed
+     * @param testing
+     */
+    @Override
+    public void updateKeyboardFocus(InputInterface focussed, boolean testing) {
+        if(focussed==null)  {
+            resetInputHandler(testing);
         }
         else {
             setInputHandler(focussed);
