@@ -20,9 +20,14 @@ public class FileBufferView extends View {
      *  CONSTRUCTORS    *
      * ******************/
 
-    /** This constructor creates a new FileBufferView with the given heigth, width, leftUpperCorner, filepath and newLine
-     * @post getVerticalScrollState() == 1
-     * @post getHorizontalScrollState() == 1
+    /**
+     * This constructor creates a new FileBufferView by loading a new file
+     * @param heigth            The heigth of the view
+     * @param witdh             The width of the view
+     * @param leftUpperCorner   The left upper corner of this view
+     * @param filepath          The absolute filepath
+     * @param newLine           The line seperator used
+     * @throws FileNotFoundException
      */
     public FileBufferView(int heigth, int witdh, Point leftUpperCorner, String filepath, String newLine) throws FileNotFoundException {
         super(heigth, witdh, leftUpperCorner);
@@ -33,9 +38,12 @@ public class FileBufferView extends View {
         buffer.subscribeView(this);
     }
 
-    /** This method sets the verticalScrollState of the FileBufferView
-     * @post getVerticalScrollState() == newVerticalScrollState
-     * @return: void
+    /**
+     * This method creates a new FileBufferView with a given buffer
+     * @param heigth            The heigth of the view
+     * @param width             The width of the view
+     * @param leftUpperCorner   The left upper corner of the view
+     * @param buffer            The buffer of this view
      */
     public FileBufferView(int heigth, int width, Point leftUpperCorner, Buffer buffer) {
         super(heigth, width, leftUpperCorner);
@@ -179,7 +187,7 @@ public class FileBufferView extends View {
     /** 
      * This method adds a new line break to the buffer 
      * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return: View
+     * @param newLine   The line seperator used
      */
     public void enterPressed(String newLine) {
         Point insert = getInsertionPoint();
@@ -189,10 +197,9 @@ public class FileBufferView extends View {
     }
 
     /**
-     *  This method adds a new character to the fileBuffer at insertion point
-     *  It also makes a new Edit object and set this new Edit as the lastEdit
-     * @param c | The character to add
-     * @return  | boolean
+     * This method adds a new character to the fileBuffer at insertion point
+     * It also makes a new Edit object and set this new Edit as the lastEdit
+     * @param c     The character to add
      */
     public void addNewChar(char c) {
         Point insert = getInsertionPoint();
@@ -203,23 +210,17 @@ public class FileBufferView extends View {
     /** 
      * This method deletes the character before the insertionPoint.
      * It also makes a new Edit object and set this new Edit as the lastEdit
-     * @return  | boolean
      */
     public void deleteChar() {
         if (! getInsertionPoint().equals(new Point(1,1))) {
             Point insert = getInsertionPoint();
-            //char c;
             Point newInsert;
             if (insert.getY() == 1) {
-               // c = (char) 13;
                 newInsert = new Point(insert.getX() - 1, getContent()[insert.getX() - 2].length() + 1);
             } else {
-               // c = getContent()[insert.getX() - 1].charAt(insert.getY() - 2);
                 newInsert = new Point(insert.getX(), insert.getY() - 1);
             }
             getBuffer().deleteChar(insert, newInsert);
-            //setInsertionPoint(newInsert);
-
         }
     }
 
@@ -275,9 +276,8 @@ public class FileBufferView extends View {
 
     /** 
      * This method saves the buffer of this view to the file with the given line seperator
-     * @pre | newLine == "\n" || newLine == "\r\n"
-     * @param newLine  | The line seperator to add to the buffer
-     * @return  | void
+     * @pre             newLine == "\n" || newLine == "\r\n"
+     * @param newLine   The line seperator to add to the buffer
      */
     @Override
     public void saveBuffer(String newLine) throws IOException {
@@ -324,6 +324,11 @@ public class FileBufferView extends View {
                 {new FileBufferView(getHeigth(), getWidth(), getLeftUpperCorner(), getBuffer())};
     }
 
+    /**
+     * This method is used to update the view's insertion point and scroll states when a new line break
+     * is added
+     * @param insert    The insertion point where the line break was added
+     */
     public void updateViewNewLineBreak(Point insert) {
         if (insert.getX() < getInsertionPoint().getX()) {
             move(Direction.SOUTH);
@@ -334,6 +339,10 @@ public class FileBufferView extends View {
         }
     }
 
+    /**
+     * This method updates the views insertion point and scroll states when a line break was deleted
+     * @param insert    The insertion point where the line break was deleted
+     */
     public void updateViewDelLineBreak(Point insert) {
         if (insert.getX() < getInsertionPoint().getX()) {
             move(Direction.NORD);
@@ -344,27 +353,43 @@ public class FileBufferView extends View {
         }
     }
 
+    /**
+     * This method updates the insertion point of this view when a new character was added
+     * @param insert    The insertion point where the character was added
+     */
     public void updateViewNewChar(Point insert) {
         if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
             move(Direction.EAST);
         }
     }
 
+    /**
+     * This method updates the insertion point of this view when a character was deleted
+     * @param insert    The insertion point where the character was deleted from
+     */
     public void updateViewDelChar(Point insert) {
         if (insert.getX() == getInsertionPoint().getX() && insert.getY() <= getInsertionPoint().getY()) {
             move(Direction.WEST);
         }
     }
 
+    /**
+     * This method returns a new view array containing a new directory view if this is a view on a file
+     * Returns an empty array when this view has a json value
+     * @param manager   The LayoutManager
+     * @return  View[]  {newView} || {}
+     */
     public View[] getDirectoryView(LayoutManager manager) {
-        String path = getParentPath();
-        return getBuffer().getDirectoryView(path, manager);
+        return getBuffer().getDirectoryView(manager);
     }
 
-    public String getParentPath() {
-        return getBuffer().getParentPath();
-    }
-
+    /**
+     * This method tries to parse the buffer's content as a simple json object. If this succeeds
+     * it returns a view array containing a new directory view on the json object. If this fails, no view
+     * is returned and the insertion point is set at the syntax error
+     * @param manager   The LayoutManager
+     * @return  View[]  {newView} || {}
+     */
     public View[] parseJson(LayoutManager manager) {
         String[] content = getContent();
         StringBuilder jsonString = new StringBuilder();
@@ -521,10 +546,9 @@ public class FileBufferView extends View {
     /** 
      * This method updates the size of the layout to the given parameters heigth, width and leftUpperCorner
      * and updates the scroll states
-     * @post    | getHeigth() == heigth
-     * @post    | getWidth() == width
-     * @post    | getLeftUpperCorner() == leftUpperCorner
-     * @return  | void
+     * @post    getHeigth() == heigth
+     * @post    getWidth() == width
+     * @post    getLeftUpperCorner() == leftUpperCorner
      */
     @Override
     public void updateSize(int heigth, int width, Point leftUpperCorner) {
@@ -533,6 +557,11 @@ public class FileBufferView extends View {
         setLeftUpperCorner(leftUpperCorner);
     }
 
+    /**
+     * This method returns the buffer if this buffer has the same absolute path
+     * @param path  The given absolute path
+     * @return      Buffer || null
+     */
     @Override
     public Buffer getBufferByName(String path) {
         if (getPathString().equals(path)) {
