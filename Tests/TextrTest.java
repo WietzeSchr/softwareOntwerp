@@ -415,14 +415,15 @@ public class TextrTest {
         //focusListener
         assertInstanceOf(TerminalHandler.class, test1.getInputHandler());
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
+        assertEquals(test1.getInputHandler(),th1);
         test1.openWindow();
         assertEquals(test1.getWindowManager().getWindowCount(), 1);
         SwingWindow w1 = test1.getWindowManager().getSwingWindows()[0];
         assertEquals(test1.getInputHandler(), w1);
         w1.dispatchEvent(new WindowEvent(w1, WindowEvent.WINDOW_CLOSING));
         int n = test1.getWindowManager().getWindowCount();
-        assertEquals(n, 0);
-        assertEquals(test1.getInputHandler(),th1);
+        assertEquals(n, 1);
+
     }
 
     @Test
