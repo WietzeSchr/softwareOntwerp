@@ -81,12 +81,11 @@ class JsonBuffer extends Buffer {
 
     /**
      * This method opens the directory the current file is in, does nothing for JsonValue
-     * @param path      The absolute path of the directory
      * @param manager   The LayoutManager
      * @return          View[]  The new views
      */
     @Override
-    public View[] getDirectoryView(String path, LayoutManager manager) {
+    public View[] getDirectoryView(LayoutManager manager) {
         return new View[] {};
     }
 }
@@ -487,18 +486,56 @@ public abstract class Buffer {
         getFile().close();
     }
 
+    /* *******************
+     *    SAVE BUFFER    *
+     * *******************/
+
+    /**
+     * This method saves the buffer to the corresponding file
+     * @param newLine   The line seperator to add to the file
+     */
+    public void saveBuffer(String newLine) throws IOException {
+        clearEdits();
+        getFile().save(newLine, getContent(), null);
+        setDirty(false);
+    }
+
+    /* ***********************
+     *  OPEN DIRECTORY VIEW  *
+     * ***********************/
+
+    /**
+     * This method returns a new view on the directory of the current file
+     * @param manager   The layout manager
+     * @return          View[] {newView}
+     */
+    public View[] getDirectoryView(LayoutManager manager) {
+        return new View[] {new DirectoryView(1,1, new Point(1,1), getParentPath(), manager)};
+    }
+
+
     /* ******************
      *   JSON LOCKING   *
      * ******************/
 
+    /**
+     * This method acquires a new lock on this buffer
+     */
     protected void acquireLock() {
         getLock().acquireNewLock();
     }
 
+    /**
+     * This method releases a lock on this buffer
+     */
     protected void releaseLock() {
         getLock().releaseLock();
     }
 
+    /**
+     * This method returns true if this buffer is not locked, returns false otherwise
+     * @return
+     */
     public boolean isNotLocked() {
         return !getLock().isLocked();
     }
@@ -527,20 +564,28 @@ public abstract class Buffer {
         return insertionPoint;
     }
 
+    /**
+     * This method returns the absolute path of the FileSystemLeaf this buffer contains
+     * @return  String  absolute path
+     */
     public String getPathString() {
         return getFile().getPathString();
     }
 
+    /**
+     * This method return the name of the FileSystemLeaf this buffer contains
+     * @return  String  leafName
+     */
     public String getName() {
         return getFile().getName();
     }
 
+    /**
+     * This method returns the absolute path of the parent, returns null if this has no parent
+     * @return  String || null
+     */
     public String getParentPath() {
         return getFile().getParentPath();
-    }
-
-    public View[] getDirectoryView(String path, LayoutManager manager) {
-        return new View[] {new DirectoryView(1,1, new Point(1,1), path, manager)};
     }
 
     /* *******************
@@ -585,8 +630,7 @@ public abstract class Buffer {
 
         /**
          * This method returns the previous Edit object
-         *
-         * @return: Edit
+         * @return:  Edit
          */
         public Edit getPrevious() {
             return previous;
@@ -597,7 +641,6 @@ public abstract class Buffer {
          *
          * @param newPrevious the new previous Edit object
          * @post getPrevious() == newPrevious
-         * @return: void
          */
         public void setPrevious(Edit newPrevious) {
             this.previous = newPrevious;
@@ -619,13 +662,9 @@ public abstract class Buffer {
             return false;
         }
 
-        public Edit mapToStart(String newLine, Point startLocation) {
-            return this;
-        }
+        public void mapToStart(String newLine, Point startLocation) {}
 
-        public Edit mapToStringLocation(String newLine) {
-            return this;
-        }
+        public void mapToStringLocation(String newLine) {}
     }
 
     /**
@@ -653,23 +692,37 @@ public abstract class Buffer {
         }
     }
 
+    /* **************
+     *   SAVE EDIT  *
+     * **************/
     class SaveEdit extends Edit {
 
-        Edit[] edits;
+        final Edit[] edits;
 
+        /**
+         * This constructor creates a new save edit, with the given edits that where made
+         * This save edit is used to undo or redo more edits at once
+         * @param edits The edits that should be undone or redone
+         */
         public SaveEdit(Edit[] edits) {
             super();
+            setNext(new EmptyEdit());
+            getNext().setPrevious(this);
             this.edits = edits;
         }
 
-        private void setEdits(Edit[] newEdits) {
-            this.edits = newEdits;
-        }
 
+        /**
+         * This method returns the edits that were made in this save
+         * @return  Edit[]  edits
+         */
         private Edit[] getEdits() {
             return edits;
         }
 
+        /**
+         * This method undoes this edit by undoing all the edits it contains in the opposite order
+         */
         @Override
         public void undo() {
             for (int i = getEdits().length - 1; i >= 0; i--) {
@@ -677,6 +730,20 @@ public abstract class Buffer {
             }
         }
 
+        /**
+         * This method undoes this edit by undoing all the edits it contains in the opposite orde
+         * @param buffer    The buffer the edits should be undone on (used for mapped edits)
+         */
+        @Override
+        public void undo(Buffer buffer) {
+            for (int i = getEdits().length - 1; i >= 0; i--) {
+                getEdits()[i].undo(buffer);
+            }
+        }
+
+        /**
+         * This method redoes this edit by redoing all the edits it contains in the same order
+         */
         @Override
         public void redo() {
             for (int i = 0; i < getEdits().length; i++) {
@@ -684,15 +751,40 @@ public abstract class Buffer {
             }
         }
 
+        /**
+         * This method redoes this save edit on the given buffer by redoing all the edits it contains in the same order
+         * @param buffer    The buffer the edits should be redone on (used for mapped edits)
+         */
         @Override
-        public Edit mapToStart(String newLine, Point startLocation) {
-            String[] content = getContent();
-            Edit[] newEdits = new Edit[getEdits().length];
+        public void redo(Buffer buffer) {
             for (int i = 0; i < getEdits().length; i++) {
-                Edit edit = getEdits()[i].mapToStringLocation(newLine);
-                newEdits[i] = edit.mapToStart(newLine, startLocation);
+                getEdits()[i].redo(buffer);
             }
-            return new SaveEdit(newEdits);
+        }
+
+        /**
+         * This method is used to maps the edit to the location of the edit in a new buffer, containing the original
+         * string at the given start location
+         * @param newLine       The line seperator used
+         * @param startLocation The start location of the original string
+         */
+        @Override
+        public void mapToStart(String newLine, Point startLocation) {
+            for (Edit edit: getEdits()) {
+                edit.mapToStart(newLine, startLocation);
+            }
+        }
+
+        /**
+         * This method maps this edit, made in an array of strings to the location as if it
+         * was made in a single array buffer containing newline characters
+         * @param newLine   The line seperator that is used
+         */
+        @Override
+        public void mapToStringLocation(String newLine) {
+            for (Edit edit : getEdits()) {
+                edit.mapToStringLocation(newLine);
+            }
         }
     }
 
@@ -763,33 +855,47 @@ public abstract class Buffer {
             return insertionPointAfter;
         }
 
+        /**
+         * This method is used to maps the edit to the location of the edit in a new buffer, containing the original
+         * string at the given start location
+         * @param newLine       The line seperator used
+         * @param startLocation The start location of the original string
+         */
         @Override
-        public Edit mapToStart(String newLine, Point startLocation) {
+        public void mapToStart(String newLine, Point startLocation) {
             setInsertionPoint(getInsertionPoint().add(startLocation).minus(new Point(1,0)));
             setInsertionPointAfter(getInsertionPointAfter().add(startLocation).minus(new Point(1,0)));
-            return this;
         }
 
+        /**
+         * This method maps this edit, made in an array of strings to the location as if it
+         * was made in a single array buffer containing newline characters
+         * @param newLine
+         */
         @Override
-        public Edit mapToStringLocation(String newLine) {
+        public void mapToStringLocation(String newLine) {
+
             String[] content = getContent();
-            int row1 = getInsertionPoint().getX() - 1;
-            int position1 = 0;
-            for (int i = 0; i < row1; i++) {
-                position1 += content[i].length();
-                position1 += newLine.length();
+            if (getInsertionPoint().getX() != 1) {
+                int row1 = getInsertionPoint().getX() - 1;
+                int position1 = 0;
+                for (int i = 0; i < row1; i++) {
+                    position1 += content[i].length();
+                    position1 += newLine.length();
+                }
+                position1 += getInsertionPoint().getY() - 2;
+                setInsertionPoint(new Point(1, position1));
             }
-            position1 += getInsertionPoint().getY();
-            int row2 = getInsertionPointAfter().getX() - 1;
-            int position2 = 0;
-            for (int i = 0; i < row1; i++) {
-                position2 = content[i].length();
-                position2 += newLine.length();
+            if (getInsertionPointAfter().getX() != 1) {
+                int row2 = getInsertionPointAfter().getX() - 1;
+                int position2 = 0;
+                for (int i = 0; i < row2; i++) {
+                    position2 = content[i].length();
+                    position2 += newLine.length();
+                }
+                position2 += getInsertionPointAfter().getY() - 2;
+                setInsertionPointAfter(new Point(1, position2));
             }
-            position2 += getInsertionPointAfter().getY();
-            setInsertionPoint(new Point(1, position1));
-            setInsertionPointAfter(new Point(1, position2));
-            return this;
         }
 
         @Override
@@ -798,42 +904,38 @@ public abstract class Buffer {
         }
     }
 
-    public void saveBuffer(String newLine) throws IOException {
-        clearEdits();
-        getFile().save(newLine, getContent(), null);
-        setDirty(false);
-    }
-
     /* *******************
      *   INSERTION EDIT  *
      * *******************/
     class Insertion extends NonEmptyEdit {
 
         /**
-         * This constructor creates a new Insertion object with the given parameters c, insert and insertAfter
-         * when the change is a line break or adding a character
+         * This constructor creates a new Insertion edit
+         * @param c             The character that was added, (char) 13 if line break is added
+         * @param insert        The insertion point before the insertion
+         * @param insertAfter   The insertion point after the insertion
          */
         public Insertion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
         /**
-         * This method undoes the insertion and deletes the character at the insertion point or the line break
-         *
-         * @return: boolean, true if the undo was successful, false otherwise
+         * This method undoes the insertion and deletes the character or line break at the insertion point
          */
         public void undo() {
             deleteChar(getInsertionPointAfter());
         }
 
+        /**
+         * This method undoes the insertion and deletes the character or line break that was added at the insertion point
+         * @param buffer    The buffer on which the edit should be undone (used for mapped edits)
+         */
         public void undo(Buffer buffer) {
             buffer.deleteChar(getInsertionPointAfter());
         }
 
         /**
-         * This method redoes the insertion and adds the character at the insertion point or adds the line break back
-         *
-         * @return: boolean, true if the redo was successful, false otherwise
+         * This method redoes the insertion and adds the character or line break at the insertion point
          */
         public void redo() {
             if (getChange() == 13) {
@@ -843,6 +945,10 @@ public abstract class Buffer {
             }
         }
 
+        /**
+         * This method redoes the insertion and adds the character or line break at the insertion point
+         * @param buffer    The buffer on which the edit should be undone (used for mapped edits)
+         */
         public void redo(Buffer buffer) {
             if (getChange() == 13) {
                 buffer.insertLineBreak(getInsertionPoint());
@@ -857,18 +963,19 @@ public abstract class Buffer {
      *   DELETION EDIT   *
      * *******************/
     class Deletion extends NonEmptyEdit {
+
         /**
-         * This constructor creates a new Deletion object with the given parameters c, insert and insertAfter
-         * when the change is deleting a line break or deleting a character
+         * This constructor creates a new Deletion edit
+         * @param c             The character that was deleted
+         * @param insert        The insertion point before de deletion
+         * @param insertAfter   The insertion point after the deletion
          */
         public Deletion(char c, Point insert, Point insertAfter) {
             super(c, insert, insertAfter);
         }
 
         /**
-         * This method undoes the deletion and adds the character at the insertion point or adds the line break back
-         *
-         * @return: boolean, true if the undo was successful, false otherwise
+         * This method undoes the deletion and adds the character or line break at the insertion point
          */
         public void undo() {
             if (getChange() == 13) {
@@ -879,9 +986,7 @@ public abstract class Buffer {
         }
 
         /**
-         * This method undoes the deletion and adds the character at the insertion point or adds the line break back
-         *
-         * @return: boolean, true if the undo was successful, false otherwise
+         * This method undoes the deletion and adds the character or line break at the insertion point
          */
         public void undo(Buffer buffer) {
             if (getChange() == 13) {
@@ -892,18 +997,14 @@ public abstract class Buffer {
         }
 
         /**
-         * This method redoes the deletion and deletes the character at the insertion point or the line break
-         *
-         * @return: boolean, true if the redo was successful, false otherwise
+         * This method redoes the deletion and deletes the character or line break at the insertion point
          */
         public void redo() {
             deleteChar(getInsertionPoint());
         }
 
         /**
-         * This method redoes the deletion and deletes the character at the insertion point or the line break
-         *
-         * @return: boolean, true if the redo was successful, false otherwise
+         * This method redoes the deletion and deletes the character or line break at the insertion point
          */
         public void redo(Buffer buffer) {
             buffer.deleteChar(getInsertionPoint());

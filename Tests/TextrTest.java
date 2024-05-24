@@ -419,6 +419,7 @@ public class TextrTest {
         assertInstanceOf(TerminalHandler.class, test1.getInputHandler());
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
         assertEquals(test1.getLayoutManager().getFocusedView(), fbv1);
+        assertEquals(test1.getInputHandler(),th1);
         test1.openWindow();
         assertEquals(test1.getWindowManager().getWindowCount(), 1);
         SwingWindow w1 = test1.getWindowManager().getSwingWindows()[0];
@@ -426,6 +427,7 @@ public class TextrTest {
         assertEquals(test1.getLayout(), fbv1);
         w1.testClose();
         int n = test1.getWindowManager().getWindowCount();
+
         assertEquals(n, 0);
         assertEquals(test1.getInputHandler(), th1);
 
@@ -519,6 +521,7 @@ public class TextrTest {
         assertEquals(test1.getWindowManager().getWindowCount(), 0);
 
         assertEquals((TerminalHandler) test1.getInputHandler(), th1);
+
     }
 
     @Test

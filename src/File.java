@@ -71,6 +71,7 @@ public class File extends FileSystemLeaf
      * This method saves the buffer of the file to the file and sets the buffer to not dirty
      * @param newLine   The new line separator
      * @param content   The content to save
+     * @param edits     The edits made, not used for files
      */
     public void save(String newLine, String[] content, Buffer.Edit[] edits) throws IOException {
         FileOutputStream file = new FileOutputStream(getPathString());

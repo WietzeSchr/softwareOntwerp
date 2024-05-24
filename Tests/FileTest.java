@@ -8,7 +8,8 @@ class FileTest {
     @Test
     void testConstructor() {
         File f1 = new File("test1.txt");
-        assertEquals(f1.getPathString(), "test1.txt");
+        Path path = new FilePath(f1.getPathString());
+        assertEquals(path.getName(), "test1.txt");
     }
 
     @Test
