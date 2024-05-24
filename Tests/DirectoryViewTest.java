@@ -93,8 +93,8 @@ public class DirectoryViewTest {
     void testMakeShow() throws IOException {
         DirectoryView test1 = makeTest1();
         DirectoryView test2 = makeTest2();
-        assertArrayEquals(test1.makeShow(), new String[] {"..", "test1.txt", "test2.txt", "testfolder1/", "testfolder2/"});
-        assertEquals(test1.makeHorizontalScrollBar(), "home/IdeaProjects/softwareOntwerp/testTxt/ ");
+        assertArrayEquals(test1.makeShow(), new String[] {"..", "test1.txt", "test2.txt", "testfolder1/", "testfolder2/", null, null, null, null});
+        assertEquals(test1.makeHorizontalScrollBar(), "testTxt ############");
         assertArrayEquals(test1.makeVerticalScrollBar(), new char[] {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#'});
     }
 
