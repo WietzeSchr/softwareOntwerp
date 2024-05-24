@@ -623,9 +623,7 @@ public abstract class Buffer {
             return this;
         }
 
-        public Edit mapToStringLocation(String newLine) {
-            return this;
-        }
+        public void mapToStringLocation(String newLine) {}
     }
 
     /**
@@ -686,13 +684,19 @@ public abstract class Buffer {
 
         @Override
         public Edit mapToStart(String newLine, Point startLocation) {
-            String[] content = getContent();
             Edit[] newEdits = new Edit[getEdits().length];
             for (int i = 0; i < getEdits().length; i++) {
-                Edit edit = getEdits()[i].mapToStringLocation(newLine);
-                newEdits[i] = edit.mapToStart(newLine, startLocation);
+                newEdits[i] = getEdits()[i].mapToStart(newLine, startLocation);
             }
-            return new SaveEdit(newEdits);
+            setEdits(newEdits);
+            return this;
+        }
+
+        @Override
+        public void mapToStringLocation(String newLine) {
+            for (Edit edit : getEdits()) {
+                edit.mapToStringLocation(newLine);
+            }
         }
     }
 
@@ -771,7 +775,7 @@ public abstract class Buffer {
         }
 
         @Override
-        public Edit mapToStringLocation(String newLine) {
+        public void mapToStringLocation(String newLine) {
             String[] content = getContent();
             int row1 = getInsertionPoint().getX() - 1;
             int position1 = 0;
@@ -782,14 +786,13 @@ public abstract class Buffer {
             position1 += getInsertionPoint().getY();
             int row2 = getInsertionPointAfter().getX() - 1;
             int position2 = 0;
-            for (int i = 0; i < row1; i++) {
+            for (int i = 0; i < row2; i++) {
                 position2 = content[i].length();
                 position2 += newLine.length();
             }
             position2 += getInsertionPointAfter().getY();
             setInsertionPoint(new Point(1, position1));
             setInsertionPointAfter(new Point(1, position2));
-            return this;
         }
 
         @Override

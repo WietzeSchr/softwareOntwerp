@@ -127,6 +127,9 @@ public class JsonValue extends FileSystemLeaf {
     public void save(String newLine, String[] content, Buffer.Edit[] edits) {
         StringBuilder text = new StringBuilder();
         Buffer.Edit[] mappedEdits = new Buffer.Edit[edits.length];
+        for (Buffer.Edit edit: edits) {
+            edit.mapToStringLocation(newLine);
+        }
         for (int i = 0; i < mappedEdits.length; i++) {
             mappedEdits[i] = edits[i].mapToStart(newLine, getLocation());
         }
@@ -171,6 +174,11 @@ public class JsonValue extends FileSystemLeaf {
             return new FileBufferView(5,5,new Point(1,1), new JsonBuffer(this, newLine));
         }
         return new FileBufferView(5,5,new Point(1,1), buffer);
+    }
+
+    @Override
+    public void close() {
+        getRoot().close();
     }
 
     /* ******************
