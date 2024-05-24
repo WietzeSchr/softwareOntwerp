@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 /* *************************
  *   DIRECTORY VIEW CLASS  *
  * *************************/
-public class DirectoryView extends View{
+            public class DirectoryView extends View{
 
     private final FileSystemNode fileSystemNode;
 
@@ -79,8 +79,10 @@ public class DirectoryView extends View{
     /**
      * This method returns the LayoutManager
      * @return  LayoutManager
+     *
+     * Visible for testing
      */
-    private LayoutManager getManager() {
+    LayoutManager getManager() {
         return manager;
     }
 
