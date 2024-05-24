@@ -16,14 +16,10 @@ class FileBufferViewTest {
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getVerticalScrollState(), 1);
         assertEquals(fbv1.getBuffer(), buffer);
-        //assertTrue(fbv1.lastEditIsEmptyEdit());
         fbv2.setPosition(1);
         assertEquals(fbv1.getInsertionPoint(), new Point(1,1));
         assertEquals(fbv1.getHorizontalScrollState(), 1);
         assertEquals(fbv1.getVerticalScrollState(), 1);
-        //assertEquals(fbv1.getTick(), 0);
-        //assertEquals(fbv1.getNextDeadline(), System.currentTimeMillis());
-        //assertTrue(fbv1.lastEditIsEmptyEdit());
         assertThrows(FileNotFoundException.class,
                 () -> new FileBufferView(10, 20, new Point(10, 20), "t", "\n"));
     }
@@ -51,9 +47,9 @@ class FileBufferViewTest {
 
     @Test
     void testDerivedAttributes() {
-        FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "Home/Documents/test1.txt");
+        FileBuffer buffer = new FileBuffer(new String[] {"test12", "", "test123"}, "test1.txt");
         FileBufferView fbv1 = new FileBufferView(5,10,new Point(20, 10), buffer);
-        FileBuffer buffer2 = new FileBuffer(new String[] {"test12", "", "test123"}, "Home\\Documents\\test2.txt");
+        FileBuffer buffer2 = new FileBuffer(new String[] {"test12", "", "test123"}, "test2.txt");
         FileBufferView fbv2 = new FileBufferView(5,10,new Point(20, 10), buffer2);
         fbv2.setVerticalScrollState(2);
         fbv2.setHorizontalScrollState(4);
@@ -62,7 +58,7 @@ class FileBufferViewTest {
         assertEquals(fbv1.getRowCount(), 3);
         assertEquals(fbv1.getColumnCount(), 7);
         assertEquals(fbv1.getCharacterCount(), 13);
-        assertEquals(fbv1.getPathString(), "Home/Documents/test1.txt");
+        assertEquals(fbv1.getPathString(), "home/wietze/IdeaProjects/softwareOntwerp/test1.txt");
         assertEquals(fbv1.getFileName(), "test1.txt");
         assertEquals(fbv2.getFileName(), "test2.txt");
         fbv1.setInsertionPoint(new Point(3,4));

@@ -137,6 +137,6 @@ public class JsonObject extends FileSystemNode {
 
     @Override
     public String toString() {
-        return getName() + ".";
+        return getName() + "/";
     }
 }
