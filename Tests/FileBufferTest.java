@@ -25,7 +25,8 @@ class FileBufferTest {
         assertEquals(fb1.getContent()[0], "hallo");
         assertEquals(fb1.getContent()[1], "");
         fb1.setFile(new File("test2.txt"));
-        assertEquals(fb1.getFile().getPathString(), "test2.txt");
+        Path path = new FilePath(fb1.getFile().getPathString());
+        assertEquals(path.getName(), "test2.txt");
         fb1.setDirty(true);
         assertTrue(fb1.getDirty());
         fb1.setDirty(false);
