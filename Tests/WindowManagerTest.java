@@ -58,4 +58,6 @@ public class WindowManagerTest {
         wm1.closeWindow(sw1);
         assertEquals(wm1.getWindowCount(), 0);
     }
+
+
 }

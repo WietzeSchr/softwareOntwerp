@@ -221,6 +221,11 @@ public class GameView extends View{
         setHeigth(heigth);
         setWidth(width);
         setLeftUpperCorner(leftUpperCorner);
-        getGame().updateSize(heigth - 1, width - 1);
+        if(getGame().getSnake()==null){
+            setGame(new Game(heigth-1, width-1));
+        }
+        else {
+            getGame().updateSize(heigth - 1, width - 1);
+        }
     }
 }

@@ -63,7 +63,6 @@ public class WindowManager {
     public void closeWindow(SwingWindow window) {
         swingWindows.remove(window);
         layoutManagers.remove(window);
-        //window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         //window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
     }
 

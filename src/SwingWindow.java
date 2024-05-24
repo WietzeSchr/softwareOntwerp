@@ -136,7 +136,7 @@ public class SwingWindow extends JFrame implements InputInterface {
 
             @Override
             public void windowClosing(WindowEvent e){
-                listenerService.fireFocusEvent((SwingWindow) e.getSource());
+                listenerService.fireFocusEvent(null);
             }
 
             @Override
