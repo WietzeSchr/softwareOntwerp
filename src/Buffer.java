@@ -656,7 +656,7 @@ public abstract class Buffer {
     class SaveEdit extends Edit {
 
         Edit[] edits;
-        
+
         public SaveEdit(Edit[] edits) {
             super();
             this.edits = edits;

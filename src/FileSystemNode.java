@@ -105,7 +105,7 @@ public abstract class FileSystemNode extends FileSystemEntry {
      */
     protected View openEntry(LayoutManager manager, int line, Buffer buffer, String newLine) throws FileNotFoundException {
         FileSystemEntry entry = getEntry(line);
-        if (entry == null && line == 1) {
+        if (entry == null && line == 1) {       // this should be the parent but is not initialized
             return new DirectoryView(5,5, new Point(1,1), getParentPath(), manager);
         }
         return entry.open(manager, buffer, newLine);

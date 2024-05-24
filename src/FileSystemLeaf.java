@@ -40,7 +40,7 @@ public abstract class FileSystemLeaf extends FileSystemEntry{
      * @param content       The content to be saved
      * @param edits         The edits that were made
      */
-    public void save(String newLine, String[] content, Buffer.Edit[] edits) throws IOException {}
+    public abstract void save(String newLine, String[] content, Buffer.Edit[] edits) throws IOException;
 
     /* ******************
      *  HELP FUNCTIONS  *
