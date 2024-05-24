@@ -23,6 +23,11 @@ public class SwingListenerService {
         swingListener.updateKeyboardFocus(focussed);
     }
 
+    void fireCloseEvent(SwingWindow window, boolean testing){
+        swingListener.removeWindow(window);
+        swingListener.updateKeyboardFocus(null, testing);
+    }
+
     void fireCloseEvent(SwingWindow window){
         swingListener.removeWindow(window);
         fireFocusEvent(null);

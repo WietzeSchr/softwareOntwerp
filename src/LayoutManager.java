@@ -370,4 +370,5 @@ public class LayoutManager {
     public Buffer getCurrentBuffer() {
          return getFocusedView().getCurrentBuffer();
     }
+
 }

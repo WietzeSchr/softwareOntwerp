@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -408,21 +409,116 @@ public class TextrTest {
     @Test
     void testOpenWindow() {
         FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
-        FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
-        Textr test1 = new Textr("\n", fbv1);
+        FileBufferView fbv1 = new FileBufferView(20,20,new Point(1,1),f1 );
+        GameView gv1 = new GameView(20,20, new Point(1,1));
+        SideBySideLayout sbs1 = new SideBySideLayout(1,1, new Point(1,1), new Layout[] {fbv1, gv1});
+        Textr test1 = new Textr("\n", sbs1);
         test1.getLayout().updateSize(20, 40);
 
-        //focusListener
+        //open in fileBufferView
         assertInstanceOf(TerminalHandler.class, test1.getInputHandler());
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
+        assertEquals(test1.getLayoutManager().getFocusedView(), fbv1);
         test1.openWindow();
         assertEquals(test1.getWindowManager().getWindowCount(), 1);
         SwingWindow w1 = test1.getWindowManager().getSwingWindows()[0];
         assertEquals(test1.getInputHandler(), w1);
-        w1.dispatchEvent(new WindowEvent(w1, WindowEvent.WINDOW_CLOSING));
+        assertEquals(test1.getLayout(), fbv1);
+        w1.testClose();
         int n = test1.getWindowManager().getWindowCount();
         assertEquals(n, 0);
-        assertEquals(test1.getInputHandler(),th1);
+        assertEquals(test1.getInputHandler(), th1);
+
+        //don't open when not in fileBufferView
+        assertEquals(test1.getLayoutManager().getFocusedView(), fbv1);
+        test1.changeFocusNext();
+        assertEquals(test1.getLayoutManager().getFocusedView(), gv1);
+        test1.openWindow();
+        assertEquals(test1.getWindowManager().getWindowCount(), 0);
+        assertArrayEquals(test1.getWindowManager().getSwingWindows(), new ArrayList<SwingWindow>().toArray());
+    }
+
+    @Test
+    void testSwingWindowInput() throws IOException {
+        FileBuffer f1 = new FileBuffer(new String[] {}, "test1");
+        FileBufferView fbv1 = new FileBufferView(20,20,new Point(1,1),f1 );
+        GameView gv1 = new GameView(20,20, new Point(1,1));
+        SideBySideLayout sbs1 = new SideBySideLayout(1,1, new Point(1,1), new Layout[] {fbv1, gv1});
+        Textr test1 = new Textr("\n", sbs1);
+        test1.getLayout().updateSize(20, 40);
+
+        TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
+
+        test1.openWindow();
+        SwingWindow w1 = test1.getWindowManager().getSwingWindows()[0];
+
+        // focus
+        w1.testKeyInput(14); //CTRL N
+        assertEquals(test1.getLayoutManager().getFocusedView(), fbv1);
+        w1.testKeyInput(16); //CTRL P
+        assertEquals(test1.getLayoutManager().getFocusedView(), fbv1);
+
+        // duplicate
+        w1.testKeyInput(4); //CTRL D
+        assertInstanceOf(SideBySideLayout.class, test1.getLayout());
+        assertInstanceOf(FileBufferView.class, test1.getLayout().getSubLayouts()[1]);
+        Buffer b1 = test1.getLayoutManager().getCurrentBuffer();
+        w1.testKeyInput(14); //CTRL N
+        assertEquals(test1.getLayoutManager().getCurrentBuffer(), b1);
+
+        // rotate
+        w1.testKeyInput(18); //CTRL R
+        assertInstanceOf(StackedLayout.class, test1.getLayout());
+        w1.testKeyInput(20); // CTRL T
+        assertInstanceOf(SideBySideLayout.class, test1.getLayout());
+        w1.testKeyInput(-6); // Shift F4
+        assertEquals(test1.getLayout(), fbv1);
+
+        // openGameView
+        w1.testKeyInput(7); //CTRL G
+        assertInstanceOf(SideBySideLayout.class, test1.getLayout());
+        assertInstanceOf(GameView.class, test1.getLayout().getSubLayouts()[1]);
+
+        w1.testKeyInput(-6); //Shift F4
+        assertEquals(test1.getLayout(), fbv1);
+
+        // parseJSon
+        //w1.testKeyInput(10); //CTRL J
+
+        //w1.testKeyInput(-6); //Shift F4
+        assertEquals(test1.getLayout(), fbv1);
+
+        // adding characters
+        w1.testKeyInput(104); //h
+        w1.testKeyInput(101); //e
+        w1.testKeyInput(108); //l
+        w1.testKeyInput(108); //l
+        w1.testKeyInput(111); //o
+        w1.testKeyInput(13); //ENTER
+        w1.testKeyInput(120); //x
+
+        assertArrayEquals(test1.getLayoutManager().getCurrentBuffer().getContent(),
+                new String[] {"hello", "x"});
+
+        // undo / redo
+        w1.testKeyInput(26); //CTRL Z
+        assertArrayEquals(test1.getLayoutManager().getCurrentBuffer().getContent(),
+                new String[] {"hello", ""});
+        w1.testKeyInput(21); //CTRL U
+        assertArrayEquals(test1.getLayoutManager().getCurrentBuffer().getContent(),
+                new String[] {"hello", "x"});
+
+        // openWindow
+        w1.testKeyInput(23); //CTRL W
+        assertEquals(test1.getWindowManager().getWindowCount(), 2);
+        SwingWindow w2 = test1.getWindowManager().getSwingWindows()[1];
+        w2.testClose();
+        assertEquals(test1.getWindowManager().getWindowCount(), 1);
+
+        w1.testClose();
+        assertEquals(test1.getWindowManager().getWindowCount(), 0);
+
+        assertEquals((TerminalHandler) test1.getInputHandler(), th1);
     }
 
     @Test
@@ -434,5 +530,4 @@ public class TextrTest {
         test1.closeView(test1.getInputHandler());
         test1.enterPressed();
     }
-
 }

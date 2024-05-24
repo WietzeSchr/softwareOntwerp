@@ -222,4 +222,17 @@ public class SwingWindow extends JFrame implements InputInterface {
         return resp;
     }
 
+    /**
+     * These methods are for testing
+     */
+
+    public void testClose(){
+        listenerService.fireCloseEvent(this, true);
+        dispose();
+    }
+
+    public void testKeyInput(int key) throws IOException {
+        listenerService.fireKeyEvent(key);
+    }
+
 }
