@@ -31,8 +31,9 @@ public class JsonObject extends FileSystemNode {
     /**
      * This method returns the original buffer from where the json object was parsed
      * @return  Buffer, returns null if this is not the root object
+     * Visible for testing
      */
-    private Buffer getBuffer() {
+    Buffer getBuffer() {
         return buffer;
     }
 
@@ -58,9 +59,12 @@ public class JsonObject extends FileSystemNode {
 
     /**
      * This method adds a new entry to the start of the entries list
+     *      This method is only used to add parent entry to the entries
+     *      therefore this method does not set the parent of the new entry to this object
+     *      Visible for testing
      * @param entry The new entry
      */
-    public void addToEntries(FileSystemEntry entry) {
+    void addToEntries(FileSystemEntry entry) {
         ArrayList<FileSystemEntry> entries = new ArrayList<>();
         entries.add(entry);
         Collections.addAll(entries, getEntries());
@@ -92,8 +96,10 @@ public class JsonObject extends FileSystemNode {
     /**
      * This method generates Json in String[] format for this JsonObject
      * @return  String[]
+     *
+     * Visible for testing
      */
-    private String[] generateJson() {
+    String[] generateJson() {
         return SimpleJsonGenerator.generateJson(this);
     }
 

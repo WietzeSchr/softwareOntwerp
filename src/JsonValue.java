@@ -92,10 +92,12 @@ public class JsonValue extends FileSystemLeaf {
         char[] value = getValue().toCharArray();
         for (int i = 0; i  < value.length; i++) {
             if (value[i] == '\n') {
+                if (newLine.equals("\r\n")) throw new IllegalArgumentException("Illegal linebreak");
                 result.add(line.toString());
                 line = new StringBuilder();
             }
             else if (value[i] == '\r') {
+                if (newLine.equals("\n")) throw new IllegalArgumentException("Illegal linebreak");
                 result.add(line.toString());
                 i++;
                 line = new StringBuilder();
@@ -169,18 +171,6 @@ public class JsonValue extends FileSystemLeaf {
             return new FileBufferView(5,5,new Point(1,1), new JsonBuffer(this, newLine));
         }
         return new FileBufferView(5,5,new Point(1,1), buffer);
-    }
-
-    /* ******************
-     *    CLOSE ENTRY   *
-     * ******************/
-
-    /**
-     * This method is used to keep track of how many JsonViews are open (Locking of buffers parsed as json)
-     */
-    @Override
-    protected void close() {
-        getRoot().close();
     }
 
     /* ******************
