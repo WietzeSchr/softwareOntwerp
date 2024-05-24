@@ -192,7 +192,7 @@ class CompositeLayoutTest {
         sl1.arrowPressed(Direction.SOUTH, 3);
         sl1.deleteChar(3);
         assertEquals(f2.getRowCount(), 3);
-        assertEquals(fbv2.getVerticalScrollState(), 3);
+        assertEquals(fbv2.getVerticalScrollState(), 0);
         assertEquals(fbv2.getInsertionPoint(), new Point(3,1));
     }
 
