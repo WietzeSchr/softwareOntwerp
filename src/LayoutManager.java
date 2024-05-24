@@ -281,9 +281,9 @@ public class LayoutManager {
     }
 
 
-    /* *****************
-     * OPEN NEW WINDOW *
-     * *****************/
+    /* *********************
+     * Open Directory View *
+     * *********************/
 
     void openDirectoryView() {
         View[] newViews = getLayout().openDirectoryView(getFocus(), this);
@@ -326,12 +326,7 @@ public class LayoutManager {
      * @return  | int, the index of next focus
      */
     private int nextFocus() {
-        int nextFocus = getLayout().getNextFocus(getFocus());
-        if (nextFocus == -1) {
-            System.out.println('\u0007');
-            return getFocus();
-        }
-        return nextFocus;
+        return getLayout().getNextFocus(getFocus());
     }
 
     /**
@@ -339,10 +334,6 @@ public class LayoutManager {
      * @return  | int, the index of previous focus
      */
     private int previousFocus() {
-        if (getFocus() == 1) {
-            System.out.println('\u0007');
-            return getFocus();
-        }
         return getLayout().getPreviousFocus(getFocus());
     }
 

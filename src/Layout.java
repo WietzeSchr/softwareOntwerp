@@ -146,7 +146,8 @@ public abstract class Layout {
      */
     public int getNextFocus(int focus) {
         if (focus == countViews()) {
-            return -1;
+            System.out.println('\u0007');
+            return focus;
         }
         return focus + 1;
     }
@@ -158,7 +159,8 @@ public abstract class Layout {
      */
     public int getPreviousFocus(int focus) {
         if (focus == 1) {
-            return countViews();
+            System.out.println('\u0007');
+            return 1;
         }
         return focus - 1;
     }

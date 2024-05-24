@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -91,22 +92,30 @@ public class TextrTest {
         Textr test1 = new Textr("\n", sl1);
         test1.getLayoutManager().initViewPositions();
         test1.getLayout().updateSize(10, 20);
+
         // Tests Add New Char
         FileBufferView focus = (FileBufferView)test1.getLayoutManager().getFocusedView();
         focus.setInsertionPoint(new Point(1,5));
         test1.addNewChar('!');
         assertEquals(fbv1.getContent()[0], "rij1!");
+
         // Tests Add New Line Break
         test1.enterPressed();
         assertEquals(fbv1.getContent().length, 4);
         assertEquals(fbv1.getContent()[0], "rij1!");
         assertEquals(fbv1.getContent()[1], "");
+
         // Tests Delete Char
         test1.deleteChar();
         assertEquals(fbv1.getContent().length, 3);
         assertEquals(fbv1.getContent()[0], "rij1!");
         assertEquals(fbv1.getContent()[1], "rij2");
         assertEquals(fbv1.getContent()[2], "rij3");
+        test1.arrowPressed(Direction.EAST);
+        test1.arrowPressed(Direction.EAST);
+        test1.arrowPressed(Direction.EAST);
+        test1.arrowPressed(Direction.EAST);
+        test1.arrowPressed(Direction.EAST);
         test1.deleteChar();
         assertEquals(fbv1.getContent().length, 3);
         assertEquals(fbv1.getContent()[0], "rij1");
@@ -124,11 +133,13 @@ public class TextrTest {
         test1.changeFocusNext();
         assertEquals(test1.getFocus(), 3);
         test1.changeFocusNext();
-        assertEquals(test1.getFocus(), 1);
-        test1.changeFocusPrevious();
         assertEquals(test1.getFocus(), 3);
         test1.changeFocusPrevious();
         assertEquals(test1.getFocus(), 2);
+        test1.changeFocusPrevious();
+        assertEquals(test1.getFocus(), 1);
+        test1.changeFocusPrevious();
+        assertEquals(test1.getFocus(), 1);
     }
 
     @Test
@@ -142,13 +153,14 @@ public class TextrTest {
         FileBufferView fbv3 = new FileBufferView(1,1,new Point(1,1),f3 );
         StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, fbv3});
         Textr test1 = new Textr("\n", sl1);
+        test1.getLayout().updateSize(20,40);
 
         //testClose cleanBuffer
         FileBufferView focus = (FileBufferView)test1.getLayoutManager().getFocusedView();
         assertFalse(focus.getBuffer().getDirty());
         test1.closeView(test1.getInputHandler());
         focus = (FileBufferView)test1.getLayoutManager().getFocusedView();
-        StackedLayout newLayout = new StackedLayout(1, 1, new Point(1,1), new Layout[] {fbv2, fbv3});
+        StackedLayout newLayout = new StackedLayout(20, 40, new Point(1,1), new Layout[] {fbv2, fbv3});
         assertEquals(newLayout, test1.getLayout());
         assertEquals(focus, fbv2);
         assertEquals(focus.getHeigth(), 10);
@@ -252,7 +264,7 @@ public class TextrTest {
         assertEquals(gameView.getHeigth(), 40);
         assertEquals(gameView.getWidth(), 20);
         Snake snake = gameView.getGame().getSnake();
-        assertEquals(snake.getHead(), new Point(19,9));
+        assertEquals(snake.getHead(), new Point(19,14));
         assertEquals(gameView.getGame().getScore(), 0);
         test1.closeView(test1.getInputHandler());
 
@@ -267,7 +279,7 @@ public class TextrTest {
         assertEquals(gameView.getHeigth(), 40);
         assertEquals(gameView.getWidth(), 30);
         snake = gameView.getGame().getSnake();
-        assertEquals(snake.getHead(), new Point(19,14));
+        assertEquals(snake.getHead(), new Point(20,15));
     }
 
     @Test
@@ -398,20 +410,22 @@ public class TextrTest {
         FileBuffer f1 = new FileBuffer(new String[] {"rij1", "rij2","rij3", "rij4", "rij5"}, "test1");
         FileBufferView fbv1 = new FileBufferView(1,1,new Point(1,1),f1 );
         Textr test1 = new Textr("\n", fbv1);
+        test1.getLayout().updateSize(20, 40);
 
         //focusListener
-        assertTrue(test1.getInputHandler() instanceof TerminalHandler);
+        assertInstanceOf(TerminalHandler.class, test1.getInputHandler());
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
         test1.openWindow();
         assertEquals(test1.getWindowManager().getWindowCount(), 1);
         SwingWindow w1 = test1.getWindowManager().getSwingWindows()[0];
         assertEquals(test1.getInputHandler(), w1);
-        test1.getWindowManager().closeWindow(w1);
-        assertEquals(test1.getWindowManager().getWindowCount(), 0);
+        w1.dispatchEvent(new WindowEvent(w1, WindowEvent.WINDOW_CLOSING));
+        int n = test1.getWindowManager().getWindowCount();
+        assertEquals(n, 0);
         assertEquals(test1.getInputHandler(),th1);
     }
 
-
+    @Test
     void testJsonLocks() throws IOException {
         FileBufferView fbv1 = new FileBufferView(5,5, new Point(1,1), "/home/wietze/IdeaProjects/softwareOntwerp/testJson/jsonTest1.txt", "\n");
         Textr test1 = new Textr("\n", fbv1);

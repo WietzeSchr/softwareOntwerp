@@ -163,6 +163,13 @@ class FileBufferViewTest {
         fbv1.addNewChar('x');
         fbv1.move(Direction.SOUTH);
         fbv1.deleteChar();
+        fbv1.move(Direction.EAST);
+        fbv1.move(Direction.EAST);
+        fbv1.move(Direction.EAST);
+        fbv1.move(Direction.EAST);
+        fbv1.move(Direction.EAST);
+        fbv1.move(Direction.EAST);
+        fbv1.move(Direction.EAST);
         fbv1.deleteChar();
         fbv1.move(Direction.WEST);
         fbv1.enterPressed("\n");

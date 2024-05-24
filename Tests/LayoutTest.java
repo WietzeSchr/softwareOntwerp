@@ -39,9 +39,10 @@ class LayoutTest {
         FileBuffer f3 = new FileBuffer(new String[] {"h", "ha","hal", "hall", "hallo"}, "test3");
         FileBufferView fbv3 = new FileBufferView(1,1,new Point(1,1),f3 );
         StackedLayout sl1 = new StackedLayout(1, 1, new Point(1,1), new Layout[] {sbsl1, fbv3});
-        assertEquals(sl1.getNextFocus(3), 1);
+
+        assertEquals(sl1.getNextFocus(3), 3);
         assertEquals(sl1.getNextFocus(2), 3);
-        assertEquals(sl1.getPreviousFocus(1), 3);
+        assertEquals(sl1.getPreviousFocus(1), 1);
         assertEquals(sl1.getPreviousFocus(2), 1);
     }
 
