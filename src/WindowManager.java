@@ -50,7 +50,7 @@ public class WindowManager {
             return;
         }
         this.width = layoutManager.getLayout().getWidth();
-        this.heigth = layoutManager.getLayout().getWidth();
+        this.heigth = layoutManager.getLayout().getHeigth();
         SwingWindow newWindow = new SwingWindow(width, heigth, listener);
         swingWindows.add(newWindow);
         Layout lay = layoutManager.getLayout();

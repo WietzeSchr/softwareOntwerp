@@ -420,15 +420,15 @@ public class TextrTest {
         TerminalHandler th1 = (TerminalHandler) test1.getInputHandler();
         assertEquals(test1.getLayoutManager().getFocusedView(), fbv1);
         assertEquals(test1.getInputHandler(),th1);
+
         test1.openWindow();
         assertEquals(test1.getWindowManager().getWindowCount(), 1);
         SwingWindow w1 = test1.getWindowManager().getSwingWindows()[0];
         assertEquals(test1.getInputHandler(), w1);
         assertEquals(test1.getLayout(), fbv1);
         w1.testClose();
-        int n = test1.getWindowManager().getWindowCount();
 
-        assertEquals(n, 0);
+        assertEquals(test1.getWindowManager().getWindowCount(), 0);
         assertEquals(test1.getInputHandler(), th1);
 
         //don't open when not in fileBufferView

@@ -81,6 +81,7 @@ public class TerminalHandler implements InputInterface {
     }
     @Override
     public void prepareToClose(){
+
         readyToClose = true;
     }
 
