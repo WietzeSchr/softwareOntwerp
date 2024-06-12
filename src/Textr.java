@@ -305,6 +305,7 @@ public class Textr implements SwingListener
         }
         if(getLayout() == null){
             inputHandler.prepareToClose();
+            timer.stop();
             if(getWindowManager().getWindowCount() < 1){
                 getWindowManager().close();
             }
